@@ -21,7 +21,3 @@ Visit `localhost:4000`
    - **Target language practice**: Get corrections and encouragement
 
 The tutor adjusts vocabulary and grammar to your CEFR level automatically.
-
-## Supported Languages
-
-English, Spanish, French, German, Portuguese, Chinese, Japanese, Arabic, Russian, Korean, Hindi, Italian
