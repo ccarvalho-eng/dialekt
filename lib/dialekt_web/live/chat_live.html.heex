@@ -65,7 +65,8 @@
                     rows="1"
                     name="value"
                     value={@input}
-                    phx-keydown="keydown"
+                    phx-hook="ChatInput"
+                    id="chat-input-empty"
                   ></textarea>
                   <button
                     type="button"
@@ -139,7 +140,8 @@
                 rows="1"
                 name="value"
                 value={@input}
-                phx-keydown="keydown"
+                phx-hook="ChatInput"
+                id="chat-input-active"
               ></textarea>
               <button
                 type="button"

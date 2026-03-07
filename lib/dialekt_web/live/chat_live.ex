@@ -81,8 +81,27 @@ defmodule DialektWeb.ChatLive do
 
   @impl true
   def handle_event("send_starter", %{"text" => text}, socket) do
-    message = %{role: "user", content: text, timestamp: DateTime.utc_now()}
-    {:noreply, assign(socket, messages: socket.assigns.messages ++ [message])}
+    user_message = %{
+      role: "user",
+      content: text,
+      text: text,
+      timestamp: DateTime.utc_now()
+    }
+
+    loading_message = %{
+      role: "assistant",
+      content: "",
+      loading: true,
+      timestamp: DateTime.utc_now()
+    }
+
+    updated_socket =
+      socket
+      |> assign(messages: socket.assigns.messages ++ [user_message, loading_message])
+
+    send(self(), {:get_tutor_response, text, length(socket.assigns.messages)})
+
+    {:noreply, updated_socket}
   end
 
   @impl true
@@ -123,18 +142,6 @@ defmodule DialektWeb.ChatLive do
 
       {:noreply, updated_socket}
     end
-  end
-
-  @impl true
-  def handle_event("keydown", %{"key" => "Enter", "shiftKey" => false}, socket) do
-    # Enter without shift sends the message
-    handle_event("send_message", %{}, socket)
-  end
-
-  @impl true
-  def handle_event("keydown", _params, socket) do
-    # Any other key combination does nothing
-    {:noreply, socket}
   end
 
   @impl true
