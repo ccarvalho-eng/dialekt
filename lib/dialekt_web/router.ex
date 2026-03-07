@@ -17,7 +17,8 @@ defmodule DialektWeb.Router do
   scope "/", DialektWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", SetupLive
+    live "/chat", ChatLive
   end
 
   # Other scopes may use custom stacks.

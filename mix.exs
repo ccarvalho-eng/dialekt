@@ -11,7 +11,9 @@ defmodule Dialekt.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      description: "AI-powered language learning tutor built with Phoenix LiveView",
+      licenses: ["Apache-2.0"]
     ]
   end
 

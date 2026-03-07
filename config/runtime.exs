@@ -7,6 +7,10 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
+# Configure Anthropic API key from environment variable
+config :dialekt,
+  anthropic_api_key: System.get_env("ANTHROPIC_API_KEY")
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
