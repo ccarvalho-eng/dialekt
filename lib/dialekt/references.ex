@@ -4,7 +4,7 @@ defmodule Dialekt.References do
   """
 
   @claude_api_url "https://api.anthropic.com/v1/messages"
-  @model "claude-3-5-sonnet-20241022"
+  @model "claude-sonnet-4-6"
 
   def fetch(native, target) do
     api_key = Application.get_env(:dialekt, :anthropic_api_key)

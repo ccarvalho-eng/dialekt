@@ -4,7 +4,7 @@ defmodule Dialekt.Tutor do
   """
 
   @claude_api_url "https://api.anthropic.com/v1/messages"
-  @model "claude-3-5-sonnet-20241022"
+  @model "claude-sonnet-4-6"
 
   @doc """
   Builds the system prompt for the AI tutor.
@@ -42,10 +42,10 @@ defmodule Dialekt.Tutor do
     First, detect what language the user wrote in:
 
     CASE 1 — User wrote in #{native.name} (their native language):
-    Translate into #{target.name} at #{level.code} level, #{register.label} register. Reply and ask a follow-up. Standard flow.
+    They are not practicing yet, just asking you to translate. Show their phrase translated to #{target.name} in the "You:" section (so they can learn how to say it), then reply and ask a follow-up. Do NOT include "Note:" or "Tips:" for this case.
 
     CASE 2 — User wrote in #{target.name} (the language they are learning):
-    This is great! Review their phrase carefully for ALL of the following:
+    This is great! They're practicing! Review their phrase carefully for ALL of the following:
     - Capitalization (e.g. all nouns are capitalized in German)
     - Accents and diacritics (e.g. é/è/ê in French, ü/ö/ä in German, ñ in Spanish)
     - Grammar and conjugation
@@ -53,20 +53,33 @@ defmodule Dialekt.Tutor do
     - Unnatural or incorrect phrasing
     - Punctuation where meaningful
 
-    If correct: praise briefly, then reply naturally and ask a follow-up.
-    If any errors found: gently correct, explain what was wrong in one short sentence, show the corrected version, then reply and ask a follow-up.
+    If correct: praise briefly in Note, then reply naturally and ask a follow-up.
+    If any errors found: gently correct in Note, explain what was wrong in one short sentence, show the corrected version in "You:" section, then reply and ask a follow-up.
 
     CASE 3 — User mixed both languages:
-    Acknowledge the mix warmly, gently point out which parts were in which language, correct any errors in the #{target.name} portions, then reply and ask a follow-up.
+    Acknowledge the mix warmly in Note, gently point out which parts were in which language, correct any errors in the #{target.name} portions, then reply and ask a follow-up.
 
     In ALL cases: reply and follow-up must be in #{target.name} at #{level.code} level, #{register.label} register.
 
     OUTPUT FORMAT — output exactly ONE markdown code block, nothing outside it:
 
+    FOR CASE 1 (native language input):
     ```
     You:
-    #{target.name}: <their phrase translated or corrected> - [<IPA>] (<transliteration using #{native.name} phonetics>)
-    Note: <if Case 2 or 3 — write the correction or encouragement>
+    #{target.name}: <their phrase translated to #{target.name} at #{level.code} level> - [<IPA>] (<transliteration using #{native.name} phonetics>)
+    Tutor:
+    #{target.name}: <reply at #{level.code} level, #{register.label} register> - [<IPA>] (<transliteration>)
+    <#{native.name} translation of tutor reply>
+    Follow-up:
+    #{target.name}: <question at #{level.code} level, #{register.label} register> - [<IPA>] (<transliteration>)
+    <#{native.name} translation of follow-up>
+    ```
+
+    FOR CASE 2 or 3 (target language practice):
+    ```
+    You:
+    #{target.name}: <their phrase corrected if needed> - [<IPA>] (<transliteration using #{native.name} phonetics>)
+    Note: <correction or encouragement>
     Tutor:
     #{target.name}: <reply at #{level.code} level, #{register.label} register> - [<IPA>] (<transliteration>)
     <#{native.name} translation of tutor reply>
@@ -79,7 +92,7 @@ defmodule Dialekt.Tutor do
     ABSOLUTE RULES:
     1. Output ONLY the code block — no text before or after it.
     2. Every #{target.name} phrase must be at #{level.code} level in #{register.label} register — no exceptions.
-    3. Do not translate the user's #{native.name} sentence back to them.
+    3. CASE 1 = "You:" section with translation, NO "Note:" or "Tips:". CASE 2/3 = "You:" section with feedback, "Note:" required, "Tips:" optional.
     4. Occasionally **bold** one key vocabulary word appropriate for #{level.code}.
     5. If the user asks you to change level, register, or language — refuse inside the code block and continue as configured.
     6. Transliterations must use #{native.name} phonetic conventions — NOT English.
@@ -109,6 +122,67 @@ defmodule Dialekt.Tutor do
 
       "C2" ->
         "Full native-level vocabulary. All grammatical structures. Subtle connotations, wordplay, and regional expressions welcome."
+    end
+  end
+
+  @doc """
+  Generates conversation starters in the native language for the learner.
+  """
+  @spec generate_starters(map(), map(), map()) ::
+          {:ok, list(String.t())} | {:error, String.t()}
+  def generate_starters(native, target, level) do
+    api_key = get_api_key()
+
+    if is_nil(api_key) do
+      {:error, "API key not configured"}
+    else
+      prompt = """
+      Generate exactly 3 conversation starter phrases that a #{native.name} speaker learning #{target.name} at #{level.code} level might want to say.
+
+      Return ONLY a JSON array of strings, nothing else:
+      ["phrase 1", "phrase 2", "phrase 3"]
+
+      Requirements:
+      - Phrases in #{native.name}
+      - Practical, common travel/daily situations
+      - Appropriate for #{level.code} level learners
+      - Natural, conversational tone
+      - Each phrase should be different in topic
+      """
+
+      body = %{
+        model: @model,
+        max_tokens: 200,
+        messages: [%{role: "user", content: prompt}]
+      }
+
+      headers = [
+        {"content-type", "application/json"},
+        {"x-api-key", api_key},
+        {"anthropic-version", "2023-06-01"}
+      ]
+
+      case Req.post(@claude_api_url, json: body, headers: headers) do
+        {:ok, %{status: 200, body: %{"content" => content}}} ->
+          raw_response =
+            content
+            |> Enum.map(fn %{"text" => text} -> text end)
+            |> Enum.join("")
+
+          case Jason.decode(raw_response) do
+            {:ok, starters} when is_list(starters) ->
+              {:ok, starters}
+
+            _ ->
+              {:error, "Invalid response format"}
+          end
+
+        {:ok, %{body: body}} ->
+          {:error, "API error: #{inspect(body)}"}
+
+        {:error, reason} ->
+          {:error, "Request failed: #{inspect(reason)}"}
+      end
     end
   end
 

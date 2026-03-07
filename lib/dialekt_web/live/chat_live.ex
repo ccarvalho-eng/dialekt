@@ -2,44 +2,166 @@ defmodule DialektWeb.ChatLive do
   use DialektWeb, :live_view
 
   alias Dialekt.Languages
-  alias Dialekt.References
   alias Dialekt.Tutor
 
   @starters %{
-    "en" => ["Hello, how are you?", "Where is the nearest café?", "I'd like to order, please."],
-    "es" => ["Hola, ¿cómo estás?", "¿Dónde está el café más cercano?", "Me gustaría pedir algo."],
+    "en" => [
+      "Hello, how are you?",
+      "Where is the nearest café?",
+      "I'd like to order, please.",
+      "What time does the museum open?",
+      "How much does this cost?",
+      "Can you recommend a good restaurant?",
+      "I'm looking for the bathroom.",
+      "Do you speak English?",
+      "I need help with directions.",
+      "What's the weather like today?"
+    ],
+    "es" => [
+      "Hola, ¿cómo estás?",
+      "¿Dónde está el café más cercano?",
+      "Me gustaría pedir algo.",
+      "¿A qué hora abre el museo?",
+      "¿Cuánto cuesta esto?",
+      "¿Puedes recomendar un buen restaurante?",
+      "Estoy buscando el baño.",
+      "¿Hablas español?",
+      "Necesito ayuda con direcciones.",
+      "¿Qué tiempo hace hoy?"
+    ],
     "fr" => [
       "Bonjour, comment allez-vous?",
       "Où est le café le plus proche?",
-      "Je voudrais commander."
+      "Je voudrais commander.",
+      "À quelle heure ouvre le musée?",
+      "Combien ça coûte?",
+      "Pouvez-vous recommander un bon restaurant?",
+      "Je cherche les toilettes.",
+      "Parlez-vous français?",
+      "J'ai besoin d'aide pour les directions.",
+      "Quel temps fait-il aujourd'hui?"
     ],
     "de" => [
       "Hallo, wie geht es Ihnen?",
       "Wo ist das nächste Café?",
-      "Ich möchte etwas bestellen."
+      "Ich möchte etwas bestellen.",
+      "Wann öffnet das Museum?",
+      "Wie viel kostet das?",
+      "Können Sie ein gutes Restaurant empfehlen?",
+      "Ich suche die Toilette.",
+      "Sprechen Sie Deutsch?",
+      "Ich brauche Hilfe mit der Wegbeschreibung.",
+      "Wie ist das Wetter heute?"
     ],
     "pt" => [
       "Olá, como vai você?",
       "Onde fica o café mais próximo?",
-      "Gostaria de pedir, por favor."
+      "Gostaria de pedir, por favor.",
+      "A que horas abre o museu?",
+      "Quanto custa isso?",
+      "Pode recomendar um bom restaurante?",
+      "Estou procurando o banheiro.",
+      "Você fala português?",
+      "Preciso de ajuda com direções.",
+      "Como está o tempo hoje?"
     ],
-    "zh" => ["你好，你好吗？", "最近的咖啡馆在哪里？", "我想点餐。"],
-    "ja" => ["こんにちは、お元気ですか？", "一番近いカフェはどこですか？", "注文したいのですが。"],
-    "ar" => ["مرحباً، كيف حالك؟", "أين أقرب مقهى؟", "أريد أن أطلب من فضلك."],
-    "ru" => ["Здравствуйте, как вы?", "Где ближайшее кафе?", "Я хотел бы сделать заказ."],
-    "ko" => ["안녕하세요, 어떻게 지내세요?", "가장 가까운 카페는 어디인가요?", "주문하고 싶어요."],
-    "hi" => ["नमस्ते, आप कैसे हैं?", "निकटतम कैफे कहाँ है?", "मैं ऑर्डर करना चाहता हूँ।"],
+    "zh" => [
+      "你好，你好吗？",
+      "最近的咖啡馆在哪里？",
+      "我想点餐。",
+      "博物馆几点开门？",
+      "这个多少钱？",
+      "你能推荐一家好餐厅吗？",
+      "我在找洗手间。",
+      "你会说中文吗？",
+      "我需要问路。",
+      "今天天气怎么样？"
+    ],
+    "ja" => [
+      "こんにちは、お元気ですか？",
+      "一番近いカフェはどこですか？",
+      "注文したいのですが。",
+      "博物館は何時に開きますか？",
+      "これはいくらですか？",
+      "良いレストランをおすすめできますか？",
+      "トイレを探しています。",
+      "日本語を話せますか？",
+      "道順を教えてください。",
+      "今日の天気はどうですか？"
+    ],
+    "ar" => [
+      "مرحباً، كيف حالك؟",
+      "أين أقرب مقهى؟",
+      "أريد أن أطلب من فضلك.",
+      "متى يفتح المتحف؟",
+      "كم سعر هذا؟",
+      "هل يمكنك أن توصي بمطعم جيد؟",
+      "أبحث عن الحمام.",
+      "هل تتكلم العربية؟",
+      "أحتاج مساعدة في الاتجاهات.",
+      "كيف الطقس اليوم؟"
+    ],
+    "ru" => [
+      "Здравствуйте, как вы?",
+      "Где ближайшее кафе?",
+      "Я хотел бы сделать заказ.",
+      "Во сколько открывается музей?",
+      "Сколько это стоит?",
+      "Можете порекомендовать хороший ресторан?",
+      "Я ищу туалет.",
+      "Вы говорите по-русски?",
+      "Мне нужна помощь с направлениями.",
+      "Какая сегодня погода?"
+    ],
+    "ko" => [
+      "안녕하세요, 어떻게 지내세요?",
+      "가장 가까운 카페는 어디인가요?",
+      "주문하고 싶어요.",
+      "박물관은 몇 시에 열어요?",
+      "이거 얼마예요?",
+      "좋은 식당을 추천해 주실 수 있나요?",
+      "화장실을 찾고 있어요.",
+      "한국어 할 수 있어요?",
+      "길 안내가 필요해요.",
+      "오늘 날씨가 어때요?"
+    ],
+    "hi" => [
+      "नमस्ते, आप कैसे हैं?",
+      "निकटतम कैफे कहाँ है?",
+      "मैं ऑर्डर करना चाहता हूँ।",
+      "संग्रहालय कब खुलता है?",
+      "यह कितने का है?",
+      "क्या आप एक अच्छे रेस्तरां की सिफारिश कर सकते हैं?",
+      "मैं बाथरूम ढूंढ रहा हूँ।",
+      "क्या आप हिंदी बोलते हैं?",
+      "मुझे दिशा-निर्देश में मदद चाहिए।",
+      "आज मौसम कैसा है?"
+    ],
     "it" => [
       "Buongiorno, come stai?",
       "Dov'è il caffè più vicino?",
-      "Vorrei ordinare, per favore."
+      "Vorrei ordinare, per favore.",
+      "A che ora apre il museo?",
+      "Quanto costa questo?",
+      "Puoi consigliare un buon ristorante?",
+      "Sto cercando il bagno.",
+      "Parli italiano?",
+      "Ho bisogno di aiuto con le indicazioni.",
+      "Che tempo fa oggi?"
     ]
   }
 
   @default_starters [
-    "Hello! How are you?",
+    "Hello, how are you?",
     "Where is the train station?",
-    "I'd like to order, please."
+    "I'd like to order, please.",
+    "What time does the museum open?",
+    "How much does this cost?",
+    "Can you recommend a good restaurant?",
+    "I'm looking for the bathroom.",
+    "Do you speak English?",
+    "I need help with directions.",
+    "What's the weather like today?"
   ]
 
   @impl true
@@ -49,9 +171,8 @@ defmodule DialektWeb.ChatLive do
     level = Languages.get_cefr_level(params["level"])
     register = Languages.get_register(params["register"])
 
-    # Fetch reference data asynchronously
-    if native && target do
-      send(self(), :fetch_references)
+    if native && target && level do
+      send(self(), :fetch_starters)
     end
 
     {:ok,
@@ -62,10 +183,7 @@ defmodule DialektWeb.ChatLive do
        register: register,
        messages: [],
        input: "",
-       ref_loading: true,
-       ref_data: nil,
-       ref_error: nil,
-       show_ref_mobile: false
+       starters: get_random_starters(native)
      )}
   end
 
@@ -105,11 +223,6 @@ defmodule DialektWeb.ChatLive do
   end
 
   @impl true
-  def handle_event("toggle_ref_mobile", _, socket) do
-    {:noreply, assign(socket, show_ref_mobile: !socket.assigns.show_ref_mobile)}
-  end
-
-  @impl true
   def handle_event("send_message", _, socket) do
     input = String.trim(socket.assigns.input)
 
@@ -145,13 +258,17 @@ defmodule DialektWeb.ChatLive do
   end
 
   @impl true
-  def handle_info(:fetch_references, socket) do
-    case References.fetch(socket.assigns.native, socket.assigns.target) do
-      {:ok, data} ->
-        {:noreply, assign(socket, ref_loading: false, ref_data: data, ref_error: nil)}
+  def handle_info(:fetch_starters, socket) do
+    case Tutor.generate_starters(
+           socket.assigns.native,
+           socket.assigns.target,
+           socket.assigns.level
+         ) do
+      {:ok, starters} ->
+        {:noreply, assign(socket, starters: starters)}
 
-      {:error, error} ->
-        {:noreply, assign(socket, ref_loading: false, ref_data: nil, ref_error: error)}
+      {:error, _error} ->
+        {:noreply, socket}
     end
   end
 
@@ -218,10 +335,10 @@ defmodule DialektWeb.ChatLive do
     else
       ~H"""
       <%= if parsed do %>
-        <%= if parsed.you do %>
+        <%= if parsed.you && parsed.you.phrase && parsed.you.phrase != "" do %>
           <div style="margin-bottom: 12px;">
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
-              You:
+              In {@target && @target.name}:
             </div>
             <div style="font-size: 0.9rem;">{parsed.you.phrase}</div>
             <%= if parsed.you.ipa != "" do %>
@@ -231,7 +348,7 @@ defmodule DialektWeb.ChatLive do
             <% end %>
           </div>
         <% end %>
-        <%= if parsed.note do %>
+        <%= if parsed.note && parsed.note != "" do %>
           <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);">
             💡 {parsed.note}
           </div>
@@ -276,7 +393,7 @@ defmodule DialektWeb.ChatLive do
             <% end %>
           </div>
         <% end %>
-        <%= if parsed.tips do %>
+        <%= if parsed.tips && parsed.tips != "" do %>
           <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);">
             💡 {parsed.tips}
           </div>
@@ -293,11 +410,16 @@ defmodule DialektWeb.ChatLive do
     |> String.replace(~r/\*\*(.+?)\*\*/, "<strong>\\1</strong>")
   end
 
-  defp get_starters(native) do
-    if native && Map.has_key?(@starters, native.code) do
-      @starters[native.code]
-    else
-      @default_starters
-    end
+  defp get_random_starters(native) do
+    all_starters =
+      if native && Map.has_key?(@starters, native.code) do
+        @starters[native.code]
+      else
+        @default_starters
+      end
+
+    all_starters
+    |> Enum.shuffle()
+    |> Enum.take(3)
   end
 end

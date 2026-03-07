@@ -1,7 +1,4 @@
 <div class="chat-root">
-  <%= if @show_ref_mobile do %>
-    <div class="ref-backdrop" phx-click="toggle_ref_mobile"></div>
-  <% end %>
   <div class="chat-app">
     <header class="chat-hdr">
       <div class="chat-hdr-inner">
@@ -13,22 +10,6 @@
         <span class="hdr-badge">{@level && @level.code}</span>
         <span class="hdr-badge">{@register && @register.label}</span>
         <span class="hdr-badge">{@target && @target.native}</span>
-        <button class="ref-toggle" phx-click="toggle_ref_mobile" type="button">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
       </div>
     </header>
 
@@ -43,7 +24,7 @@
             if you're not ready yet.
           </p>
           <div class="starters">
-            <%= for starter <- get_starters(@native) do %>
+            <%= for starter <- @starters do %>
               <button
                 type="button"
                 class="starter"
@@ -169,64 +150,4 @@
       </div>
     <% end %>
   </div>
-
-  <aside class={["ref-sidebar", @show_ref_mobile && "ref-sidebar-open"]}>
-    <div class="ref-hdr">
-      <span class="ref-title">{@target && @target.flag} Quick Reference</span>
-      <button class="ref-close" phx-click="toggle_ref_mobile" type="button">✕</button>
-    </div>
-    <div class="ref-body">
-      <%= if @ref_loading do %>
-        <div class="ref-loading">
-          <span class="ld"></span>
-          <span class="ld"></span>
-          <span class="ld"></span>
-          <p>Loading {@target && @target.name} reference...</p>
-        </div>
-      <% end %>
-
-      <%= if @ref_error do %>
-        <p class="ref-err">{@ref_error}</p>
-      <% end %>
-
-      <%= if @ref_data && !@ref_loading do %>
-        <div class="ref-half">
-          <div class="ref-section-title">Alphabet</div>
-          <div class="ref-scroll">
-            <div class="ref-alphabet">
-              <%= for item <- Map.get(@ref_data, "alphabet", []) do %>
-                <div class="ref-alpha-row">
-                  <span class="ref-char">{item["char"]}</span>
-                  <div class="ref-alpha-info">
-                    <span class="ref-ipa">[{item["ipa"]}]</span>
-                    <%= if item["hint"] do %>
-                      <span class="ref-hint">{item["hint"]}</span>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-        <div class="ref-half">
-          <div class="ref-section-title">Numbers</div>
-          <div class="ref-scroll">
-            <div class="ref-list">
-              <%= for item <- Map.get(@ref_data, "numbers", []) do %>
-                <div class="ref-row">
-                  <span class="ref-native-word">{item["word"]}</span>
-                  <div class="ref-target-info">
-                    <span class="ref-target-word">{item["target"]}</span>
-                    <span class="ref-ipa">
-                      [{item["ipa"]}]{if item["hint"], do: " · #{item["hint"]}"}
-                    </span>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </aside>
 </div>
