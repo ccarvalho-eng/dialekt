@@ -32,7 +32,11 @@ Hooks.ChatInput = {
     this.el.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault()
-        this.pushEvent("send_message", {})
+        const value = this.el.value.trim()
+        if (value !== "") {
+          this.pushEvent("send_message", {})
+          this.el.value = ""
+        }
       }
     })
   }
