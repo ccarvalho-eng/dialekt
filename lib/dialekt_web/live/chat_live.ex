@@ -81,8 +81,27 @@ defmodule DialektWeb.ChatLive do
 
   @impl true
   def handle_event("send_starter", %{"text" => text}, socket) do
-    message = %{role: "user", content: text, timestamp: DateTime.utc_now()}
-    {:noreply, assign(socket, messages: socket.assigns.messages ++ [message])}
+    user_message = %{
+      role: "user",
+      content: text,
+      text: text,
+      timestamp: DateTime.utc_now()
+    }
+
+    loading_message = %{
+      role: "assistant",
+      content: "",
+      loading: true,
+      timestamp: DateTime.utc_now()
+    }
+
+    updated_socket =
+      socket
+      |> assign(messages: socket.assigns.messages ++ [user_message, loading_message])
+
+    send(self(), {:get_tutor_response, text, length(socket.assigns.messages)})
+
+    {:noreply, updated_socket}
   end
 
   @impl true
