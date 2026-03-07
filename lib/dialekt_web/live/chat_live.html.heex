@@ -1,0 +1,230 @@
+<div class="chat-root">
+  <%= if @show_ref_mobile do %>
+    <div class="ref-backdrop" phx-click="toggle_ref_mobile"></div>
+  <% end %>
+  <div class="chat-app">
+    <header class="chat-hdr">
+      <div class="chat-hdr-inner">
+        <button class="back-btn" phx-click={JS.navigate(~p"/")} type="button">←</button>
+        <div class="hdr-info">
+          <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
+          <span class="hdr-title">{@target && @target.name} Tutor</span>
+        </div>
+        <span class="hdr-badge">{@level && @level.code}</span>
+        <span class="hdr-badge">{@register && @register.label}</span>
+        <span class="hdr-badge">{@target && @target.native}</span>
+        <button class="ref-toggle" phx-click="toggle_ref_mobile" type="button">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class={["chat-body", @messages == [] && "chat-body-empty"]}>
+      <%= if @messages == [] do %>
+        <div class="empty">
+          <div class="empty-flag">{@target && @target.flag}</div>
+          <h2 class="empty-h">Ready to speak {@target && @target.name}?</h2>
+          <p class="empty-p">
+            Chat in <strong>{@target && @target.name}</strong>
+            — or <strong>{@native && @native.name}</strong>
+            if you're not ready yet.
+          </p>
+          <div class="starters">
+            <%= for starter <- get_starters(@native) do %>
+              <button
+                type="button"
+                class="starter"
+                phx-click="send_starter"
+                phx-value-text={starter}
+              >
+                {starter}
+              </button>
+            <% end %>
+          </div>
+
+          <div class="empty-input-wrapper">
+            <div class="empty-input-inner">
+              <form phx-change="update_input">
+                <div class="input-row">
+                  <textarea
+                    class="chat-ta"
+                    placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
+                    rows="1"
+                    name="value"
+                    value={@input}
+                    phx-keydown="keydown"
+                  ></textarea>
+                  <button
+                    type="button"
+                    class="send-btn"
+                    disabled={@input == ""}
+                    phx-click="send_message"
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="input-hint">↵ send · ⇧↵ new line</div>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <%= for msg <- @messages do %>
+          <%= if msg.role == "user" do %>
+            <div class="msg user-msg">
+              <span class="av">{@native && @native.flag}</span>
+              <div class="user-bubble">
+                <span class="user-text">{msg.content}</span>
+              </div>
+            </div>
+          <% else %>
+            <%= if Map.get(msg, :loading) do %>
+              <div class="msg">
+                <span class="av">{@target && @target.flag}</span>
+                <div class="tb tb-loading">
+                  <span class="ld"></span>
+                  <span class="ld"></span>
+                  <span class="ld"></span>
+                </div>
+              </div>
+            <% else %>
+              <div class="msg">
+                <span class="av">{@target && @target.flag}</span>
+                <div class="tb">
+                  <%= if Map.get(msg, :error) do %>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">{msg.content}</p>
+                  <% else %>
+                    {render_tutor_response(assigns, msg)}
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= if @messages != [] do %>
+      <div class="input-area">
+        <div class="input-inner">
+          <form phx-change="update_input">
+            <div class="input-row">
+              <textarea
+                class="chat-ta"
+                placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
+                rows="1"
+                name="value"
+                value={@input}
+                phx-keydown="keydown"
+              ></textarea>
+              <button
+                type="button"
+                class="send-btn"
+                disabled={@input == ""}
+                phx-click="send_message"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </button>
+            </div>
+            <div class="input-hint">↵ send · ⇧↵ new line</div>
+          </form>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <aside class={["ref-sidebar", @show_ref_mobile && "ref-sidebar-open"]}>
+    <div class="ref-hdr">
+      <span class="ref-title">{@target && @target.flag} Quick Reference</span>
+      <button class="ref-close" phx-click="toggle_ref_mobile" type="button">✕</button>
+    </div>
+    <div class="ref-body">
+      <%= if @ref_loading do %>
+        <div class="ref-loading">
+          <span class="ld"></span>
+          <span class="ld"></span>
+          <span class="ld"></span>
+          <p>Loading {@target && @target.name} reference...</p>
+        </div>
+      <% end %>
+
+      <%= if @ref_error do %>
+        <p class="ref-err">{@ref_error}</p>
+      <% end %>
+
+      <%= if @ref_data && !@ref_loading do %>
+        <div class="ref-half">
+          <div class="ref-section-title">Alphabet</div>
+          <div class="ref-scroll">
+            <div class="ref-alphabet">
+              <%= for item <- Map.get(@ref_data, "alphabet", []) do %>
+                <div class="ref-alpha-row">
+                  <span class="ref-char">{item["char"]}</span>
+                  <div class="ref-alpha-info">
+                    <span class="ref-ipa">[{item["ipa"]}]</span>
+                    <%= if item["hint"] do %>
+                      <span class="ref-hint">{item["hint"]}</span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="ref-half">
+          <div class="ref-section-title">Numbers</div>
+          <div class="ref-scroll">
+            <div class="ref-list">
+              <%= for item <- Map.get(@ref_data, "numbers", []) do %>
+                <div class="ref-row">
+                  <span class="ref-native-word">{item["word"]}</span>
+                  <div class="ref-target-info">
+                    <span class="ref-target-word">{item["target"]}</span>
+                    <span class="ref-ipa">
+                      [{item["ipa"]}]{if item["hint"], do: " · #{item["hint"]}"}
+                    </span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </aside>
+</div>

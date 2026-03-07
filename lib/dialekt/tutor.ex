@@ -9,6 +9,7 @@ defmodule Dialekt.Tutor do
   @doc """
   Builds the system prompt for the AI tutor.
   """
+  @spec build_system_prompt(map(), map(), map(), map()) :: String.t()
   def build_system_prompt(native, target, level, register) do
     register_rules =
       if register.code == "formal" do
@@ -88,6 +89,7 @@ defmodule Dialekt.Tutor do
   @doc """
   Returns CEFR rules for a given level.
   """
+  @spec cefr_rules(String.t()) :: String.t()
   def cefr_rules(level) do
     case level do
       "A1" ->
@@ -113,6 +115,7 @@ defmodule Dialekt.Tutor do
   @doc """
   Sends a chat message to the AI tutor and returns the response.
   """
+  @spec chat(String.t(), map()) :: {:ok, map(), String.t()} | {:error, String.t()}
   def chat(message, context) do
     api_key = get_api_key()
 
@@ -163,6 +166,7 @@ defmodule Dialekt.Tutor do
   @doc """
   Parses the AI response into a structured format.
   """
+  @spec parse_response(String.t()) :: map()
   def parse_response(raw) do
     # Strip code fences if present
     content =
