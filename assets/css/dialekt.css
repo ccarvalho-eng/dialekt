@@ -103,7 +103,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--fb);font-weight:40
 .chat-root{display:flex;height:100vh;overflow:hidden;}
 .chat-app{display:flex;flex-direction:column;flex:1;min-width:0;max-width:800px;margin:0 auto;}
 
-.chat-hdr{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);background:rgba(248,248,247,0.96);backdrop-filter:blur(12px);flex-shrink:0;}
+.chat-hdr{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);background:rgba(248,248,247,0.96);backdrop-filter:blur(12px);flex-shrink:0;width:100%;}
 .back-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text-dim);width:32px;height:32px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:var(--fb);}
 .back-btn:hover{border-color:var(--text);background:var(--text);color:#fff;}
 .hdr-info{flex:1;display:flex;flex-direction:column;}
@@ -133,7 +133,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--fb);font-weight:40
 .ld{width:6px;height:6px;border-radius:50%;background:var(--border2);animation:ldp 1.3s ease-in-out infinite;}
 .ld:nth-child(2){animation-delay:.2s;}.ld:nth-child(3){animation-delay:.4s;}
 @keyframes ldp{0%,80%,100%{transform:scale(.7);opacity:.3;}40%{transform:scale(1);opacity:1;}}
-.input-area{padding:12px 20px 16px;border-top:1px solid var(--border);background:rgba(248,248,247,0.97);backdrop-filter:blur(12px);flex-shrink:0;}
+.input-area{padding:12px 20px 16px;border-top:1px solid var(--border);background:rgba(248,248,247,0.97);backdrop-filter:blur(12px);flex-shrink:0;width:100%;}
 .input-row{display:flex;gap:9px;align-items:flex-end;}
 .chat-ta{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--fb);font-size:0.88rem;padding:11px 15px;resize:none;outline:none;min-height:44px;max-height:130px;transition:border-color .2s;line-height:1.5;}
 .chat-ta::placeholder{color:var(--text-muted);}
