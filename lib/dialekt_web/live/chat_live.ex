@@ -3,6 +3,7 @@ defmodule DialektWeb.ChatLive do
 
   alias Dialekt.Languages
   alias Dialekt.References
+  alias Dialekt.Tutor
 
   @starters %{
     "en" => ["Hello, how are you?", "Where is the nearest café?", "I'd like to order, please."],
@@ -74,6 +75,11 @@ defmodule DialektWeb.ChatLive do
   end
 
   @impl true
+  def handle_event("update_input", %{"value" => value}, socket) do
+    {:noreply, assign(socket, input: value)}
+  end
+
+  @impl true
   def handle_event("send_starter", %{"text" => text}, socket) do
     message = %{role: "user", content: text, timestamp: DateTime.utc_now()}
     {:noreply, assign(socket, messages: socket.assigns.messages ++ [message])}
@@ -82,6 +88,53 @@ defmodule DialektWeb.ChatLive do
   @impl true
   def handle_event("toggle_ref_mobile", _, socket) do
     {:noreply, assign(socket, show_ref_mobile: !socket.assigns.show_ref_mobile)}
+  end
+
+  @impl true
+  def handle_event("send_message", _, socket) do
+    input = String.trim(socket.assigns.input)
+
+    if input == "" do
+      {:noreply, socket}
+    else
+      # Add user message
+      user_message = %{
+        role: "user",
+        content: input,
+        text: input,
+        timestamp: DateTime.utc_now()
+      }
+
+      # Add loading message
+      loading_message = %{
+        role: "assistant",
+        content: "",
+        loading: true,
+        timestamp: DateTime.utc_now()
+      }
+
+      updated_socket =
+        socket
+        |> assign(messages: socket.assigns.messages ++ [user_message, loading_message])
+        |> assign(input: "")
+
+      # Send async message to get AI response
+      send(self(), {:get_tutor_response, input, length(socket.assigns.messages)})
+
+      {:noreply, updated_socket}
+    end
+  end
+
+  @impl true
+  def handle_event("keydown", %{"key" => "Enter", "shiftKey" => false}, socket) do
+    # Enter without shift sends the message
+    handle_event("send_message", %{}, socket)
+  end
+
+  @impl true
+  def handle_event("keydown", _params, socket) do
+    # Any other key combination does nothing
+    {:noreply, socket}
   end
 
   @impl true
@@ -96,6 +149,144 @@ defmodule DialektWeb.ChatLive do
   end
 
   @impl true
+  def handle_info({:get_tutor_response, user_input, _message_index}, socket) do
+    context = %{
+      native: socket.assigns.native,
+      target: socket.assigns.target,
+      level: socket.assigns.level,
+      register: socket.assigns.register,
+      history: build_history(socket.assigns.messages)
+    }
+
+    case Tutor.chat(user_input, context) do
+      {:ok, parsed, raw_response} ->
+        # Remove loading message and add real response
+        messages_without_loading = Enum.reject(socket.assigns.messages, &Map.get(&1, :loading))
+
+        assistant_message = %{
+          role: "assistant",
+          content: raw_response,
+          parsed: parsed,
+          raw_response: raw_response,
+          timestamp: DateTime.utc_now()
+        }
+
+        {:noreply, assign(socket, messages: messages_without_loading ++ [assistant_message])}
+
+      {:error, error} ->
+        # Remove loading message and add error
+        messages_without_loading = Enum.reject(socket.assigns.messages, &Map.get(&1, :loading))
+
+        error_message = %{
+          role: "assistant",
+          content: "Error: #{error}",
+          error: true,
+          timestamp: DateTime.utc_now()
+        }
+
+        {:noreply, assign(socket, messages: messages_without_loading ++ [error_message])}
+    end
+  end
+
+  defp build_history(messages) do
+    messages
+    |> Enum.reject(&Map.get(&1, :loading))
+    |> Enum.map(fn msg ->
+      %{
+        role: msg.role,
+        text: msg[:text] || msg[:content] || "",
+        raw_response: msg[:raw_response]
+      }
+    end)
+  end
+
+  defp render_tutor_response(assigns, msg) do
+    parsed = msg[:parsed]
+
+    if parsed && parsed.raw do
+      # Fallback: show raw content
+      ~H"""
+      <div style="white-space: pre-wrap; font-size: 0.85rem;">{parsed.raw}</div>
+      """
+    else
+      ~H"""
+      <%= if parsed do %>
+        <%= if parsed.you do %>
+          <div style="margin-bottom: 12px;">
+            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
+              You:
+            </div>
+            <div style="font-size: 0.9rem;">{parsed.you.phrase}</div>
+            <%= if parsed.you.ipa != "" do %>
+              <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
+                [{parsed.you.ipa}] {parsed.you.roman != "" && "(#{parsed.you.roman})"}
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        <%= if parsed.note do %>
+          <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);">
+            💡 {parsed.note}
+          </div>
+        <% end %>
+        <%= if parsed.tutor && length(parsed.tutor) > 0 do %>
+          <div style="margin-bottom: 12px;">
+            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
+              Tutor:
+            </div>
+            <%= for line <- parsed.tutor do %>
+              <div style="margin-bottom: 8px;">
+                <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(line.phrase)) %></div>
+                <%= if line.ipa != "" do %>
+                  <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
+                    [{line.ipa}] {line.roman != "" && "(#{line.roman})"}
+                  </div>
+                <% end %>
+                <%= if line.translation != "" do %>
+                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
+                    {line.translation}
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        <%= if parsed.followup do %>
+          <div style="margin-bottom: 8px;">
+            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
+              Follow-up:
+            </div>
+            <div style="font-size: 0.9rem;">{parsed.followup.phrase}</div>
+            <%= if parsed.followup.ipa != "" do %>
+              <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
+                [{parsed.followup.ipa}] {parsed.followup.roman != "" && "(#{parsed.followup.roman})"}
+              </div>
+            <% end %>
+            <%= if parsed.followup.translation != "" do %>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
+                {parsed.followup.translation}
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        <%= if parsed.tips do %>
+          <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);">
+            💡 {parsed.tips}
+          </div>
+        <% end %>
+      <% else %>
+        <div style="white-space: pre-wrap; font-size: 0.85rem;">{msg.content}</div>
+      <% end %>
+      """
+    end
+  end
+
+  defp format_bold(text) do
+    text
+    |> String.replace(~r/\*\*(.+?)\*\*/, "<strong>\\1</strong>")
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="chat-root">
@@ -104,33 +295,35 @@ defmodule DialektWeb.ChatLive do
       <% end %>
       <div class="chat-app">
         <header class="chat-hdr">
-          <button class="back-btn" phx-click={JS.navigate(~p"/")} type="button">←</button>
-          <div class="hdr-info">
-            <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
-            <span class="hdr-title">{@target && @target.name} Tutor</span>
+          <div class="chat-hdr-inner">
+            <button class="back-btn" phx-click={JS.navigate(~p"/")} type="button">←</button>
+            <div class="hdr-info">
+              <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
+              <span class="hdr-title">{@target && @target.name} Tutor</span>
+            </div>
+            <span class="hdr-badge">{@level && @level.code}</span>
+            <span class="hdr-badge">{@register && @register.label}</span>
+            <span class="hdr-badge">{@target && @target.native}</span>
+            <button class="ref-toggle" phx-click="toggle_ref_mobile" type="button">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
           </div>
-          <span class="hdr-badge">{@level && @level.code}</span>
-          <span class="hdr-badge">{@register && @register.label}</span>
-          <span class="hdr-badge">{@target && @target.native}</span>
-          <button class="ref-toggle" phx-click="toggle_ref_mobile" type="button">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
         </header>
 
-        <div class="chat-body">
+        <div class={["chat-body", @messages == [] && "chat-body-empty"]}>
           <%= if @messages == [] do %>
             <div class="empty">
               <div class="empty-flag">{@target && @target.flag}</div>
@@ -152,43 +345,118 @@ defmodule DialektWeb.ChatLive do
                   </button>
                 <% end %>
               </div>
+
+              <div class="empty-input-wrapper">
+                <div class="empty-input-inner">
+                  <form phx-change="update_input">
+                    <div class="input-row">
+                      <textarea
+                        class="chat-ta"
+                        placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
+                        rows="1"
+                        name="value"
+                        value={@input}
+                        phx-keydown="keydown"
+                      ></textarea>
+                      <button
+                        type="button"
+                        class="send-btn"
+                        disabled={@input == ""}
+                        phx-click="send_message"
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="input-hint">↵ send · ⇧↵ new line</div>
+                  </form>
+                </div>
+              </div>
             </div>
           <% else %>
             <%= for msg <- @messages do %>
-              <div class="msg user-msg">
-                <span class="av">{@native && @native.flag}</span>
-                <div class="user-bubble">
-                  <span class="user-text">{msg.content}</span>
+              <%= if msg.role == "user" do %>
+                <div class="msg user-msg">
+                  <span class="av">{@native && @native.flag}</span>
+                  <div class="user-bubble">
+                    <span class="user-text">{msg.content}</span>
+                  </div>
                 </div>
-              </div>
+              <% else %>
+                <%= if Map.get(msg, :loading) do %>
+                  <div class="msg">
+                    <span class="av">{@target && @target.flag}</span>
+                    <div class="tb tb-loading">
+                      <span class="ld"></span>
+                      <span class="ld"></span>
+                      <span class="ld"></span>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="msg">
+                    <span class="av">{@target && @target.flag}</span>
+                    <div class="tb">
+                      <%= if Map.get(msg, :error) do %>
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">{msg.content}</p>
+                      <% else %>
+                        {render_tutor_response(assigns, msg)}
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
             <% end %>
           <% end %>
         </div>
 
-        <div class="input-area">
-          <div class="input-row">
-            <textarea
-              class="chat-ta"
-              placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
-              rows="1"
-            ></textarea>
-            <button type="button" class="send-btn" disabled>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
-            </button>
+        <%= if @messages != [] do %>
+          <div class="input-area">
+            <div class="input-inner">
+              <form phx-change="update_input">
+                <div class="input-row">
+                  <textarea
+                    class="chat-ta"
+                    placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
+                    rows="1"
+                    name="value"
+                    value={@input}
+                    phx-keydown="keydown"
+                  ></textarea>
+                  <button
+                    type="button"
+                    class="send-btn"
+                    disabled={@input == ""}
+                    phx-click="send_message"
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="input-hint">↵ send · ⇧↵ new line</div>
+              </form>
+            </div>
           </div>
-          <div class="input-hint">↵ send · ⇧↵ new line</div>
-        </div>
+        <% end %>
       </div>
 
       <aside class={["ref-sidebar", @show_ref_mobile && "ref-sidebar-open"]}>
