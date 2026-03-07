@@ -145,18 +145,6 @@ defmodule DialektWeb.ChatLive do
   end
 
   @impl true
-  def handle_event("keydown", %{"key" => "Enter", "shiftKey" => false}, socket) do
-    # Enter without shift sends the message
-    handle_event("send_message", %{}, socket)
-  end
-
-  @impl true
-  def handle_event("keydown", _params, socket) do
-    # Any other key combination does nothing
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_info(:fetch_references, socket) do
     case References.fetch(socket.assigns.native, socket.assigns.target) do
       {:ok, data} ->

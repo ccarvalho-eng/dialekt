@@ -57,7 +57,7 @@
 
           <div class="empty-input-wrapper">
             <div class="empty-input-inner">
-              <form phx-change="update_input">
+              <form phx-change="update_input" phx-submit="send_message">
                 <div class="input-row">
                   <textarea
                     class="chat-ta"
@@ -65,7 +65,6 @@
                     rows="1"
                     name="value"
                     value={@input}
-                    phx-keydown="keydown"
                   ></textarea>
                   <button
                     type="button"
@@ -131,7 +130,7 @@
     <%= if @messages != [] do %>
       <div class="input-area">
         <div class="input-inner">
-          <form phx-change="update_input">
+          <form phx-change="update_input" phx-submit="send_message">
             <div class="input-row">
               <textarea
                 class="chat-ta"
@@ -139,7 +138,6 @@
                 rows="1"
                 name="value"
                 value={@input}
-                phx-keydown="keydown"
               ></textarea>
               <button
                 type="button"
