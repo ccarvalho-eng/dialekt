@@ -95,32 +95,35 @@ defmodule DialektWeb.SetupLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gray-50 flex items-start justify-center px-4 py-8">
-      <div class="w-full max-width bg-white rounded-lg shadow-lg p-8">
-        <div class="text-center mb-8">
-          <h1 class="text-4xl font-mono font-bold mb-4">DIALEKT</h1>
-          <p class="text-gray-600 italic">
-            "So the Lord scattered them over the face of the whole earth." — Genesis 11:8
-          </p>
+    <div class="setup">
+      <div class="panel">
+        <div class="brand">
+          <pre class="brand-ascii">██████  ██  █████  ██      ███████ ██   ██ ████████
+    ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+    ██   ██ ██ ███████ ██      █████   █████      ██
+    ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+    ██████  ██ ██   ██ ███████ ███████ ██   ██    ██</pre>
         </div>
+        <p class="brand-tagline">
+          "So the Lord scattered them over the face of the whole earth." — Genesis 11:8
+        </p>
 
-        <div class="space-y-6">
+        <div class="steps">
           <!-- Step 1: Native Language -->
-          <section>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-xs font-semibold text-gray-500">01</span>
-              <span class="text-lg italic">I speak</span>
+          <section class="step">
+            <div class="step-hd">
+              <span class="step-n">01</span>
+              <span class="step-label">I speak</span>
             </div>
 
-            <div class="flex flex-wrap gap-2 mb-4">
+            <div class="quick-pills">
               <%= for lang <- Languages.native_quick_languages() do %>
                 <button
                   phx-click="select_native"
                   phx-value-code={lang.code}
                   class={[
-                    "px-4 py-2 rounded-full border transition-colors",
-                    @native_lang && @native_lang.code == lang.code &&
-                      "bg-gray-800 text-white border-gray-800"
+                    "qpill",
+                    @native_lang && @native_lang.code == lang.code && "qpill-on"
                   ]}
                 >
                   {lang.flag} {lang.name}
@@ -128,143 +131,153 @@ defmodule DialektWeb.SetupLive do
               <% end %>
               <button
                 phx-click="toggle_native_search"
-                class="px-4 py-2 rounded-full border border-dashed"
+                class="qpill qpill-other"
               >
                 {if @show_native_search, do: "↑ less", else: "⊕ other"}
               </button>
             </div>
 
             <%= if @show_native_search do %>
-              <div class="mt-4">
+              <div class="ls-wrap">
                 <input
                   type="text"
                   phx-change="update_native_search"
                   value={@native_search}
                   name="search"
                   placeholder="Search your language..."
-                  class="w-full px-4 py-2 border rounded-lg"
+                  class="ls-input"
                 />
-                <div class="mt-2 max-h-48 overflow-y-auto border rounded-lg">
+                <div class="ls-list">
                   <%= for lang <- filter_languages(Languages.all_languages(), @native_search) do %>
                     <button
                       phx-click="select_native"
                       phx-value-code={lang.code}
                       class={[
-                        "w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2",
-                        @native_lang && @native_lang.code == lang.code && "bg-gray-100"
+                        "ls-row",
+                        @native_lang && @native_lang.code == lang.code && "ls-sel"
                       ]}
                     >
-                      <span>{lang.flag}</span>
-                      <span class="font-medium">{lang.name}</span>
-                      <span class="text-gray-500 text-sm">{lang.native}</span>
+                      <span class="ls-flag">{lang.flag}</span>
+                      <span class="ls-name">{lang.name}</span>
+                      <span class="ls-native">{lang.native}</span>
+                      <%= if @native_lang && @native_lang.code == lang.code do %>
+                        <span class="ls-check">✓</span>
+                      <% end %>
                     </button>
+                  <% end %>
+                  <%= if filter_languages(Languages.all_languages(), @native_search) == [] do %>
+                    <div class="ls-empty">No languages found</div>
                   <% end %>
                 </div>
               </div>
             <% end %>
           </section>
 
-          <hr />
+          <div class="step-divider"></div>
           
     <!-- Step 2: Target Language -->
-          <section class={[@native_lang == nil && "opacity-25 pointer-events-none"]}>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-xs font-semibold text-gray-500">02</span>
-              <span class="text-lg italic">I want to learn</span>
+          <section class={["step", @native_lang == nil && "step-dim"]}>
+            <div class="step-hd">
+              <span class="step-n">02</span>
+              <span class="step-label">I want to learn</span>
             </div>
 
             <%= if @native_lang do %>
-              <div phx-value-step="target">
+              <div class="ls-wrap">
                 <input
                   type="text"
                   phx-change="update_target_search"
                   value={@target_search}
                   name="search"
                   placeholder="Search a language to learn..."
-                  class="w-full px-4 py-2 border rounded-lg"
+                  class="ls-input"
                 />
-                <div class="mt-2 max-h-48 overflow-y-auto border rounded-lg">
+                <div class="ls-list">
                   <%= for lang <- filter_target_languages(@native_lang, Languages.all_languages(), @target_search) do %>
                     <button
                       phx-click="select_target"
                       phx-value-code={lang.code}
                       class={[
-                        "w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2",
-                        @target_lang && @target_lang.code == lang.code && "bg-gray-100"
+                        "ls-row",
+                        @target_lang && @target_lang.code == lang.code && "ls-sel"
                       ]}
                     >
-                      <span>{lang.flag}</span>
-                      <span class="font-medium">{lang.name}</span>
-                      <span class="text-gray-500 text-sm">{lang.native}</span>
+                      <span class="ls-flag">{lang.flag}</span>
+                      <span class="ls-name">{lang.name}</span>
+                      <span class="ls-native">{lang.native}</span>
+                      <%= if @target_lang && @target_lang.code == lang.code do %>
+                        <span class="ls-check">✓</span>
+                      <% end %>
                     </button>
+                  <% end %>
+                  <%= if filter_target_languages(@native_lang, Languages.all_languages(), @target_search) == [] do %>
+                    <div class="ls-empty">No languages found</div>
                   <% end %>
                 </div>
               </div>
             <% else %>
-              <p class="text-gray-500">Select your native language first</p>
+              <p class="step-hint">Select your native language first</p>
             <% end %>
           </section>
 
-          <hr />
+          <div class="step-divider"></div>
           
     <!-- Step 3: CEFR Level -->
-          <section class={[@target_lang == nil && "opacity-25 pointer-events-none"]}>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-xs font-semibold text-gray-500">03</span>
-              <span class="text-lg italic">My level</span>
+          <section class={["step", @target_lang == nil && "step-dim"]}>
+            <div class="step-hd">
+              <span class="step-n">03</span>
+              <span class="step-label">My level</span>
             </div>
 
             <%= if @target_lang do %>
-              <div class="grid grid-cols-6 gap-2">
+              <div class="cefr-grid">
                 <%= for level <- Languages.cefr_levels() do %>
                   <button
                     phx-click="select_level"
                     phx-value-code={level.code}
                     class={[
-                      "flex flex-col items-center py-3 px-2 border rounded-lg transition-colors",
-                      @cefr_level && @cefr_level.code == level.code &&
-                        "bg-gray-800 text-white border-gray-800"
+                      "cefr-btn",
+                      @cefr_level && @cefr_level.code == level.code && "cefr-on"
                     ]}
                   >
-                    <span class="font-bold">{level.label}</span>
-                    <span class="text-xs">{level.desc}</span>
+                    <span class="cefr-code">{level.label}</span>
+                    <span class="cefr-desc">{level.desc}</span>
                   </button>
                 <% end %>
               </div>
             <% else %>
-              <p class="text-gray-500">Select a language to learn first</p>
+              <p class="step-hint">Select a language to learn first</p>
             <% end %>
           </section>
 
-          <hr />
+          <div class="step-divider"></div>
           
     <!-- Step 4: Register -->
-          <section class={[@cefr_level == nil && "opacity-25 pointer-events-none"]}>
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="text-xs font-semibold text-gray-500">04</span>
-              <span class="text-lg italic">Register</span>
+          <section class={["step", @cefr_level == nil && "step-dim"]}>
+            <div class="step-hd">
+              <span class="step-n">04</span>
+              <span class="step-label">Register</span>
             </div>
 
             <%= if @cefr_level do %>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="register-grid">
                 <%= for register <- Languages.registers() do %>
                   <button
                     phx-click="select_register"
                     phx-value-code={register.code}
                     class={[
-                      "flex flex-col items-center py-4 px-4 border rounded-lg transition-colors",
-                      @register && @register.code == register.code &&
-                        "bg-gray-800 text-white border-gray-800"
+                      "reg-btn",
+                      @register && @register.code == register.code && "reg-on"
                     ]}
                   >
-                    <span class="text-2xl mb-2">{register.icon}</span>
-                    <span class="font-semibold">{register.label}</span>
-                    <span class="text-xs text-center">{register.desc}</span>
+                    <span class="reg-icon">{register.icon}</span>
+                    <span class="reg-label">{register.label}</span>
+                    <span class="reg-desc">{register.desc}</span>
                   </button>
                 <% end %>
               </div>
             <% else %>
-              <p class="text-gray-500">Select your level first</p>
+              <p class="step-hint">Select your level first</p>
             <% end %>
           </section>
         </div>
@@ -274,28 +287,21 @@ defmodule DialektWeb.SetupLive do
           phx-click="start"
           disabled={!(@native_lang && @target_lang && @cefr_level && @register)}
           class={[
-            "w-full mt-8 py-3 px-4 rounded-lg font-medium transition-all",
-            @native_lang && @target_lang && @cefr_level && @register &&
-              "bg-gray-800 text-white hover:bg-gray-700",
-            !(@native_lang && @target_lang && @cefr_level && @register) &&
-              "bg-gray-200 text-gray-500 cursor-not-allowed"
+            "go-btn",
+            @native_lang && @target_lang && @cefr_level && @register && "go-on"
           ]}
         >
           <%= if @native_lang && @target_lang && @cefr_level && @register do %>
-            Start {@register.label} {@target_lang.name} at {@cefr_level.code} {@target_lang.flag}
-            <span class="ml-auto">→</span>
+            <span>
+              Start {@register.label} {@target_lang.name} at {@cefr_level.code} {@target_lang.flag}
+            </span>
+            <span class="go-arr">→</span>
           <% else %>
             Complete all steps above
           <% end %>
         </button>
       </div>
     </div>
-
-    <style>
-      .max-width {
-        max-width: 520px;
-      }
-    </style>
     """
   end
 

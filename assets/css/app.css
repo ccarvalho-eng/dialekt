@@ -103,3 +103,4 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+@import "./dialekt.css";
