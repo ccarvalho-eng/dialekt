@@ -556,7 +556,7 @@ defmodule DialektWeb.ChatLive do
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               In {@target && @target.name}:
             </div>
-            <div style="font-size: 0.9rem;">{@parsed.you.phrase}</div>
+            <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(@parsed.you.phrase)) %></div>
             <%= if @parsed.you.ipa != "" do %>
               <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
                 [{@parsed.you.ipa}] {@parsed.you.roman != "" && "(#{@parsed.you.roman})"}
@@ -565,8 +565,11 @@ defmodule DialektWeb.ChatLive do
           </div>
         <% end %>
         <%= if @parsed.note && @parsed.note != "" do %>
-          <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);">
-            💡 {@parsed.note}
+          <div
+            style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);"
+            phx-no-format
+          >
+            💡 <%= raw(format_bold(@parsed.note)) %>
           </div>
         <% end %>
         <%= if @parsed.tutor && length(@parsed.tutor) > 0 do %>
@@ -596,7 +599,7 @@ defmodule DialektWeb.ChatLive do
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               Follow-up:
             </div>
-            <div style="font-size: 0.9rem;">{@parsed.followup.phrase}</div>
+            <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(@parsed.followup.phrase)) %></div>
             <%= if @parsed.followup.ipa != "" do %>
               <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
                 [{@parsed.followup.ipa}] {@parsed.followup.roman != "" &&
@@ -611,8 +614,11 @@ defmodule DialektWeb.ChatLive do
           </div>
         <% end %>
         <%= if @parsed.tips && @parsed.tips != "" do %>
-          <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);">
-            💡 {@parsed.tips}
+          <div
+            style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);"
+            phx-no-format
+          >
+            💡 <%= raw(format_bold(@parsed.tips)) %>
           </div>
         <% end %>
       <% else %>
