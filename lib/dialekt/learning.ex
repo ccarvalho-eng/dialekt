@@ -5,6 +5,7 @@ defmodule Dialekt.Learning do
   """
 
   import Ecto.Query
+  import Ecto.Changeset
   alias Dialekt.Repo
   alias Dialekt.Learning.{ChatSession, Config}
 
@@ -114,5 +115,16 @@ defmodule Dialekt.Learning do
     ChatSession
     |> where([s], s.config_id == ^config_id)
     |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Updates the entire message history for a session.
+  """
+  @spec update_session_messages(ChatSession.t(), list(map())) ::
+          {:ok, ChatSession.t()} | {:error, Ecto.Changeset.t()}
+  def update_session_messages(%ChatSession{} = session, messages) do
+    session
+    |> change(messages: messages)
+    |> Repo.update()
   end
 end

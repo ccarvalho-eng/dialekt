@@ -426,11 +426,8 @@ defmodule DialektWeb.ChatLive do
 
     # Update session with all messages
     session = socket.assigns.chat_session
-
-    {:ok, updated_session} =
-      Learning.get_session!(session.id)
-      |> Ecto.Changeset.change(messages: persistable_messages)
-      |> Dialekt.Repo.update()
+    fresh_session = Learning.get_session!(session.id)
+    {:ok, updated_session} = Learning.update_session_messages(fresh_session, persistable_messages)
 
     assign(socket, chat_session: updated_session)
   end
