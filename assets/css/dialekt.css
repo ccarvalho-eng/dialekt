@@ -972,7 +972,7 @@ body {
   overflow: hidden;
 }
 
-.session-item:hover {
+.session-item:hover:not(.session-active) {
   background: var(--surface);
   border-color: var(--border2);
 }
@@ -980,6 +980,11 @@ body {
 .session-active {
   background: var(--primary);
   border-color: var(--primary);
+}
+
+.session-active:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 .session-active .session-label,
