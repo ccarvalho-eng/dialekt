@@ -87,6 +87,7 @@
                 class="starter"
                 phx-click="send_starter"
                 phx-value-text={starter}
+                phx-disable-with="..."
               >
                 {starter}
               </button>
@@ -111,6 +112,7 @@
                     class="send-btn"
                     disabled={@input == ""}
                     phx-click="send_message"
+                    phx-disable-with="Sending..."
                   >
                     <svg
                       width="18"
@@ -188,6 +190,7 @@
                 class="send-btn"
                 disabled={@input == ""}
                 phx-click="send_message"
+                phx-disable-with="Sending..."
               >
                 <svg
                   width="18"
