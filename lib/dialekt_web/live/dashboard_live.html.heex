@@ -92,14 +92,47 @@
             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)';"
             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';"
           >
-            <h3 style="
-              font-size: 1.25rem;
-              font-weight: 700;
-              color: #1a202c;
-              margin-bottom: 16px;
-            ">
-              <%= config.name %>
-            </h3>
+            <%= if @editing_config_id == config.id do %>
+              <div style="margin-bottom: 16px;">
+                <input
+                  type="text"
+                  phx-blur="save_name"
+                  phx-value-config-id={config.id}
+                  phx-keydown="cancel_edit"
+                  phx-key="Escape"
+                  value={@edit_name}
+                  phx-change="update_edit_name"
+                  autofocus
+                  style="
+                    width: 100%;
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #1a202c;
+                    border: 2px solid #667eea;
+                    border-radius: 6px;
+                    padding: 8px 12px;
+                    outline: none;
+                  "
+                />
+              </div>
+            <% else %>
+              <h3
+                phx-click="edit_name"
+                phx-value-config-id={config.id}
+                style="
+                  font-size: 1.25rem;
+                  font-weight: 700;
+                  color: #1a202c;
+                  margin-bottom: 16px;
+                  cursor: pointer;
+                  transition: color 0.2s;
+                "
+                onmouseover="this.style.color='#667eea';"
+                onmouseout="this.style.color='#1a202c';"
+              >
+                <%= config.name %>
+              </h3>
+            <% end %>
 
             <div style="color: #718096; font-size: 0.875rem; margin-bottom: 16px;">
               <div style="margin-bottom: 8px;">
