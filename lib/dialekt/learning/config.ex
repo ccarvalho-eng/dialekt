@@ -7,6 +7,9 @@ defmodule Dialekt.Learning.Config do
 
   alias Dialekt.Learning.ChatSession
 
+  @required_fields ~w(name native_language_code target_language_code cefr_level_code register_code)a
+  @optional_fields ~w()a
+
   schema "learning_configs" do
     field(:name, :string)
     field(:native_language_code, :string)
@@ -19,25 +22,16 @@ defmodule Dialekt.Learning.Config do
     timestamps(type: :utc_datetime)
   end
 
+  @type t :: %__MODULE__{}
+
   @doc """
   Changeset for creating or updating a config.
   """
+  @spec changeset(t() | Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def changeset(config, attrs) do
     config
-    |> cast(attrs, [
-      :name,
-      :native_language_code,
-      :target_language_code,
-      :cefr_level_code,
-      :register_code
-    ])
-    |> validate_required([
-      :name,
-      :native_language_code,
-      :target_language_code,
-      :cefr_level_code,
-      :register_code
-    ])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
     |> validate_length(:name, min: 1, max: 255)
   end
 end
