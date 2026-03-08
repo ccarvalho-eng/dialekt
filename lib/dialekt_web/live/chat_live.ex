@@ -2,6 +2,7 @@ defmodule DialektWeb.ChatLive do
   use DialektWeb, :live_view
 
   alias Dialekt.Languages
+  alias Dialekt.Learning
   alias Dialekt.Tutor
 
   @starters %{
@@ -166,10 +167,79 @@ defmodule DialektWeb.ChatLive do
 
   @impl true
   def mount(params, _session, socket) do
+    session_id = params["session_id"]
+
+    if session_id do
+      mount_with_session(socket, session_id)
+    else
+      mount_with_params(socket, params)
+    end
+  end
+
+  defp mount_with_session(socket, session_id) do
+    try do
+      session = Learning.get_session!(String.to_integer(session_id))
+      config = Learning.get_config!(session.config_id)
+
+      native = Languages.get_language(config.native_language_code)
+      target = Languages.get_language(config.target_language_code)
+      level = Languages.get_cefr_level(config.cefr_level_code)
+      register = Languages.get_register(config.register_code)
+
+      messages = convert_persisted_messages(session.messages)
+
+      send(self(), :fetch_starters)
+
+      # Get all sessions for this config
+      all_sessions = Learning.list_sessions_for_config(config.id)
+
+      {:ok,
+       assign(socket,
+         chat_session: session,
+         config: config,
+         native: native,
+         target: target,
+         level: level,
+         register: register,
+         messages: messages,
+         input: "",
+         starters: get_random_starters(native),
+         all_sessions: all_sessions,
+         deleting_session_id: nil
+       )}
+    rescue
+      Ecto.NoResultsError ->
+        {:ok,
+         socket
+         |> put_flash(:error, "Session not found")
+         |> push_navigate(to: ~p"/dashboard")}
+    end
+  end
+
+  defp mount_with_params(socket, params) do
     native = Languages.get_language(params["native"])
     target = Languages.get_language(params["target"])
     level = Languages.get_cefr_level(params["level"])
     register = Languages.get_register(params["register"])
+
+    # Create config and session for persistence
+    {chat_session, config, all_sessions} =
+      if native && target && level && register do
+        {:ok, config} =
+          Learning.create_config(%{
+            name: "#{target.name} Practice",
+            native_language_code: native.code,
+            target_language_code: target.code,
+            cefr_level_code: level.code,
+            register_code: register.code
+          })
+
+        {:ok, session} = Learning.create_session(config.id)
+        all_sessions = Learning.list_sessions_for_config(config.id)
+        {session, config, all_sessions}
+      else
+        {nil, nil, []}
+      end
 
     if native && target && level do
       send(self(), :fetch_starters)
@@ -177,15 +247,54 @@ defmodule DialektWeb.ChatLive do
 
     {:ok,
      assign(socket,
+       chat_session: chat_session,
+       config: config,
        native: native,
        target: target,
        level: level,
        register: register,
        messages: [],
        input: "",
-       starters: get_random_starters(native)
+       starters: get_random_starters(native),
+       all_sessions: all_sessions,
+       deleting_session_id: nil
      )}
   end
+
+  defp convert_persisted_messages(persisted_messages) do
+    Enum.map(persisted_messages, fn msg ->
+      base_msg = %{
+        role: msg["role"],
+        content: msg["content"],
+        text: msg["text"],
+        raw_response: msg["raw_response"],
+        timestamp: parse_timestamp(msg["timestamp"])
+      }
+
+      # Add error flag if present
+      base_msg = if msg["error"], do: Map.put(base_msg, :error, true), else: base_msg
+
+      # Re-parse assistant messages for rendering (skip if it's an error message)
+      if msg["role"] == "assistant" && msg["raw_response"] && msg["raw_response"] != "" &&
+           !msg["error"] do
+        parsed = Tutor.parse_response(msg["raw_response"])
+        Map.put(base_msg, :parsed, parsed)
+      else
+        base_msg
+      end
+    end)
+  end
+
+  defp parse_timestamp(nil), do: DateTime.utc_now()
+
+  defp parse_timestamp(timestamp) when is_binary(timestamp) do
+    case DateTime.from_iso8601(timestamp) do
+      {:ok, dt, _offset} -> dt
+      _ -> DateTime.utc_now()
+    end
+  end
+
+  defp parse_timestamp(_), do: DateTime.utc_now()
 
   @impl true
   def handle_event("set_input", %{"text" => text}, socket) do
@@ -213,13 +322,68 @@ defmodule DialektWeb.ChatLive do
       timestamp: DateTime.utc_now()
     }
 
+    updated_messages = socket.assigns.messages ++ [user_message, loading_message]
+
     updated_socket =
       socket
-      |> assign(messages: socket.assigns.messages ++ [user_message, loading_message])
+      |> assign(messages: updated_messages)
+
+    # Persist user message immediately
+    updated_socket =
+      if socket.assigns.chat_session do
+        persist_messages(updated_socket, updated_messages)
+      else
+        updated_socket
+      end
 
     send(self(), {:get_tutor_response, text, length(socket.assigns.messages)})
 
     {:noreply, updated_socket}
+  end
+
+  @impl true
+  def handle_event("switch_session", %{"session-id" => session_id}, socket) do
+    {:noreply, push_navigate(socket, to: ~p"/chat?session_id=#{session_id}")}
+  end
+
+  @impl true
+  def handle_event("new_session", _, socket) do
+    if socket.assigns.config do
+      {:ok, new_session} = Learning.create_session(socket.assigns.config.id)
+      {:noreply, push_navigate(socket, to: ~p"/chat?session_id=#{new_session.id}")}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("show_delete_session", %{"session-id" => session_id}, socket) do
+    {:noreply, assign(socket, deleting_session_id: String.to_integer(session_id))}
+  end
+
+  @impl true
+  def handle_event("delete_session_from_sidebar", _, socket) do
+    if socket.assigns.deleting_session_id do
+      session = Learning.get_session!(socket.assigns.deleting_session_id)
+      {:ok, _} = Learning.delete_session(session)
+
+      # Refresh sessions list
+      all_sessions =
+        if socket.assigns.config do
+          Learning.list_sessions_for_config(socket.assigns.config.id)
+        else
+          []
+        end
+
+      # If we deleted the current session, redirect to dashboard
+      if socket.assigns.chat_session && socket.assigns.chat_session.id == session.id do
+        {:noreply, push_navigate(socket, to: ~p"/dashboard")}
+      else
+        {:noreply, assign(socket, all_sessions: all_sessions, deleting_session_id: nil)}
+      end
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -245,10 +409,20 @@ defmodule DialektWeb.ChatLive do
         timestamp: DateTime.utc_now()
       }
 
+      updated_messages = socket.assigns.messages ++ [user_message, loading_message]
+
+      # Persist user message immediately
       updated_socket =
         socket
-        |> assign(messages: socket.assigns.messages ++ [user_message, loading_message])
+        |> assign(messages: updated_messages)
         |> assign(input: "")
+
+      updated_socket =
+        if socket.assigns.chat_session do
+          persist_messages(updated_socket, updated_messages)
+        else
+          updated_socket
+        end
 
       # Send async message to get AI response
       send(self(), {:get_tutor_response, input, length(socket.assigns.messages)})
@@ -295,7 +469,17 @@ defmodule DialektWeb.ChatLive do
           timestamp: DateTime.utc_now()
         }
 
-        {:noreply, assign(socket, messages: messages_without_loading ++ [assistant_message])}
+        all_messages = messages_without_loading ++ [assistant_message]
+
+        # Persist messages if we have a session
+        socket =
+          if socket.assigns.chat_session do
+            persist_messages(socket, all_messages)
+          else
+            socket
+          end
+
+        {:noreply, assign(socket, messages: all_messages)}
 
       {:error, error} ->
         # Remove loading message and add error
@@ -308,8 +492,42 @@ defmodule DialektWeb.ChatLive do
           timestamp: DateTime.utc_now()
         }
 
-        {:noreply, assign(socket, messages: messages_without_loading ++ [error_message])}
+        all_messages = messages_without_loading ++ [error_message]
+
+        # Persist messages including error
+        socket =
+          if socket.assigns.chat_session do
+            persist_messages(socket, all_messages)
+          else
+            socket
+          end
+
+        {:noreply, assign(socket, messages: all_messages)}
     end
+  end
+
+  defp persist_messages(socket, messages) do
+    # Convert messages to persistable format (remove loading messages and parsed field)
+    persistable_messages =
+      messages
+      |> Enum.reject(&Map.get(&1, :loading))
+      |> Enum.map(fn msg ->
+        %{
+          "role" => msg.role,
+          "content" => msg[:content] || msg[:text] || "",
+          "text" => msg[:text] || msg[:content] || "",
+          "raw_response" => msg[:raw_response],
+          "error" => msg[:error],
+          "timestamp" => DateTime.to_iso8601(msg.timestamp)
+        }
+      end)
+
+    # Update session with all messages
+    session = socket.assigns.chat_session
+    fresh_session = Learning.get_session!(session.id)
+    {:ok, updated_session} = Learning.update_session_messages(fresh_session, persistable_messages)
+
+    assign(socket, chat_session: updated_session)
   end
 
   defp build_history(messages) do
@@ -325,40 +543,41 @@ defmodule DialektWeb.ChatLive do
   end
 
   defp render_tutor_response(assigns, msg) do
-    parsed = msg[:parsed]
+    assigns = assign(assigns, :parsed, msg[:parsed])
+    assigns = assign(assigns, :msg, msg)
 
-    if parsed && parsed.raw do
-      # Fallback: show raw content
-      ~H"""
-      <div style="white-space: pre-wrap; font-size: 0.85rem;">{parsed.raw}</div>
-      """
-    else
-      ~H"""
-      <%= if parsed do %>
-        <%= if parsed.you && parsed.you.phrase && parsed.you.phrase != "" do %>
+    ~H"""
+    <%= if @parsed && @parsed.raw do %>
+      <div style="white-space: pre-wrap; font-size: 0.85rem;">{@parsed.raw}</div>
+    <% else %>
+      <%= if @parsed do %>
+        <%= if @parsed.you && @parsed.you.phrase && @parsed.you.phrase != "" do %>
           <div style="margin-bottom: 12px;">
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               In {@target && @target.name}:
             </div>
-            <div style="font-size: 0.9rem;">{parsed.you.phrase}</div>
-            <%= if parsed.you.ipa != "" do %>
+            <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(@parsed.you.phrase)) %></div>
+            <%= if @parsed.you.ipa != "" do %>
               <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                [{parsed.you.ipa}] {parsed.you.roman != "" && "(#{parsed.you.roman})"}
+                [{@parsed.you.ipa}] {@parsed.you.roman != "" && "(#{@parsed.you.roman})"}
               </div>
             <% end %>
           </div>
         <% end %>
-        <%= if parsed.note && parsed.note != "" do %>
-          <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);">
-            💡 {parsed.note}
+        <%= if @parsed.note && @parsed.note != "" do %>
+          <div
+            style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);"
+            phx-no-format
+          >
+            💡 <%= raw(format_bold(@parsed.note)) %>
           </div>
         <% end %>
-        <%= if parsed.tutor && length(parsed.tutor) > 0 do %>
+        <%= if @parsed.tutor && length(@parsed.tutor) > 0 do %>
           <div style="margin-bottom: 12px;">
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               Tutor:
             </div>
-            <%= for line <- parsed.tutor do %>
+            <%= for line <- @parsed.tutor do %>
               <div style="margin-bottom: 8px;">
                 <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(line.phrase)) %></div>
                 <%= if line.ipa != "" do %>
@@ -375,34 +594,38 @@ defmodule DialektWeb.ChatLive do
             <% end %>
           </div>
         <% end %>
-        <%= if parsed.followup do %>
+        <%= if @parsed.followup do %>
           <div style="margin-bottom: 8px;">
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               Follow-up:
             </div>
-            <div style="font-size: 0.9rem;">{parsed.followup.phrase}</div>
-            <%= if parsed.followup.ipa != "" do %>
+            <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(@parsed.followup.phrase)) %></div>
+            <%= if @parsed.followup.ipa != "" do %>
               <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                [{parsed.followup.ipa}] {parsed.followup.roman != "" && "(#{parsed.followup.roman})"}
+                [{@parsed.followup.ipa}] {@parsed.followup.roman != "" &&
+                  "(#{@parsed.followup.roman})"}
               </div>
             <% end %>
-            <%= if parsed.followup.translation != "" do %>
+            <%= if @parsed.followup.translation != "" do %>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                {parsed.followup.translation}
+                {@parsed.followup.translation}
               </div>
             <% end %>
           </div>
         <% end %>
-        <%= if parsed.tips && parsed.tips != "" do %>
-          <div style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);">
-            💡 {parsed.tips}
+        <%= if @parsed.tips && @parsed.tips != "" do %>
+          <div
+            style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);"
+            phx-no-format
+          >
+            💡 <%= raw(format_bold(@parsed.tips)) %>
           </div>
         <% end %>
       <% else %>
-        <div style="white-space: pre-wrap; font-size: 0.85rem;">{msg.content}</div>
+        <div style="white-space: pre-wrap; font-size: 0.85rem;">{@msg.content}</div>
       <% end %>
-      """
-    end
+    <% end %>
+    """
   end
 
   defp format_bold(text) do

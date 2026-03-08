@@ -9,6 +9,7 @@ defmodule Dialekt.Application do
   def start(_type, _args) do
     children = [
       DialektWeb.Telemetry,
+      Dialekt.Repo,
       {DNSCluster, query: Application.get_env(:dialekt, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Dialekt.PubSub},
       # Start a worker by calling: Dialekt.Worker.start_link(arg)

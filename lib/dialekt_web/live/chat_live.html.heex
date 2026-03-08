@@ -1,8 +1,57 @@
 <div class="chat-root">
+  <!-- Sessions Sidebar -->
+  <%= if @config && @all_sessions do %>
+    <div class="sessions-sidebar">
+      <div class="sessions-hdr">
+        <div class="sessions-title">{@config.name}</div>
+        <button
+          phx-click="new_session"
+          class="new-session-btn"
+          title="New Session"
+        >
+          <.icon name="hero-pencil-square" class="size-4" />
+        </button>
+      </div>
+      <div class="sessions-body">
+        <%= if Enum.empty?(@all_sessions) do %>
+          <div class="sessions-empty">No sessions yet</div>
+        <% else %>
+          <%= for session <- @all_sessions do %>
+            <div class={[
+              "session-item",
+              @chat_session && @chat_session.id == session.id && "session-active"
+            ]}>
+              <div
+                phx-click="switch_session"
+                phx-value-session-id={session.id}
+                class="session-content"
+              >
+                <div class="session-label">Session #{session.id}</div>
+                <div class="session-date">
+                  {Calendar.strftime(session.inserted_at, "%b %d")}
+                </div>
+              </div>
+              <%= if @chat_session && @chat_session.id != session.id do %>
+                <button
+                  phx-click="show_delete_session"
+                  phx-value-session-id={session.id}
+                  class="session-delete"
+                  title="Delete session"
+                >
+                  ✕
+                </button>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="chat-app">
     <header class="chat-hdr">
       <div class="chat-hdr-inner">
-        <button class="back-btn" phx-click={JS.navigate(~p"/")} type="button">←</button>
+        <button class="back-btn" phx-click={JS.navigate(~p"/dashboard")} type="button">←</button>
         <div class="hdr-info">
           <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
           <span class="hdr-title">{@target && @target.name} Tutor</span>
@@ -69,7 +118,7 @@
                     </svg>
                   </button>
                 </div>
-                <div class="input-hint">↵ send · ⇧↵ new line</div>
+                <div class="input-hint">↵ send · ⇧↵ new line · AI transliteration may contain mistakes</div>
               </form>
             </div>
           </div>
@@ -144,10 +193,21 @@
                 </svg>
               </button>
             </div>
-            <div class="input-hint">↵ send · ⇧↵ new line</div>
+            <div class="input-hint">↵ send · ⇧↵ new line · AI transliteration may contain mistakes</div>
           </form>
         </div>
       </div>
     <% end %>
   </div>
+  
+<!-- Delete Session Modal -->
+  <%= if @deleting_session_id do %>
+    <.confirm_modal
+      id="delete-chat-session-modal"
+      title="Delete Session"
+      on_confirm={JS.push("delete_session_from_sidebar")}
+    >
+      Are you sure you want to delete this session?
+    </.confirm_modal>
+  <% end %>
 </div>

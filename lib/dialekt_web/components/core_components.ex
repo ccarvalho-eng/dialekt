@@ -419,6 +419,131 @@ defmodule DialektWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Renders a confirmation modal.
+
+  ## Examples
+
+      <.confirm_modal id="delete-config" on_confirm={JS.push("delete_config")}>
+        Are you sure you want to delete this configuration?
+      </.confirm_modal>
+  """
+  attr :id, :string, required: true
+  attr :on_confirm, JS, required: true
+  attr :title, :string, default: "Confirm"
+  slot :inner_block, required: true
+
+  def confirm_modal(assigns) do
+    ~H"""
+    <div
+      id={@id}
+      style="position: relative; z-index: 50; display: none;"
+      phx-mounted={show_modal(@id)}
+      phx-remove={hide_modal(@id)}
+    >
+      <!-- Backdrop -->
+      <div
+        id={"#{@id}-backdrop"}
+        style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); transition: opacity 0.2s;"
+        aria-hidden="true"
+      />
+      <!-- Modal -->
+      <div
+        style="position: fixed; inset: 0; overflow-y: auto;"
+        aria-labelledby={"#{@id}-title"}
+        aria-describedby={"#{@id}-description"}
+        role="dialog"
+        aria-modal="true"
+      >
+        <div style="display: flex; min-height: 100%; align-items: center; justify-content: center; padding: 1rem;">
+          <div
+            id={"#{@id}-container"}
+            style="position: relative; width: 100%; max-width: 28rem; transform-origin: center; overflow: hidden; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); transition: all 0.2s;"
+          >
+            <h3
+              id={"#{@id}-title"}
+              style="font-family: var(--fd); font-size: 1.1rem; font-weight: 600; font-style: italic; color: var(--text); margin-bottom: 16px;"
+            >
+              {@title}
+            </h3>
+            <p
+              id={"#{@id}-description"}
+              style="color: var(--text-dim); font-size: 0.88rem; line-height: 1.5; margin-bottom: 24px;"
+            >
+              {render_slot(@inner_block)}
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+              <button
+                type="button"
+                phx-click={hide_modal(@id)}
+                style="padding: 8px 16px; font-size: 0.88rem; font-weight: 500; font-family: var(--fb); border-radius: 6px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='var(--surface3)'; this.style.borderColor='var(--border2)';"
+                onmouseout="this.style.background='var(--surface2)'; this.style.borderColor='var(--border)';"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                phx-click={@on_confirm |> hide_modal(@id)}
+                style="padding: 8px 16px; font-size: 0.88rem; font-weight: 500; font-family: var(--fb); border-radius: 6px; background: var(--danger); color: var(--primary-text); border: none; cursor: pointer; transition: background 0.2s;"
+                onmouseover="this.style.background='var(--danger-hover)';"
+                onmouseout="this.style.background='var(--danger)';"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Shows a modal with smooth animations.
+  """
+  @spec show_modal(Phoenix.LiveView.JS.t(), String.t()) ::
+          Phoenix.LiveView.JS.t()
+  def show_modal(js \\ %JS{}, id) when is_binary(id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.show(
+      to: "##{id}-backdrop",
+      transition: {"transition-opacity ease-out duration-200", "opacity-0", "opacity-100"}
+    )
+    |> JS.show(
+      to: "##{id}-container",
+      transition:
+        {"transition-all ease-out duration-200",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"}
+    )
+    |> JS.add_class("overflow-hidden", to: "body")
+    |> JS.focus_first(to: "##{id}")
+  end
+
+  @doc """
+  Hides a modal with smooth animations.
+  """
+  @spec hide_modal(Phoenix.LiveView.JS.t(), String.t()) ::
+          Phoenix.LiveView.JS.t()
+  def hide_modal(js \\ %JS{}, id) do
+    js
+    |> JS.hide(
+      to: "##{id}-backdrop",
+      transition: {"transition-opacity ease-in duration-150", "opacity-100", "opacity-0"}
+    )
+    |> JS.hide(
+      to: "##{id}-container",
+      time: 150,
+      transition:
+        {"transition-all ease-in duration-150", "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+    |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    |> JS.remove_class("overflow-hidden", to: "body")
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do

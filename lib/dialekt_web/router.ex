@@ -18,6 +18,7 @@ defmodule DialektWeb.Router do
     pipe_through :browser
 
     live "/", SetupLive
+    live "/dashboard", DashboardLive
     live "/chat", ChatLive
   end
 
