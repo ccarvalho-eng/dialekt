@@ -42,10 +42,31 @@ Hooks.ChatInput = {
   }
 }
 
+Hooks.ThemeManager = {
+  mounted() {
+    const savedTheme = localStorage.getItem("dialekt-theme") || "light"
+    document.documentElement.setAttribute("data-theme", savedTheme)
+
+    // Sync saved theme to LiveView
+    this.pushEvent("sync_theme", {theme: savedTheme})
+  },
+
+  updated() {
+    const theme = this.el.dataset.theme
+    if (theme) {
+      document.documentElement.setAttribute("data-theme", theme)
+      localStorage.setItem("dialekt-theme", theme)
+    }
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken},
+  params: () => {
+    const theme = localStorage.getItem("dialekt-theme") || "light"
+    return {_csrf_token: csrfToken, theme: theme}
+  },
   hooks: {...colocatedHooks, ...Hooks},
 })
 

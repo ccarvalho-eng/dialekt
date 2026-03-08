@@ -5,6 +5,8 @@ defmodule DialektWeb.SetupLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    theme = get_connect_params(socket)["theme"] || "light"
+
     {:ok,
      assign(socket,
        native_lang: nil,
@@ -13,7 +15,8 @@ defmodule DialektWeb.SetupLive do
        register: nil,
        show_native_search: false,
        native_search: "",
-       target_search: ""
+       target_search: "",
+       theme: theme
      )}
   end
 
@@ -74,6 +77,15 @@ defmodule DialektWeb.SetupLive do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_event("toggle_theme", _, socket) do
+    new_theme = if socket.assigns.theme == "dark", do: "light", else: "dark"
+    {:noreply, assign(socket, theme: new_theme)}
+  end
+
+  def handle_event("sync_theme", %{"theme" => theme}, socket) do
+    {:noreply, assign(socket, theme: theme)}
   end
 
   @impl true

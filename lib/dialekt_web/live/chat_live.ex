@@ -166,8 +166,11 @@ defmodule DialektWeb.ChatLive do
   ]
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(params, session, socket) do
     session_id = params["session_id"]
+    theme = get_connect_params(socket)["theme"] || "light"
+
+    socket = assign(socket, theme: theme)
 
     if session_id do
       mount_with_session(socket, session_id)
@@ -429,6 +432,17 @@ defmodule DialektWeb.ChatLive do
 
       {:noreply, updated_socket}
     end
+  end
+
+  @impl true
+  def handle_event("toggle_theme", _, socket) do
+    new_theme = if socket.assigns.theme == "dark", do: "light", else: "dark"
+    {:noreply, assign(socket, theme: new_theme)}
+  end
+
+  @impl true
+  def handle_event("sync_theme", %{"theme" => theme}, socket) do
+    {:noreply, assign(socket, theme: theme)}
   end
 
   @impl true
