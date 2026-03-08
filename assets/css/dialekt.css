@@ -878,6 +878,151 @@ body {
   letter-spacing: 0.05em;
 }
 
+/* ========== SESSIONS SIDEBAR ========== */
+.sessions-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sessions-hdr {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sessions-title {
+  font-family: var(--fd);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text);
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.new-session-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.new-session-btn:hover {
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
+}
+
+.sessions-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.sessions-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sessions-body::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 2px;
+}
+
+.sessions-empty {
+  padding: 20px 12px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.session-item:hover {
+  background: var(--surface3);
+  border-color: var(--border2);
+}
+
+.session-active {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+.session-active .session-label,
+.session-active .session-date {
+  color: #fff;
+}
+
+.session-content {
+  flex: 1;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.session-label {
+  font-size: 0.78rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.session-date {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.session-delete {
+  width: 28px;
+  height: 100%;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.session-delete:hover {
+  background: rgba(213, 47, 47, 0.1);
+  color: #d32f2f;
+}
+
 /* ========== REFERENCE SIDEBAR ========== */
 .ref-sidebar {
   width: 260px;

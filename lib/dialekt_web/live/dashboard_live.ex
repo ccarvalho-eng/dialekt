@@ -13,7 +13,9 @@ defmodule DialektWeb.DashboardLive do
        show_form: Enum.empty?(configs),
        editing_config_id: nil,
        edit_name: "",
-       expanded_config_id: nil
+       expanded_config_id: nil,
+       deleting_config_id: nil,
+       deleting_session_id: nil
      )}
   end
 
@@ -27,14 +29,33 @@ defmodule DialektWeb.DashboardLive do
   end
 
   @impl true
-  def handle_event("delete_config", %{"config-id" => config_id}, socket) do
-    config = Learning.get_config!(String.to_integer(config_id))
-    {:ok, _} = Learning.delete_config(config)
+  def handle_event("show_delete_config", %{"config-id" => config_id}, socket) do
+    {:noreply, assign(socket, deleting_config_id: String.to_integer(config_id))}
+  end
 
-    # Refresh the configs list
-    configs = Learning.list_configs()
+  @impl true
+  def handle_event("delete_config", _, socket) do
+    if socket.assigns.deleting_config_id do
+      config = Learning.get_config!(socket.assigns.deleting_config_id)
+      {:ok, _} = Learning.delete_config(config)
 
-    {:noreply, assign(socket, configs: configs, show_form: Enum.empty?(configs))}
+      # Refresh the configs list
+      configs = Learning.list_configs()
+
+      {:noreply,
+       assign(socket,
+         configs: configs,
+         show_form: Enum.empty?(configs),
+         deleting_config_id: nil
+       )}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("cancel_delete", _, socket) do
+    {:noreply, assign(socket, deleting_config_id: nil, deleting_session_id: nil)}
   end
 
   @impl true
@@ -90,10 +111,19 @@ defmodule DialektWeb.DashboardLive do
   end
 
   @impl true
-  def handle_event("delete_session", %{"session-id" => session_id}, socket) do
-    session = Learning.get_session!(String.to_integer(session_id))
-    {:ok, _} = Learning.delete_session(session)
+  def handle_event("show_delete_session", %{"session-id" => session_id}, socket) do
+    {:noreply, assign(socket, deleting_session_id: String.to_integer(session_id))}
+  end
 
-    {:noreply, socket}
+  @impl true
+  def handle_event("delete_session", _, socket) do
+    if socket.assigns.deleting_session_id do
+      session = Learning.get_session!(socket.assigns.deleting_session_id)
+      {:ok, _} = Learning.delete_session(session)
+
+      {:noreply, assign(socket, deleting_session_id: nil)}
+    else
+      {:noreply, socket}
+    end
   end
 end

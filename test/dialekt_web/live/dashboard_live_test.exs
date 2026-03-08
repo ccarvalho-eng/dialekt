@@ -118,9 +118,14 @@ defmodule DialektWeb.DashboardLiveTest do
       # Verify config exists
       assert render(view) =~ config.name
 
-      # Click delete button
+      # Click delete button to show modal
       view
-      |> element("button", "Delete")
+      |> element("button[phx-value-config-id='#{config.id}']", "Delete")
+      |> render_click()
+
+      # Confirm deletion in modal
+      view
+      |> element("#delete-config-modal button", "Delete")
       |> render_click()
 
       # Config should be deleted
@@ -270,9 +275,14 @@ defmodule DialektWeb.DashboardLiveTest do
 
       {:ok, view, _html} = live(conn, ~p"/dashboard")
 
-      # Delete only config1
+      # Click delete button for config1 to show modal
       view
       |> element("button[phx-value-config-id='#{config1.id}']", "Delete")
+      |> render_click()
+
+      # Confirm deletion in modal
+      view
+      |> element("#delete-config-modal button", "Delete")
       |> render_click()
 
       # Config1 should be deleted

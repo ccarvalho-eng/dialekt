@@ -1,5 +1,5 @@
 <div class="setup">
-  <div class="panel" style="max-width: 720px;">
+  <div class="panel" style="max-width: 680px;">
     <div class="brand-section">
       <div class="brand">
         <pre class="brand-ascii">
@@ -36,14 +36,14 @@
         </div>
       <% else %>
         <!-- Configs List -->
-        <div style="margin-bottom: 24px;">
+        <div style="margin-bottom: 48px;">
           <div style="margin-bottom: 20px;">
             <h2 style="font-family: var(--fd); font-size: 1.1rem; font-style: italic; color: var(--text);">
               Your Configurations
             </h2>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
             <%= for config <- @configs do %>
               <div
                 style="background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; transition: all 0.2s;"
@@ -115,9 +115,8 @@
                     </button>
 
                     <button
-                      phx-click="delete_config"
+                      phx-click="show_delete_config"
                       phx-value-config-id={config.id}
-                      data-confirm={"Are you sure you want to delete '#{config.name}'? All chat sessions will be deleted."}
                       style="background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; color: var(--text-dim); padding: 6px 12px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
                       onmouseover="this.style.borderColor='#d32f2f'; this.style.color='#d32f2f';"
                       onmouseout="this.style.borderColor='var(--border2)'; this.style.color='var(--text-dim)';"
@@ -157,9 +156,8 @@
                                 Resume
                               </button>
                               <button
-                                phx-click="delete_session"
+                                phx-click="show_delete_session"
                                 phx-value-session-id={session.id}
-                                data-confirm="Delete this session?"
                                 style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 8px; font-size: 0.7rem; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
                                 onmouseover="this.style.borderColor='#d32f2f'; this.style.color='#d32f2f';"
                                 onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
@@ -191,4 +189,28 @@
       <% end %>
     </div>
   </div>
+  
+<!-- Delete Config Modal -->
+  <%= if @deleting_config_id do %>
+    <% config = Enum.find(@configs, &(&1.id == @deleting_config_id)) %>
+    <%= if config do %>
+      <.confirm_modal
+        id="delete-config-modal"
+        title="Delete Configuration"
+        on_confirm={JS.push("delete_config")}
+      >
+        Are you sure you want to delete "{config.name}"? All chat sessions will be deleted.
+      </.confirm_modal>
+    <% end %>
+  <% end %>
+  <!-- Delete Session Modal -->
+  <%= if @deleting_session_id do %>
+    <.confirm_modal
+      id="delete-session-modal"
+      title="Delete Session"
+      on_confirm={JS.push("delete_session")}
+    >
+      Are you sure you want to delete this session?
+    </.confirm_modal>
+  <% end %>
 </div>
