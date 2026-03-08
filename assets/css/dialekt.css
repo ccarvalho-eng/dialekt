@@ -973,18 +973,18 @@ body {
 }
 
 .session-item:hover {
-  background: var(--surface3);
+  background: var(--surface);
   border-color: var(--border2);
 }
 
 .session-active {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
 .session-active .session-label,
 .session-active .session-date {
-  color: #fff;
+  color: var(--primary-text);
 }
 
 .session-content {
