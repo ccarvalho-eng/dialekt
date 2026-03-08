@@ -2,6 +2,7 @@ defmodule DialektWeb.ChatLive do
   use DialektWeb, :live_view
 
   alias Dialekt.Languages
+  alias Dialekt.Learning
   alias Dialekt.Tutor
 
   @starters %{
@@ -166,10 +167,65 @@ defmodule DialektWeb.ChatLive do
 
   @impl true
   def mount(params, _session, socket) do
+    session_id = params["session_id"]
+
+    if session_id do
+      mount_with_session(socket, session_id)
+    else
+      mount_with_params(socket, params)
+    end
+  end
+
+  defp mount_with_session(socket, session_id) do
+    session = Learning.get_session!(String.to_integer(session_id))
+    config = Learning.get_config!(session.config_id)
+
+    native = Languages.get_language(config.native_language_code)
+    target = Languages.get_language(config.target_language_code)
+    level = Languages.get_cefr_level(config.cefr_level_code)
+    register = Languages.get_register(config.register_code)
+
+    messages = convert_persisted_messages(session.messages)
+
+    send(self(), :fetch_starters)
+
+    {:ok,
+     assign(socket,
+       chat_session: session,
+       config: config,
+       native: native,
+       target: target,
+       level: level,
+       register: register,
+       messages: messages,
+       input: "",
+       starters: get_random_starters(native)
+     )}
+  end
+
+  defp mount_with_params(socket, params) do
     native = Languages.get_language(params["native"])
     target = Languages.get_language(params["target"])
     level = Languages.get_cefr_level(params["level"])
     register = Languages.get_register(params["register"])
+
+    # Create config and session for persistence
+    chat_session =
+      if native && target && level && register do
+        {:ok, config} =
+          Learning.create_config(%{
+            name: "#{target.name} Practice",
+            native_language_code: native.code,
+            target_language_code: target.code,
+            cefr_level_code: level.code,
+            register_code: register.code
+          })
+
+        {:ok, session} = Learning.create_session(config.id)
+        session
+      else
+        nil
+      end
 
     if native && target && level do
       send(self(), :fetch_starters)
@@ -177,6 +233,8 @@ defmodule DialektWeb.ChatLive do
 
     {:ok,
      assign(socket,
+       chat_session: chat_session,
+       config: nil,
        native: native,
        target: target,
        level: level,
@@ -186,6 +244,29 @@ defmodule DialektWeb.ChatLive do
        starters: get_random_starters(native)
      )}
   end
+
+  defp convert_persisted_messages(persisted_messages) do
+    Enum.map(persisted_messages, fn msg ->
+      %{
+        role: msg["role"],
+        content: msg["content"],
+        text: msg["text"],
+        raw_response: msg["raw_response"],
+        timestamp: parse_timestamp(msg["timestamp"])
+      }
+    end)
+  end
+
+  defp parse_timestamp(nil), do: DateTime.utc_now()
+
+  defp parse_timestamp(timestamp) when is_binary(timestamp) do
+    case DateTime.from_iso8601(timestamp) do
+      {:ok, dt, _offset} -> dt
+      _ -> DateTime.utc_now()
+    end
+  end
+
+  defp parse_timestamp(_), do: DateTime.utc_now()
 
   @impl true
   def handle_event("set_input", %{"text" => text}, socket) do
@@ -295,7 +376,17 @@ defmodule DialektWeb.ChatLive do
           timestamp: DateTime.utc_now()
         }
 
-        {:noreply, assign(socket, messages: messages_without_loading ++ [assistant_message])}
+        all_messages = messages_without_loading ++ [assistant_message]
+
+        # Persist messages if we have a session
+        socket =
+          if socket.assigns.chat_session do
+            persist_messages(socket, all_messages)
+          else
+            socket
+          end
+
+        {:noreply, assign(socket, messages: all_messages)}
 
       {:error, error} ->
         # Remove loading message and add error
@@ -310,6 +401,30 @@ defmodule DialektWeb.ChatLive do
 
         {:noreply, assign(socket, messages: messages_without_loading ++ [error_message])}
     end
+  end
+
+  defp persist_messages(socket, messages) do
+    # Convert messages to persistable format (remove parsed field, etc.)
+    persistable_messages =
+      Enum.map(messages, fn msg ->
+        %{
+          "role" => msg.role,
+          "content" => msg[:content] || msg[:text] || "",
+          "text" => msg[:text] || msg[:content] || "",
+          "raw_response" => msg[:raw_response],
+          "timestamp" => DateTime.to_iso8601(msg.timestamp)
+        }
+      end)
+
+    # Update session with all messages
+    session = socket.assigns.chat_session
+
+    {:ok, updated_session} =
+      Learning.get_session!(session.id)
+      |> Ecto.Changeset.change(messages: persistable_messages)
+      |> Dialekt.Repo.update()
+
+    assign(socket, chat_session: updated_session)
   end
 
   defp build_history(messages) do
