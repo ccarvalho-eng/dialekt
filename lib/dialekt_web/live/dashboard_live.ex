@@ -6,6 +6,7 @@ defmodule DialektWeb.DashboardLive do
   @impl true
   def mount(_params, _session, socket) do
     configs = Learning.list_configs()
+    theme = get_connect_params(socket)["theme"] || "light"
 
     {:ok,
      assign(socket,
@@ -15,7 +16,8 @@ defmodule DialektWeb.DashboardLive do
        edit_name: "",
        expanded_config_id: nil,
        deleting_config_id: nil,
-       deleting_session_id: nil
+       deleting_session_id: nil,
+       theme: theme
      )}
   end
 
@@ -125,5 +127,20 @@ defmodule DialektWeb.DashboardLive do
     else
       {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("toggle_theme", _, socket) do
+    new_theme = if socket.assigns.theme == "dark", do: "light", else: "dark"
+
+    {:noreply,
+     socket
+     |> assign(theme: new_theme)
+     |> push_event("update-theme", %{theme: new_theme})}
+  end
+
+  @impl true
+  def handle_event("sync_theme", %{"theme" => theme}, socket) do
+    {:noreply, assign(socket, theme: theme)}
   end
 end

@@ -1,4 +1,4 @@
-<div class="chat-root">
+<div class="chat-root" phx-hook="ThemeManager" data-theme={@theme} id="theme-manager">
   <!-- Sessions Sidebar -->
   <%= if @config && @all_sessions do %>
     <div class="sessions-sidebar">
@@ -59,6 +59,14 @@
         <span class="hdr-badge">{@level && @level.code}</span>
         <span class="hdr-badge">{@register && @register.label}</span>
         <span class="hdr-badge">{@target && @target.native}</span>
+        <button
+          phx-click="toggle_theme"
+          class="theme-toggle"
+          title="Toggle dark mode"
+          type="button"
+        >
+          <.icon name={if @theme == "dark", do: "hero-sun", else: "hero-moon"} class="size-4" />
+        </button>
       </div>
     </header>
 
@@ -118,7 +126,9 @@
                     </svg>
                   </button>
                 </div>
-                <div class="input-hint">↵ send · ⇧↵ new line · AI transliteration may contain mistakes</div>
+                <div class="input-hint">
+                  ↵ send · ⇧↵ new line · AI transliteration may contain mistakes
+                </div>
               </form>
             </div>
           </div>
@@ -193,7 +203,9 @@
                 </svg>
               </button>
             </div>
-            <div class="input-hint">↵ send · ⇧↵ new line · AI transliteration may contain mistakes</div>
+            <div class="input-hint">
+              ↵ send · ⇧↵ new line · AI transliteration may contain mistakes
+            </div>
           </form>
         </div>
       </div>

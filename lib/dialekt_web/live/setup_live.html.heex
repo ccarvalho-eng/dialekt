@@ -1,14 +1,24 @@
-<div class="setup">
+<div class="setup" phx-hook="ThemeManager" data-theme={@theme} id="theme-manager">
   <div class="panel">
     <div class="brand-section">
-      <div class="brand">
-        <pre class="brand-ascii">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="brand">
+          <pre class="brand-ascii">
   ██████  ██  █████  ██      ███████ ██   ██ ████████
   ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
   ██   ██ ██ ███████ ██      █████   █████      ██
   ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
   ██████  ██ ██   ██ ███████ ███████ ██   ██    ██
-        </pre>
+          </pre>
+        </div>
+        <button
+          phx-click="toggle_theme"
+          class="theme-toggle"
+          title="Toggle dark mode"
+          type="button"
+        >
+          <.icon name={if @theme == "dark", do: "hero-sun", else: "hero-moon"} class="size-4" />
+        </button>
       </div>
       <p class="brand-tagline">
         "So the Lord scattered them over the face of the whole earth." — Genesis 11:8
