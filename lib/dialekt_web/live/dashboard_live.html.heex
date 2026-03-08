@@ -1,218 +1,194 @@
-<div style="
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 24px;
-">
-  <div style="max-width: 1200px; margin: 0 auto;">
-    <h1 style="
-      color: white;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 32px;
-      text-align: center;
-    ">
-      My Learning Configs
-    </h1>
-
-    <%= if @show_form do %>
-      <!-- Empty State -->
-      <div style="
-        background: white;
-        border-radius: 16px;
-        padding: 48px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        text-align: center;
-      ">
-        <h2 style="
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: #1a202c;
-          margin-bottom: 16px;
-        ">
-          Welcome to Dialekt!
-        </h2>
-        <p style="
-          color: #718096;
-          margin-bottom: 32px;
-          font-size: 1rem;
-        ">
-          Create your first learning configuration to get started.
-        </p>
-        <.link
-          navigate={~p"/"}
-          style="
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px 32px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s;
-          "
-        >
-          Create Your First Config
-        </.link>
+<div class="setup">
+  <div class="panel" style="max-width: 720px;">
+    <div class="brand-section">
+      <div class="brand">
+        <pre class="brand-ascii">
+  ██████  ██  █████  ██      ███████ ██   ██ ████████
+  ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+  ██   ██ ██ ███████ ██      █████   █████      ██
+  ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+  ██████  ██ ██   ██ ███████ ███████ ██   ██    ██
+        </pre>
       </div>
-    <% else %>
-      <!-- Configs Grid -->
-      <div style="margin-bottom: 24px; text-align: right;">
+      <p class="brand-tagline">
+        "So the Lord scattered them over the face of the whole earth." — Genesis 11:8
+      </p>
+    </div>
+
+    <div class="content-section">
+      <%= if @show_form do %>
+        <!-- Empty State -->
+        <div style="text-align: center; padding: 30px 0;">
+          <h2 style="font-family: var(--fd); font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 12px; font-style: italic;">
+            Welcome!
+          </h2>
+          <p style="color: var(--text-dim); margin-bottom: 24px; font-size: 0.88rem;">
+            Create your first learning configuration to get started.
+          </p>
+          <.link
+            navigate={~p"/"}
+            class="go-btn go-on"
+            style="max-width: 320px; margin: 0 auto;"
+          >
+            <span>Create Your First Config</span>
+            <span class="go-arr">→</span>
+          </.link>
+        </div>
+      <% else %>
+        <!-- Configs List -->
+        <div style="margin-bottom: 24px;">
+          <div style="margin-bottom: 20px;">
+            <h2 style="font-family: var(--fd); font-size: 1.1rem; font-style: italic; color: var(--text);">
+              Your Configurations
+            </h2>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <%= for config <- @configs do %>
+              <div
+                style="background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; transition: all 0.2s;"
+                onmouseover="this.style.background='var(--surface3)'; this.style.borderColor='var(--border2)';"
+                onmouseout="this.style.background='var(--surface2)'; this.style.borderColor='var(--border)';"
+              >
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <%= if @editing_config_id == config.id do %>
+                    <input
+                      type="text"
+                      phx-blur="save_name"
+                      phx-value-config-id={config.id}
+                      phx-keydown="cancel_edit"
+                      phx-key="Escape"
+                      value={@edit_name}
+                      phx-change="update_edit_name"
+                      autofocus
+                      style="flex: 1; font-family: var(--fd); font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--text); border: 1px solid var(--text); border-radius: 6px; padding: 6px 10px; outline: none; background: var(--surface);"
+                    />
+                  <% else %>
+                    <h3
+                      phx-click="edit_name"
+                      phx-value-config-id={config.id}
+                      style="flex: 1; font-family: var(--fd); font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--text); cursor: pointer; transition: color 0.2s; margin: 0;"
+                      onmouseover="this.style.color='var(--text-dim)';"
+                      onmouseout="this.style.color='var(--text)';"
+                    >
+                      {config.name}
+                    </h3>
+                  <% end %>
+
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 0.72rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;">
+                      {config.native_language_code |> String.upcase()} → {config.target_language_code
+                      |> String.upcase()}
+                    </span>
+                    <span style="font-size: 0.72rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;">
+                      {config.cefr_level_code}
+                    </span>
+                    <span style="font-size: 0.72rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;">
+                      {config.register_code |> String.capitalize()}
+                    </span>
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                  <button
+                    phx-click="toggle_sessions"
+                    phx-value-config-id={config.id}
+                    style="background: none; border: none; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; font-family: var(--fb); padding: 0; text-decoration: underline; text-decoration-style: dotted; transition: color 0.2s;"
+                    onmouseover="this.style.color='var(--text)';"
+                    onmouseout="this.style.color='var(--text-muted)';"
+                  >
+                    {Learning.count_sessions_for_config(config.id)} session(s) {if @expanded_config_id ==
+                                                                                     config.id,
+                                                                                   do: " ▲",
+                                                                                   else: " ▼"}
+                  </button>
+
+                  <div style="display: flex; gap: 6px;">
+                    <button
+                      phx-click="start_new_chat"
+                      phx-value-config-id={config.id}
+                      style="background: var(--text); border: none; border-radius: 6px; color: #fff; padding: 6px 14px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
+                      onmouseover="this.style.background='#333331'; this.style.transform='translateY(-1px)';"
+                      onmouseout="this.style.background='var(--text)'; this.style.transform='translateY(0)';"
+                    >
+                      New Chat
+                    </button>
+
+                    <button
+                      phx-click="delete_config"
+                      phx-value-config-id={config.id}
+                      data-confirm={"Are you sure you want to delete '#{config.name}'? All chat sessions will be deleted."}
+                      style="background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; color: var(--text-dim); padding: 6px 12px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
+                      onmouseover="this.style.borderColor='#d32f2f'; this.style.color='#d32f2f';"
+                      onmouseout="this.style.borderColor='var(--border2)'; this.style.color='var(--text-dim)';"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+
+                <%= if @expanded_config_id == config.id do %>
+                  <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+                    <% sessions = Learning.list_sessions_for_config(config.id) %>
+                    <%= if Enum.empty?(sessions) do %>
+                      <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 8px;">
+                        No sessions yet
+                      </p>
+                    <% else %>
+                      <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <%= for session <- sessions do %>
+                          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; transition: background 0.2s;">
+                            <div style="flex: 1;">
+                              <div style="font-size: 0.72rem; color: var(--text-dim);">
+                                Session #{session.id}
+                              </div>
+                              <div style="font-size: 0.65rem; color: var(--text-muted);">
+                                {Calendar.strftime(session.inserted_at, "%b %d, %Y at %I:%M %p")}
+                              </div>
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                              <button
+                                phx-click="resume_session"
+                                phx-value-session-id={session.id}
+                                style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 10px; font-size: 0.7rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
+                                onmouseover="this.style.borderColor='var(--text)'; this.style.color='var(--text)';"
+                                onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
+                              >
+                                Resume
+                              </button>
+                              <button
+                                phx-click="delete_session"
+                                phx-value-session-id={session.id}
+                                data-confirm="Delete this session?"
+                                style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 8px; font-size: 0.7rem; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
+                                onmouseover="this.style.borderColor='#d32f2f'; this.style.color='#d32f2f';"
+                                onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        
+<!-- New Configuration Button -->
         <.link
           navigate={~p"/"}
-          style="
-            display: inline-block;
-            background: white;
-            color: #667eea;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-          "
+          style="position: fixed; bottom: 32px; right: 32px; display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); padding: 7px 14px; font-size: 0.82rem; font-weight: 500; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);"
+          onmouseover="this.style.borderColor='var(--text)'; this.style.background='var(--text)'; this.style.color='#fff';"
+          onmouseout="this.style.borderColor='var(--border)'; this.style.background='var(--surface2)'; this.style.color='var(--text-dim)';"
+          title="New Configuration"
         >
           + New Configuration
         </.link>
-      </div>
-
-      <div style="
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 24px;
-      ">
-        <%= for config <- @configs do %>
-          <div
-            style="
-              background: white;
-              border-radius: 12px;
-              padding: 24px;
-              box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-              transition: transform 0.2s, box-shadow 0.2s;
-            "
-            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)';"
-            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';"
-          >
-            <%= if @editing_config_id == config.id do %>
-              <div style="margin-bottom: 16px;">
-                <input
-                  type="text"
-                  phx-blur="save_name"
-                  phx-value-config-id={config.id}
-                  phx-keydown="cancel_edit"
-                  phx-key="Escape"
-                  value={@edit_name}
-                  phx-change="update_edit_name"
-                  autofocus
-                  style="
-                    width: 100%;
-                    font-size: 1.25rem;
-                    font-weight: 700;
-                    color: #1a202c;
-                    border: 2px solid #667eea;
-                    border-radius: 6px;
-                    padding: 8px 12px;
-                    outline: none;
-                  "
-                />
-              </div>
-            <% else %>
-              <h3
-                phx-click="edit_name"
-                phx-value-config-id={config.id}
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: #1a202c;
-                  margin-bottom: 16px;
-                  cursor: pointer;
-                  transition: color 0.2s;
-                "
-                onmouseover="this.style.color='#667eea';"
-                onmouseout="this.style.color='#1a202c';"
-              >
-                <%= config.name %>
-              </h3>
-            <% end %>
-
-            <div style="color: #718096; font-size: 0.875rem; margin-bottom: 16px;">
-              <div style="margin-bottom: 8px;">
-                <strong>From:</strong>
-                <%= config.native_language_code |> String.upcase() %>
-              </div>
-              <div style="margin-bottom: 8px;">
-                <strong>To:</strong>
-                <%= config.target_language_code |> String.upcase() %>
-              </div>
-              <div style="margin-bottom: 8px;">
-                <strong>Level:</strong>
-                <%= config.cefr_level_code %>
-              </div>
-              <div style="margin-bottom: 8px;">
-                <strong>Register:</strong>
-                <%= config.register_code |> String.capitalize() %>
-              </div>
-              <div style="
-                background: #edf2f7;
-                padding: 8px 12px;
-                border-radius: 6px;
-                margin-top: 12px;
-                font-weight: 600;
-                color: #4a5568;
-              ">
-                <%= Learning.count_sessions_for_config(config.id) %> chat session(s)
-              </div>
-            </div>
-
-            <div style="
-              display: flex;
-              gap: 8px;
-              margin-top: 20px;
-              flex-wrap: wrap;
-            ">
-              <button
-                phx-click="start_new_chat"
-                phx-value-config-id={config.id}
-                style="
-                  flex: 1;
-                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                  color: white;
-                  padding: 10px 16px;
-                  border-radius: 6px;
-                  font-weight: 600;
-                  border: none;
-                  cursor: pointer;
-                  font-size: 0.875rem;
-                  transition: opacity 0.2s;
-                "
-                onmouseover="this.style.opacity='0.9';"
-                onmouseout="this.style.opacity='1';"
-              >
-                New Chat
-              </button>
-
-              <button
-                phx-click="delete_config"
-                phx-value-config-id={config.id}
-                style="
-                  background: #f56565;
-                  color: white;
-                  padding: 10px 16px;
-                  border-radius: 6px;
-                  font-weight: 600;
-                  border: none;
-                  cursor: pointer;
-                  font-size: 0.875rem;
-                  transition: opacity 0.2s;
-                "
-                onmouseover="this.style.opacity='0.9';"
-                onmouseout="this.style.opacity='1';"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 </div>

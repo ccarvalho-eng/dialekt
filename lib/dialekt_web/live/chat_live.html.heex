@@ -2,7 +2,7 @@
   <div class="chat-app">
     <header class="chat-hdr">
       <div class="chat-hdr-inner">
-        <button class="back-btn" phx-click={JS.navigate(~p"/")} type="button">←</button>
+        <button class="back-btn" phx-click={JS.navigate(~p"/dashboard")} type="button">←</button>
         <div class="hdr-info">
           <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
           <span class="hdr-title">{@target && @target.name} Tutor</span>

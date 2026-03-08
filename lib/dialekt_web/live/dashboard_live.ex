@@ -12,7 +12,8 @@ defmodule DialektWeb.DashboardLive do
        configs: configs,
        show_form: Enum.empty?(configs),
        editing_config_id: nil,
-       edit_name: ""
+       edit_name: "",
+       expanded_config_id: nil
      )}
   end
 
@@ -67,5 +68,32 @@ defmodule DialektWeb.DashboardLive do
   @impl true
   def handle_event("cancel_edit", _, socket) do
     {:noreply, assign(socket, editing_config_id: nil, edit_name: "")}
+  end
+
+  @impl true
+  def handle_event("toggle_sessions", %{"config-id" => config_id}, socket) do
+    config_id = String.to_integer(config_id)
+
+    new_expanded =
+      if socket.assigns.expanded_config_id == config_id do
+        nil
+      else
+        config_id
+      end
+
+    {:noreply, assign(socket, expanded_config_id: new_expanded)}
+  end
+
+  @impl true
+  def handle_event("resume_session", %{"session-id" => session_id}, socket) do
+    {:noreply, push_navigate(socket, to: ~p"/chat?session_id=#{session_id}")}
+  end
+
+  @impl true
+  def handle_event("delete_session", %{"session-id" => session_id}, socket) do
+    session = Learning.get_session!(String.to_integer(session_id))
+    {:ok, _} = Learning.delete_session(session)
+
+    {:noreply, socket}
   end
 end
