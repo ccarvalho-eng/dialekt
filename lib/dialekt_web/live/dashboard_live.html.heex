@@ -147,9 +147,19 @@
                 <strong>Level:</strong>
                 <%= config.cefr_level_code %>
               </div>
-              <div>
+              <div style="margin-bottom: 8px;">
                 <strong>Register:</strong>
                 <%= config.register_code |> String.capitalize() %>
+              </div>
+              <div style="
+                background: #edf2f7;
+                padding: 8px 12px;
+                border-radius: 6px;
+                margin-top: 12px;
+                font-weight: 600;
+                color: #4a5568;
+              ">
+                <%= Learning.count_sessions_for_config(config.id) %> chat session(s)
               </div>
             </div>
 

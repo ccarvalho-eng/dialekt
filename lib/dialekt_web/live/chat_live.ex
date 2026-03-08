@@ -177,30 +177,38 @@ defmodule DialektWeb.ChatLive do
   end
 
   defp mount_with_session(socket, session_id) do
-    session = Learning.get_session!(String.to_integer(session_id))
-    config = Learning.get_config!(session.config_id)
+    try do
+      session = Learning.get_session!(String.to_integer(session_id))
+      config = Learning.get_config!(session.config_id)
 
-    native = Languages.get_language(config.native_language_code)
-    target = Languages.get_language(config.target_language_code)
-    level = Languages.get_cefr_level(config.cefr_level_code)
-    register = Languages.get_register(config.register_code)
+      native = Languages.get_language(config.native_language_code)
+      target = Languages.get_language(config.target_language_code)
+      level = Languages.get_cefr_level(config.cefr_level_code)
+      register = Languages.get_register(config.register_code)
 
-    messages = convert_persisted_messages(session.messages)
+      messages = convert_persisted_messages(session.messages)
 
-    send(self(), :fetch_starters)
+      send(self(), :fetch_starters)
 
-    {:ok,
-     assign(socket,
-       chat_session: session,
-       config: config,
-       native: native,
-       target: target,
-       level: level,
-       register: register,
-       messages: messages,
-       input: "",
-       starters: get_random_starters(native)
-     )}
+      {:ok,
+       assign(socket,
+         chat_session: session,
+         config: config,
+         native: native,
+         target: target,
+         level: level,
+         register: register,
+         messages: messages,
+         input: "",
+         starters: get_random_starters(native)
+       )}
+    rescue
+      Ecto.NoResultsError ->
+        {:ok,
+         socket
+         |> put_flash(:error, "Session not found")
+         |> push_navigate(to: ~p"/dashboard")}
+    end
   end
 
   defp mount_with_params(socket, params) do

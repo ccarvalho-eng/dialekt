@@ -105,4 +105,14 @@ defmodule Dialekt.Learning do
   def delete_session(%ChatSession{} = session) do
     Repo.delete(session)
   end
+
+  @doc """
+  Counts the number of chat sessions for a given config.
+  """
+  @spec count_sessions_for_config(integer()) :: integer()
+  def count_sessions_for_config(config_id) do
+    ChatSession
+    |> where([s], s.config_id == ^config_id)
+    |> Repo.aggregate(:count)
+  end
 end
