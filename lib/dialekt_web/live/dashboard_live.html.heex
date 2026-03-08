@@ -1,0 +1,74 @@
+<div style="
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <h1 style="
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      text-align: center;
+    ">
+      My Learning Configs
+    </h1>
+
+    <%= if @show_form do %>
+      <!-- Empty State -->
+      <div style="
+        background: white;
+        border-radius: 16px;
+        padding: 48px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        text-align: center;
+      ">
+        <h2 style="
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #1a202c;
+          margin-bottom: 16px;
+        ">
+          Welcome to Dialekt!
+        </h2>
+        <p style="
+          color: #718096;
+          margin-bottom: 32px;
+          font-size: 1rem;
+        ">
+          Create your first learning configuration to get started.
+        </p>
+        <.link
+          navigate={~p"/"}
+          style="
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+          "
+        >
+          Create Your First Config
+        </.link>
+      </div>
+    <% else %>
+      <!-- Configs exist - will add grid view in next task -->
+      <div style="
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      ">
+        <p style="color: #1a202c;">
+          You have <%= length(@configs) %> learning configuration(s).
+        </p>
+        <p style="color: #718096; margin-top: 8px;">
+          Grid view will be added in the next task.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
