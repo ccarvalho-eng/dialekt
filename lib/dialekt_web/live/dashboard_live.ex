@@ -132,7 +132,11 @@ defmodule DialektWeb.DashboardLive do
   @impl true
   def handle_event("toggle_theme", _, socket) do
     new_theme = if socket.assigns.theme == "dark", do: "light", else: "dark"
-    {:noreply, assign(socket, theme: new_theme)}
+
+    {:noreply,
+     socket
+     |> assign(theme: new_theme)
+     |> push_event("update-theme", %{theme: new_theme})}
   end
 
   @impl true

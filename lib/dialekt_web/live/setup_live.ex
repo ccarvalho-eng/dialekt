@@ -81,7 +81,11 @@ defmodule DialektWeb.SetupLive do
 
   def handle_event("toggle_theme", _, socket) do
     new_theme = if socket.assigns.theme == "dark", do: "light", else: "dark"
-    {:noreply, assign(socket, theme: new_theme)}
+
+    {:noreply,
+     socket
+     |> assign(theme: new_theme)
+     |> push_event("update-theme", %{theme: new_theme})}
   end
 
   def handle_event("sync_theme", %{"theme" => theme}, socket) do

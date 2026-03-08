@@ -49,6 +49,12 @@ Hooks.ThemeManager = {
 
     // Sync saved theme to LiveView
     this.pushEvent("sync_theme", {theme: savedTheme})
+
+    // Listen for theme changes from server
+    this.handleEvent("update-theme", ({theme}) => {
+      document.documentElement.setAttribute("data-theme", theme)
+      localStorage.setItem("dialekt-theme", theme)
+    })
   },
 
   updated() {
