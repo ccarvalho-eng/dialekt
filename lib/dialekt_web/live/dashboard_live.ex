@@ -7,7 +7,13 @@ defmodule DialektWeb.DashboardLive do
   def mount(_params, _session, socket) do
     configs = Learning.list_configs()
 
-    {:ok, assign(socket, configs: configs, show_form: Enum.empty?(configs))}
+    {:ok,
+     assign(socket,
+       configs: configs,
+       show_form: Enum.empty?(configs),
+       editing_config_id: nil,
+       edit_name: ""
+     )}
   end
 
   @impl true
@@ -28,5 +34,38 @@ defmodule DialektWeb.DashboardLive do
     configs = Learning.list_configs()
 
     {:noreply, assign(socket, configs: configs, show_form: Enum.empty?(configs))}
+  end
+
+  @impl true
+  def handle_event("edit_name", %{"config-id" => config_id}, socket) do
+    config = Learning.get_config!(String.to_integer(config_id))
+
+    {:noreply, assign(socket, editing_config_id: config.id, edit_name: config.name)}
+  end
+
+  @impl true
+  def handle_event("update_edit_name", %{"value" => value}, socket) do
+    {:noreply, assign(socket, edit_name: value)}
+  end
+
+  @impl true
+  def handle_event("save_name", %{"config-id" => config_id}, socket) do
+    config = Learning.get_config!(String.to_integer(config_id))
+    {:ok, _} = Learning.update_config(config, %{name: socket.assigns.edit_name})
+
+    # Refresh configs and exit edit mode
+    configs = Learning.list_configs()
+
+    {:noreply,
+     assign(socket,
+       configs: configs,
+       editing_config_id: nil,
+       edit_name: ""
+     )}
+  end
+
+  @impl true
+  def handle_event("cancel_edit", _, socket) do
+    {:noreply, assign(socket, editing_config_id: nil, edit_name: "")}
   end
 end
