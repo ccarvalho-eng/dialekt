@@ -55,19 +55,120 @@
         </.link>
       </div>
     <% else %>
-      <!-- Configs exist - will add grid view in next task -->
+      <!-- Configs Grid -->
+      <div style="margin-bottom: 24px; text-align: right;">
+        <.link
+          navigate={~p"/"}
+          style="
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+          "
+        >
+          + New Configuration
+        </.link>
+      </div>
+
       <div style="
-        background: white;
-        border-radius: 16px;
-        padding: 32px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
       ">
-        <p style="color: #1a202c;">
-          You have <%= length(@configs) %> learning configuration(s).
-        </p>
-        <p style="color: #718096; margin-top: 8px;">
-          Grid view will be added in the next task.
-        </p>
+        <%= for config <- @configs do %>
+          <div
+            style="
+              background: white;
+              border-radius: 12px;
+              padding: 24px;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+              transition: transform 0.2s, box-shadow 0.2s;
+            "
+            onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';"
+          >
+            <h3 style="
+              font-size: 1.25rem;
+              font-weight: 700;
+              color: #1a202c;
+              margin-bottom: 16px;
+            ">
+              <%= config.name %>
+            </h3>
+
+            <div style="color: #718096; font-size: 0.875rem; margin-bottom: 16px;">
+              <div style="margin-bottom: 8px;">
+                <strong>From:</strong>
+                <%= config.native_language_code |> String.upcase() %>
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong>To:</strong>
+                <%= config.target_language_code |> String.upcase() %>
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong>Level:</strong>
+                <%= config.cefr_level_code %>
+              </div>
+              <div>
+                <strong>Register:</strong>
+                <%= config.register_code |> String.capitalize() %>
+              </div>
+            </div>
+
+            <div style="
+              display: flex;
+              gap: 8px;
+              margin-top: 20px;
+              flex-wrap: wrap;
+            ">
+              <button
+                phx-click="start_new_chat"
+                phx-value-config-id={config.id}
+                style="
+                  flex: 1;
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
+                  padding: 10px 16px;
+                  border-radius: 6px;
+                  font-weight: 600;
+                  border: none;
+                  cursor: pointer;
+                  font-size: 0.875rem;
+                  transition: opacity 0.2s;
+                "
+                onmouseover="this.style.opacity='0.9';"
+                onmouseout="this.style.opacity='1';"
+              >
+                New Chat
+              </button>
+
+              <button
+                phx-click="delete_config"
+                phx-value-config-id={config.id}
+                style="
+                  background: #f56565;
+                  color: white;
+                  padding: 10px 16px;
+                  border-radius: 6px;
+                  font-weight: 600;
+                  border: none;
+                  cursor: pointer;
+                  font-size: 0.875rem;
+                  transition: opacity 0.2s;
+                "
+                onmouseover="this.style.opacity='0.9';"
+                onmouseout="this.style.opacity='1';"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
