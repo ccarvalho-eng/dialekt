@@ -8,6 +8,9 @@
 import Config
 
 config :dialekt,
+  ecto_repos: [Dialekt.Repo]
+
+config :dialekt,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint

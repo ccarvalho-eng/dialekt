@@ -73,3 +73,13 @@ config :phoenix_live_view,
   debug_attributes: true,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
+
+# Configure Ecto Repo
+config :dialekt, Dialekt.Repo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  database: "dialekt_dev",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
