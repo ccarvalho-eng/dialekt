@@ -485,9 +485,9 @@ defmodule DialektWeb.CoreComponents do
               <button
                 type="button"
                 phx-click={@on_confirm |> hide_modal(@id)}
-                style="padding: 8px 16px; font-size: 0.88rem; font-weight: 500; font-family: var(--fb); border-radius: 6px; background: #d32f2f; color: white; border: none; cursor: pointer; transition: background 0.2s;"
-                onmouseover="this.style.background='#b71c1c';"
-                onmouseout="this.style.background='#d32f2f';"
+                style="padding: 8px 16px; font-size: 0.88rem; font-weight: 500; font-family: var(--fb); border-radius: 6px; background: var(--danger); color: var(--primary-text); border: none; cursor: pointer; transition: background 0.2s;"
+                onmouseover="this.style.background='var(--danger-hover)';"
+                onmouseout="this.style.background='var(--danger)';"
               >
                 Delete
               </button>

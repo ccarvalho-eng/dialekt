@@ -107,9 +107,9 @@
                     <button
                       phx-click="start_new_chat"
                       phx-value-config-id={config.id}
-                      style="background: var(--text); border: none; border-radius: 6px; color: #fff; padding: 6px 14px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                      onmouseover="this.style.background='#333331'; this.style.transform='translateY(-1px)';"
-                      onmouseout="this.style.background='var(--text)'; this.style.transform='translateY(0)';"
+                      style="background: var(--primary); border: none; border-radius: 6px; color: var(--primary-text); padding: 6px 14px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
+                      onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-1px)';"
+                      onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)';"
                     >
                       New Chat
                     </button>
@@ -118,7 +118,7 @@
                       phx-click="show_delete_config"
                       phx-value-config-id={config.id}
                       style="background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; color: var(--text-dim); padding: 6px 12px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                      onmouseover="this.style.borderColor='#d32f2f'; this.style.color='#d32f2f';"
+                      onmouseover="this.style.borderColor='var(--danger)'; this.style.color='var(--danger)';"
                       onmouseout="this.style.borderColor='var(--border2)'; this.style.color='var(--text-dim)';"
                     >
                       Delete
@@ -150,7 +150,7 @@
                                 phx-click="resume_session"
                                 phx-value-session-id={session.id}
                                 style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 10px; font-size: 0.7rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                                onmouseover="this.style.borderColor='var(--text)'; this.style.color='var(--text)';"
+                                onmouseover="this.style.borderColor='var(--primary)'; this.style.color='var(--primary)';"
                                 onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
                               >
                                 Resume
@@ -159,7 +159,7 @@
                                 phx-click="show_delete_session"
                                 phx-value-session-id={session.id}
                                 style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 8px; font-size: 0.7rem; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                                onmouseover="this.style.borderColor='#d32f2f'; this.style.color='#d32f2f';"
+                                onmouseover="this.style.borderColor='var(--danger)'; this.style.color='var(--danger)';"
                                 onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
                               >
                                 ✕
@@ -179,8 +179,8 @@
 <!-- New Configuration Button -->
         <.link
           navigate={~p"/"}
-          style="position: fixed; bottom: 32px; right: 32px; display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); padding: 7px 14px; font-size: 0.82rem; font-weight: 500; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);"
-          onmouseover="this.style.borderColor='var(--text)'; this.style.background='var(--text)'; this.style.color='#fff';"
+          style="position: fixed; bottom: 32px; right: 32px; display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); padding: 7px 14px; font-size: 0.82rem; font-weight: 500; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 16px rgba(41, 37, 36, 0.08);"
+          onmouseover="this.style.borderColor='var(--primary)'; this.style.background='var(--primary)'; this.style.color='var(--primary-text)';"
           onmouseout="this.style.borderColor='var(--border)'; this.style.background='var(--surface2)'; this.style.color='var(--text-dim)';"
           title="New Configuration"
         >

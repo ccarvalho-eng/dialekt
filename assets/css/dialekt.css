@@ -17,15 +17,20 @@ ol {
 
 /* ========== CSS VARIABLES ========== */
 :root {
-  --bg: #f8f8f7;
+  --bg: #fafaf9;
   --surface: #ffffff;
-  --surface2: #f1f1f0;
-  --surface3: #e8e8e6;
-  --border: #dddcda;
-  --border2: #c8c7c4;
-  --text: #111110;
-  --text-dim: #666662;
-  --text-muted: #aaa9a5;
+  --surface2: #f5f5f4;
+  --surface3: #ebebea;
+  --border: #e5e5e3;
+  --border2: #d1d0ce;
+  --text: #1c1c1a;
+  --text-dim: #57534e;
+  --text-muted: #a8a29e;
+  --primary: #292524;
+  --primary-hover: #44403c;
+  --primary-text: #fafaf9;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
   --fd: 'Lora', serif;
   --fb: 'Nunito', sans-serif;
 }
@@ -481,15 +486,15 @@ body {
 }
 
 .go-on {
-  background: var(--text);
-  border-color: var(--text);
-  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
   cursor: pointer;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 12px rgba(41, 37, 36, 0.15);
 }
 
 .go-on:hover {
-  background: #2a2a28;
+  background: var(--primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
 }
@@ -846,7 +851,7 @@ body {
 }
 
 .send-btn {
-  background: var(--text);
+  background: var(--primary);
   border: none;
   border-radius: 8px;
   width: 44px;
@@ -855,13 +860,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--primary-text);
   transition: all 0.2s;
   flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
-  background: #333331;
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -928,9 +933,9 @@ body {
 }
 
 .new-session-btn:hover {
-  background: var(--text);
-  border-color: var(--text);
-  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
 }
 
 .sessions-body {
