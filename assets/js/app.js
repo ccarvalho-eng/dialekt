@@ -185,6 +185,12 @@ Hooks.TextToSpeech = {
       'zu': 'zu-ZA'    // Zulu - South Africa
     }
 
+    // Languages with verified good Web Speech API support
+    const verifiedLanguages = new Set([
+      'en', 'es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'zh',
+      'ru', 'ar', 'hi', 'nl', 'pl', 'sv'
+    ])
+
     this.handleClick = () => {
       const text = this.el.dataset.text
       const langCode = this.el.dataset.lang
