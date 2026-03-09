@@ -191,6 +191,19 @@ Hooks.TextToSpeech = {
       'ru', 'ar', 'hi', 'nl', 'pl', 'sv'
     ])
 
+    // Check if this language is verified and set data attribute
+    const langCode = this.el.dataset.lang
+    const isVerified = verifiedLanguages.has(langCode)
+
+    // Set verification status for CSS styling
+    if (isVerified) {
+      this.el.dataset.verified = 'true'
+      this.el.title = 'Listen'
+    } else {
+      this.el.dataset.verified = 'false'
+      this.el.title = 'Listen (quality may vary)'
+    }
+
     this.handleClick = () => {
       const text = this.el.dataset.text
       const langCode = this.el.dataset.lang
