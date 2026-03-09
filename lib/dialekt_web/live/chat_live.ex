@@ -593,7 +593,21 @@ defmodule DialektWeb.ChatLive do
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               In {@target && @target.name}:
             </div>
-            <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(@parsed.you.phrase)) %></div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="font-size: 0.9rem; flex: 1;" phx-no-format><%= raw(format_bold(@parsed.you.phrase)) %></div>
+              <button
+                phx-hook="TextToSpeech"
+                data-text={@parsed.you.phrase}
+                data-lang={@target && @target.code}
+                type="button"
+                style="background: none; border: none; cursor: pointer; padding: 4px; font-size: 1rem; opacity: 0.6; transition: opacity 0.2s;"
+                onmouseover="this.style.opacity='1'"
+                onmouseout="this.style.opacity='0.6'"
+                title="Listen"
+              >
+                🔊
+              </button>
+            </div>
             <%= if @parsed.you.ipa != "" do %>
               <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
                 [{@parsed.you.ipa}] {@parsed.you.roman != "" && "(#{@parsed.you.roman})"}
