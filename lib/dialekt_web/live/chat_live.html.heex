@@ -70,7 +70,11 @@
       </div>
     </header>
 
-    <div class={["chat-body", @messages == [] && "chat-body-empty"]}>
+    <div
+      class={["chat-body", @messages == [] && "chat-body-empty"]}
+      phx-hook="ChatScroll"
+      id="chat-messages"
+    >
       <%= if @messages == [] do %>
         <div class="empty">
           <div class="empty-flag">{@target && @target.flag}</div>

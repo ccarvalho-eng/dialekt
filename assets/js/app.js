@@ -42,6 +42,20 @@ Hooks.ChatInput = {
   }
 }
 
+Hooks.ChatScroll = {
+  mounted() {
+    this.scrollToBottom()
+  },
+
+  updated() {
+    this.scrollToBottom()
+  },
+
+  scrollToBottom() {
+    this.el.scrollTop = this.el.scrollHeight
+  }
+}
+
 Hooks.ConfigNameInput = {
   mounted() {
     this.el.addEventListener("keydown", (e) => {
