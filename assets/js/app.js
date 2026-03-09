@@ -146,6 +146,11 @@ Hooks.TextToSpeech = {
       // Speak the text
       window.speechSynthesis.speak(utterance)
     })
+  },
+
+  destroyed() {
+    // Cancel any ongoing speech when element is removed
+    window.speechSynthesis.cancel()
   }
 }
 
