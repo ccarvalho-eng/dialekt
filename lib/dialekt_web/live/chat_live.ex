@@ -593,15 +593,15 @@ defmodule DialektWeb.ChatLive do
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               In {@target && @target.name}:
             </div>
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <div style="font-size: 0.9rem; flex: 1;" phx-no-format><%= raw(format_bold(@parsed.you.phrase)) %></div>
+            <div style="font-size: 0.9rem;" phx-no-format>
+              <%= raw(format_bold(@parsed.you.phrase)) %>
               <button
                 id={"tts-you-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
                 phx-hook="TextToSpeech"
                 data-text={@parsed.you.phrase}
                 data-lang={@target && @target.code}
                 type="button"
-                style="background: none; border: none; cursor: pointer; padding: 4px; opacity: 0.6; transition: opacity 0.2s;"
+                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.6'"
                 title="Listen"
@@ -629,17 +629,32 @@ defmodule DialektWeb.ChatLive do
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               Tutor:
             </div>
-            <%= for line <- @parsed.tutor do %>
+            <%= for {line, idx} <- Enum.with_index(@parsed.tutor) do %>
               <div style="margin-bottom: 8px;">
-                <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(line.phrase)) %></div>
+                <div style="font-size: 0.9rem;" phx-no-format>
+                  <%= raw(format_bold(line.phrase)) %>
+                  <button
+                    id={"tts-tutor-#{DateTime.to_unix(@msg.timestamp, :microsecond)}-#{idx}"}
+                    phx-hook="TextToSpeech"
+                    data-text={line.phrase}
+                    data-lang={@target && @target.code}
+                    type="button"
+                    style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
+                    onmouseover="this.style.opacity='1'"
+                    onmouseout="this.style.opacity='0.6'"
+                    title="Listen"
+                  >
+                    <.icon name="hero-speaker-wave" class="size-4" />
+                  </button>
+                </div>
                 <%= if line.ipa != "" do %>
                   <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                    [{line.ipa}] {line.roman != "" && "(#{line.roman})"}
+                    [{line.ipa}] {if line.roman != "", do: "(#{line.roman})"}
                   </div>
                 <% end %>
                 <%= if line.translation != "" do %>
                   <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                    {line.translation}
+                    <%= line.translation %>
                   </div>
                 <% end %>
               </div>
@@ -651,16 +666,31 @@ defmodule DialektWeb.ChatLive do
             <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
               Follow-up:
             </div>
-            <div style="font-size: 0.9rem;" phx-no-format><%= raw(format_bold(@parsed.followup.phrase)) %></div>
+            <div style="font-size: 0.9rem;" phx-no-format>
+              <%= raw(format_bold(@parsed.followup.phrase)) %>
+              <button
+                id={"tts-followup-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
+                phx-hook="TextToSpeech"
+                data-text={@parsed.followup.phrase}
+                data-lang={@target && @target.code}
+                type="button"
+                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
+                onmouseover="this.style.opacity='1'"
+                onmouseout="this.style.opacity='0.6'"
+                title="Listen"
+              >
+                <.icon name="hero-speaker-wave" class="size-4" />
+              </button>
+            </div>
             <%= if @parsed.followup.ipa != "" do %>
               <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                [{@parsed.followup.ipa}] {@parsed.followup.roman != "" &&
-                  "(#{@parsed.followup.roman})"}
+                [{@parsed.followup.ipa}] {if @parsed.followup.roman != "",
+                  do: "(#{@parsed.followup.roman})"}
               </div>
             <% end %>
             <%= if @parsed.followup.translation != "" do %>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                {@parsed.followup.translation}
+                <%= @parsed.followup.translation %>
               </div>
             <% end %>
           </div>
