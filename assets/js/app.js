@@ -100,6 +100,55 @@ Hooks.ThemeManager = {
   }
 }
 
+Hooks.TextToSpeech = {
+  mounted() {
+    // Check if speech synthesis is supported
+    if (!window.speechSynthesis) {
+      this.el.style.display = 'none'
+      return
+    }
+
+    // Language code mapping (2-letter to locale)
+    const langMap = {
+      'en': 'en-US',
+      'es': 'es-ES',
+      'fr': 'fr-FR',
+      'de': 'de-DE',
+      'pt': 'pt-BR',
+      'zh': 'zh-CN',
+      'ja': 'ja-JP',
+      'ar': 'ar-SA',
+      'ru': 'ru-RU',
+      'hi': 'hi-IN',
+      'ko': 'ko-KR',
+      'it': 'it-IT'
+    }
+
+    this.el.addEventListener('click', () => {
+      const text = this.el.dataset.text
+      const langCode = this.el.dataset.lang
+
+      if (!text || !langCode) return
+
+      // Stop any ongoing speech
+      window.speechSynthesis.cancel()
+
+      // Create utterance with mapped language
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = langMap[langCode] || langCode
+
+      // Optional: Add visual feedback
+      this.el.style.opacity = '0.6'
+      utterance.onend = () => {
+        this.el.style.opacity = '1'
+      }
+
+      // Speak the text
+      window.speechSynthesis.speak(utterance)
+    })
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
