@@ -5,168 +5,168 @@ defmodule DialektWeb.ChatLive do
   alias Dialekt.Learning
   alias Dialekt.Tutor
 
-  @starters %{
+  @hardcoded_starters %{
     "en" => [
       "Hello, how are you?",
-      "Where is the nearest café?",
-      "I'd like to order, please.",
-      "What time does the museum open?",
-      "How much does this cost?",
-      "Can you recommend a good restaurant?",
-      "I'm looking for the bathroom.",
-      "Do you speak English?",
-      "I need help with directions.",
-      "What's the weather like today?"
+      "How's your day going?",
+      "Nice to meet you!",
+      "What's your name?",
+      "How have you been?",
+      "What did you do today?",
+      "Good morning!",
+      "How are things?",
+      "What's new?",
+      "Great to see you!"
     ],
     "es" => [
       "Hola, ¿cómo estás?",
-      "¿Dónde está el café más cercano?",
-      "Me gustaría pedir algo.",
-      "¿A qué hora abre el museo?",
-      "¿Cuánto cuesta esto?",
-      "¿Puedes recomendar un buen restaurante?",
-      "Estoy buscando el baño.",
-      "¿Hablas español?",
-      "Necesito ayuda con direcciones.",
-      "¿Qué tiempo hace hoy?"
+      "¿Cómo va tu día?",
+      "¡Mucho gusto!",
+      "¿Cómo te llamas?",
+      "¿Qué tal todo?",
+      "¿Qué hiciste hoy?",
+      "¡Buenos días!",
+      "¿Cómo te va?",
+      "¿Qué hay de nuevo?",
+      "¡Encantado de verte!"
     ],
     "fr" => [
-      "Bonjour, comment allez-vous?",
-      "Où est le café le plus proche?",
-      "Je voudrais commander.",
-      "À quelle heure ouvre le musée?",
-      "Combien ça coûte?",
-      "Pouvez-vous recommander un bon restaurant?",
-      "Je cherche les toilettes.",
-      "Parlez-vous français?",
-      "J'ai besoin d'aide pour les directions.",
-      "Quel temps fait-il aujourd'hui?"
+      "Bonjour, comment ça va?",
+      "Comment se passe ta journée?",
+      "Enchanté!",
+      "Comment tu t'appelles?",
+      "Comment vas-tu?",
+      "Qu'as-tu fait aujourd'hui?",
+      "Bonjour!",
+      "Comment ça se passe?",
+      "Quoi de neuf?",
+      "Ravi de te voir!"
     ],
     "de" => [
-      "Hallo, wie geht es Ihnen?",
-      "Wo ist das nächste Café?",
-      "Ich möchte etwas bestellen.",
-      "Wann öffnet das Museum?",
-      "Wie viel kostet das?",
-      "Können Sie ein gutes Restaurant empfehlen?",
-      "Ich suche die Toilette.",
-      "Sprechen Sie Deutsch?",
-      "Ich brauche Hilfe mit der Wegbeschreibung.",
-      "Wie ist das Wetter heute?"
+      "Hallo, wie geht's?",
+      "Wie läuft dein Tag?",
+      "Freut mich!",
+      "Wie heißt du?",
+      "Wie geht es dir?",
+      "Was hast du heute gemacht?",
+      "Guten Morgen!",
+      "Wie läuft's?",
+      "Was gibt's Neues?",
+      "Schön dich zu sehen!"
     ],
     "pt" => [
-      "Olá, como vai você?",
-      "Onde fica o café mais próximo?",
-      "Gostaria de pedir, por favor.",
-      "A que horas abre o museu?",
-      "Quanto custa isso?",
-      "Pode recomendar um bom restaurante?",
-      "Estou procurando o banheiro.",
-      "Você fala português?",
-      "Preciso de ajuda com direções.",
-      "Como está o tempo hoje?"
+      "Olá, como vai?",
+      "Como está seu dia?",
+      "Prazer em conhecer!",
+      "Qual é seu nome?",
+      "Como você está?",
+      "O que você fez hoje?",
+      "Bom dia!",
+      "Como vão as coisas?",
+      "O que há de novo?",
+      "Que bom te ver!"
     ],
     "zh" => [
       "你好，你好吗？",
-      "最近的咖啡馆在哪里？",
-      "我想点餐。",
-      "博物馆几点开门？",
-      "这个多少钱？",
-      "你能推荐一家好餐厅吗？",
-      "我在找洗手间。",
-      "你会说中文吗？",
-      "我需要问路。",
-      "今天天气怎么样？"
+      "你今天怎么样？",
+      "很高兴认识你！",
+      "你叫什么名字？",
+      "你最近怎么样？",
+      "你今天做了什么？",
+      "早上好！",
+      "一切都好吗？",
+      "有什么新鲜事吗？",
+      "见到你真好！"
     ],
     "ja" => [
-      "こんにちは、お元気ですか？",
-      "一番近いカフェはどこですか？",
-      "注文したいのですが。",
-      "博物館は何時に開きますか？",
-      "これはいくらですか？",
-      "良いレストランをおすすめできますか？",
-      "トイレを探しています。",
-      "日本語を話せますか？",
-      "道順を教えてください。",
-      "今日の天気はどうですか？"
+      "こんにちは、元気ですか？",
+      "今日はどうですか？",
+      "はじめまして！",
+      "お名前は何ですか？",
+      "最近どうですか？",
+      "今日は何をしましたか？",
+      "おはようございます！",
+      "調子はどうですか？",
+      "何か新しいことはありますか？",
+      "会えて嬉しいです！"
     ],
     "ar" => [
-      "مرحباً، كيف حالك؟",
-      "أين أقرب مقهى؟",
-      "أريد أن أطلب من فضلك.",
-      "متى يفتح المتحف؟",
-      "كم سعر هذا؟",
-      "هل يمكنك أن توصي بمطعم جيد؟",
-      "أبحث عن الحمام.",
-      "هل تتكلم العربية؟",
-      "أحتاج مساعدة في الاتجاهات.",
-      "كيف الطقس اليوم؟"
+      "مرحبا، كيف حالك؟",
+      "كيف يومك؟",
+      "تشرفنا!",
+      "ما اسمك؟",
+      "كيف كنت؟",
+      "ماذا فعلت اليوم؟",
+      "صباح الخير!",
+      "كيف الأحوال؟",
+      "ما الجديد؟",
+      "سعيد برؤيتك!"
     ],
     "ru" => [
-      "Здравствуйте, как вы?",
-      "Где ближайшее кафе?",
-      "Я хотел бы сделать заказ.",
-      "Во сколько открывается музей?",
-      "Сколько это стоит?",
-      "Можете порекомендовать хороший ресторан?",
-      "Я ищу туалет.",
-      "Вы говорите по-русски?",
-      "Мне нужна помощь с направлениями.",
-      "Какая сегодня погода?"
+      "Привет, как дела?",
+      "Как твой день?",
+      "Приятно познакомиться!",
+      "Как тебя зовут?",
+      "Как ты?",
+      "Что ты делал сегодня?",
+      "Доброе утро!",
+      "Как жизнь?",
+      "Что нового?",
+      "Рад тебя видеть!"
+    ],
+    "hi" => [
+      "नमस्ते, कैसे हो?",
+      "आपका दिन कैसा है?",
+      "आपसे मिलकर खुशी हुई!",
+      "आपका नाम क्या है?",
+      "आप कैसे हैं?",
+      "आपने आज क्या किया?",
+      "सुप्रभात!",
+      "सब कैसा चल रहा है?",
+      "क्या नया है?",
+      "आपको देखकर अच्छा लगा!"
     ],
     "ko" => [
       "안녕하세요, 어떻게 지내세요?",
-      "가장 가까운 카페는 어디인가요?",
-      "주문하고 싶어요.",
-      "박물관은 몇 시에 열어요?",
-      "이거 얼마예요?",
-      "좋은 식당을 추천해 주실 수 있나요?",
-      "화장실을 찾고 있어요.",
-      "한국어 할 수 있어요?",
-      "길 안내가 필요해요.",
-      "오늘 날씨가 어때요?"
-    ],
-    "hi" => [
-      "नमस्ते, आप कैसे हैं?",
-      "निकटतम कैफे कहाँ है?",
-      "मैं ऑर्डर करना चाहता हूँ।",
-      "संग्रहालय कब खुलता है?",
-      "यह कितने का है?",
-      "क्या आप एक अच्छे रेस्तरां की सिफारिश कर सकते हैं?",
-      "मैं बाथरूम ढूंढ रहा हूँ।",
-      "क्या आप हिंदी बोलते हैं?",
-      "मुझे दिशा-निर्देश में मदद चाहिए।",
-      "आज मौसम कैसा है?"
+      "오늘 어떠세요?",
+      "만나서 반갑습니다!",
+      "이름이 뭐예요?",
+      "요즘 어떻게 지내요?",
+      "오늘 뭐 했어요?",
+      "좋은 아침이에요!",
+      "어떻게 지내요?",
+      "무슨 일 있어요?",
+      "만나서 기뻐요!"
     ],
     "it" => [
-      "Buongiorno, come stai?",
-      "Dov'è il caffè più vicino?",
-      "Vorrei ordinare, per favore.",
-      "A che ora apre il museo?",
-      "Quanto costa questo?",
-      "Puoi consigliare un buon ristorante?",
-      "Sto cercando il bagno.",
-      "Parli italiano?",
-      "Ho bisogno di aiuto con le indicazioni.",
-      "Che tempo fa oggi?"
+      "Ciao, come stai?",
+      "Come va la tua giornata?",
+      "Piacere di conoscerti!",
+      "Come ti chiami?",
+      "Come stai?",
+      "Cosa hai fatto oggi?",
+      "Buongiorno!",
+      "Come vanno le cose?",
+      "Cosa c'è di nuovo?",
+      "Felice di vederti!"
     ]
   }
 
   @default_starters [
     "Hello, how are you?",
-    "Where is the train station?",
-    "I'd like to order, please.",
-    "What time does the museum open?",
-    "How much does this cost?",
-    "Can you recommend a good restaurant?",
-    "I'm looking for the bathroom.",
-    "Do you speak English?",
-    "I need help with directions.",
-    "What's the weather like today?"
+    "How's your day going?",
+    "Nice to meet you!",
+    "What's your name?",
+    "How have you been?",
+    "What did you do today?",
+    "Good morning!",
+    "How are things?",
+    "What's new?",
+    "Great to see you!"
   ]
 
   @impl true
-  def mount(params, session, socket) do
+  def mount(params, _session, socket) do
     session_id = params["session_id"]
     theme = get_connect_params(socket)["theme"] || "light"
 
@@ -191,7 +191,8 @@ defmodule DialektWeb.ChatLive do
 
       messages = convert_persisted_messages(session.messages)
 
-      send(self(), :fetch_starters)
+      # Get initial starters (cached, hardcoded, or trigger AI)
+      starters = get_initial_starters(config, native)
 
       # Get all sessions for this config
       all_sessions = Learning.list_sessions_for_config(config.id)
@@ -206,7 +207,7 @@ defmodule DialektWeb.ChatLive do
          register: register,
          messages: messages,
          input: "",
-         starters: get_random_starters(native),
+         starters: starters,
          all_sessions: all_sessions,
          deleting_session_id: nil
        )}
@@ -244,9 +245,13 @@ defmodule DialektWeb.ChatLive do
         {nil, nil, []}
       end
 
-    if native && target && level do
-      send(self(), :fetch_starters)
-    end
+    # Get initial starters (cached, hardcoded, or trigger AI)
+    starters =
+      if config && native do
+        get_initial_starters(config, native)
+      else
+        []
+      end
 
     {:ok,
      assign(socket,
@@ -258,7 +263,7 @@ defmodule DialektWeb.ChatLive do
        register: register,
        messages: [],
        input: "",
-       starters: get_random_starters(native),
+       starters: starters,
        all_sessions: all_sessions,
        deleting_session_id: nil
      )}
@@ -457,10 +462,24 @@ defmodule DialektWeb.ChatLive do
            socket.assigns.level
          ) do
       {:ok, starters} ->
+        # Cache AI-generated starters to config for future sessions
+        if socket.assigns.config do
+          Learning.update_config_starters(socket.assigns.config, starters)
+        end
+
         {:noreply, assign(socket, starters: starters)}
 
       {:error, _error} ->
-        {:noreply, socket}
+        # On error, fallback to default starters if available
+        fallback_starters =
+          if socket.assigns.native &&
+               Map.has_key?(@hardcoded_starters, socket.assigns.native.code) do
+            get_random_starters(socket.assigns.native)
+          else
+            Enum.take(@default_starters, 3)
+          end
+
+        {:noreply, assign(socket, starters: fallback_starters)}
     end
   end
 
@@ -651,10 +670,30 @@ defmodule DialektWeb.ChatLive do
     |> String.replace(~r/\*\*(.+?)\*\*/, "<strong>\\1</strong>")
   end
 
+  defp get_initial_starters(config, native) do
+    cond do
+      # If config has cached starters, use them
+      config.starters && length(config.starters) > 0 ->
+        config.starters
+
+      # If native language has hardcoded starters, use them and cache
+      native && Map.has_key?(@hardcoded_starters, native.code) ->
+        starters = get_random_starters(native)
+        # Cache hardcoded starters to config
+        Learning.update_config_starters(config, starters)
+        starters
+
+      # No hardcoded or cached, trigger AI generation
+      true ->
+        send(self(), :fetch_starters)
+        []
+    end
+  end
+
   defp get_random_starters(native) do
     all_starters =
-      if native && Map.has_key?(@starters, native.code) do
-        @starters[native.code]
+      if native && Map.has_key?(@hardcoded_starters, native.code) do
+        @hardcoded_starters[native.code]
       else
         @default_starters
       end

@@ -8,7 +8,7 @@ defmodule Dialekt.Learning.Config do
   alias Dialekt.Learning.ChatSession
 
   @required_fields ~w(name native_language_code target_language_code cefr_level_code register_code)a
-  @optional_fields ~w()a
+  @optional_fields ~w(starters)a
 
   schema "learning_configs" do
     field(:name, :string)
@@ -16,6 +16,7 @@ defmodule Dialekt.Learning.Config do
     field(:target_language_code, :string)
     field(:cefr_level_code, :string)
     field(:register_code, :string)
+    field(:starters, {:array, :string}, default: [])
 
     has_many(:chat_sessions, ChatSession)
 

@@ -81,16 +81,22 @@
             if you're not ready yet.
           </p>
           <div class="starters">
-            <%= for starter <- @starters do %>
-              <button
-                type="button"
-                class="starter"
-                phx-click="send_starter"
-                phx-value-text={starter}
-                phx-disable-with="..."
-              >
-                {starter}
-              </button>
+            <%= if Enum.empty?(@starters) do %>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">
+                Loading suggestions...
+              </p>
+            <% else %>
+              <%= for starter <- @starters do %>
+                <button
+                  type="button"
+                  class="starter"
+                  phx-click="send_starter"
+                  phx-value-text={starter}
+                  phx-disable-with="..."
+                >
+                  {starter}
+                </button>
+              <% end %>
             <% end %>
           </div>
 

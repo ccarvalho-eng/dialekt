@@ -47,6 +47,17 @@ defmodule Dialekt.Learning do
   end
 
   @doc """
+  Updates the conversation starters for a config.
+  """
+  @spec update_config_starters(Config.t(), list(String.t())) ::
+          {:ok, Config.t()} | {:error, Ecto.Changeset.t()}
+  def update_config_starters(%Config{} = config, starters) do
+    config
+    |> change(starters: starters)
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a learning config.
   """
   @spec delete_config(Config.t()) :: {:ok, Config.t()} | {:error, Ecto.Changeset.t()}

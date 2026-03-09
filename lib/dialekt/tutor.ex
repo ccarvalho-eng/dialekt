@@ -139,17 +139,17 @@ defmodule Dialekt.Tutor do
       {:error, "API key not configured"}
     else
       prompt = """
-      Generate exactly 3 conversation starter phrases that a #{native.name} speaker learning #{target.name} at #{level.code} level might want to say.
+      Generate exactly 3 short conversation starter questions in #{native.name} for someone learning #{target.name} at #{level.code} level.
 
       Return ONLY a JSON array of strings, nothing else:
       ["phrase 1", "phrase 2", "phrase 3"]
 
       Requirements:
-      - Phrases in #{native.name}
-      - Practical, common travel/daily situations
-      - Appropriate for #{level.code} level learners
-      - Natural, conversational tone
-      - Each phrase should be different in topic
+      - Very short greetings or simple questions (like "Hi, how are you?" or "How's your day?")
+      - NEVER use personal names or identity statements
+      - NEVER ask a question and then answer it in the same phrase
+      - Just brief, natural conversation starters
+      - Each phrase should be different
       """
 
       body = %{
