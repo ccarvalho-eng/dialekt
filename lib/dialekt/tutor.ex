@@ -411,12 +411,8 @@ defmodule Dialekt.Tutor do
             }
 
           nil ->
-            # Fallback: just return the text as phrase if it doesn't match header patterns
-            if !Regex.match?(~r/^(You|Tutor|Follow-up|Note|Tips):/i, text) && text != "" do
-              %{phrase: text, ipa: "", roman: "", translation: ""}
-            else
-              nil
-            end
+            # Not a phrase line - return nil so it can be treated as translation
+            nil
         end
     end
   end
