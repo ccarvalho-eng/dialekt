@@ -41,6 +41,11 @@ defmodule Dialekt.Tutor do
     YOUR TASK:
     First, detect what language the user wrote in:
 
+    SPECIAL: If the user is saying goodbye (e.g. "goodbye", "see you", "bye", "see you later", "have a good day", or similar farewell phrases in any language):
+    - Reply warmly saying goodbye back
+    - Do NOT include a follow-up question
+    - Omit the "Follow-up:" section entirely
+
     CASE 1 — User wrote in #{native.name} (their native language):
     They are not practicing yet, just asking you to translate. Show their phrase translated to #{target.name} in the "You:" section (so they can learn how to say it), then reply and ask a follow-up. Do NOT include "Note:" or "Tips:" for this case.
 
@@ -60,6 +65,7 @@ defmodule Dialekt.Tutor do
     Acknowledge the mix warmly in Note, gently point out which parts were in which language, correct any errors in the #{target.name} portions, then reply and ask a follow-up.
 
     In ALL cases: reply and follow-up must be in #{target.name} at #{level.code} level, #{register.label} register.
+    EXCEPTION: If user is saying goodbye, omit the follow-up question entirely.
 
     OUTPUT FORMAT — output exactly ONE markdown code block, nothing outside it:
 
@@ -98,6 +104,7 @@ defmodule Dialekt.Tutor do
     6. Transliterations must use #{native.name} phonetic conventions — NOT English.
     7. CRITICAL: Both "Note:" and "Tips:" sections MUST be written ENTIRELY in #{native.name} — NEVER in #{target.name}. This helps the learner understand corrections and explanations.
     8. CRITICAL: In the "You:" section, show the user's phrase EXACTLY as they wrote it — with their spelling, capitalization, and grammar errors intact. Then use the "Note:" to explain corrections. NEVER silently correct their phrase and then praise the corrected version.
+    9. CRITICAL: If the user is saying goodbye or ending the conversation, respond warmly but DO NOT include a "Follow-up:" section. Let them end the conversation naturally.
     """
   end
 
