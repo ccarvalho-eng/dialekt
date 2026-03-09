@@ -8,9 +8,16 @@ defmodule DialektWeb.DashboardLive do
     configs = Learning.list_configs()
     theme = get_connect_params(socket)["theme"] || "light"
 
+    # Pre-fetch all sessions for each config
+    sessions_by_config =
+      Map.new(configs, fn config ->
+        {config.id, Learning.list_sessions_for_config(config.id)}
+      end)
+
     {:ok,
      assign(socket,
        configs: configs,
+       sessions_by_config: sessions_by_config,
        show_form: Enum.empty?(configs),
        editing_config_id: nil,
        edit_name: "",
@@ -41,12 +48,18 @@ defmodule DialektWeb.DashboardLive do
       config = Learning.get_config!(socket.assigns.deleting_config_id)
       {:ok, _} = Learning.delete_config(config)
 
-      # Refresh the configs list
+      # Refresh configs and sessions
       configs = Learning.list_configs()
+
+      sessions_by_config =
+        Map.new(configs, fn config ->
+          {config.id, Learning.list_sessions_for_config(config.id)}
+        end)
 
       {:noreply,
        assign(socket,
          configs: configs,
+         sessions_by_config: sessions_by_config,
          show_form: Enum.empty?(configs),
          deleting_config_id: nil
        )}
@@ -153,7 +166,20 @@ defmodule DialektWeb.DashboardLive do
       session = Learning.get_session!(socket.assigns.deleting_session_id)
       {:ok, _} = Learning.delete_session(session)
 
-      {:noreply, assign(socket, deleting_session_id: nil)}
+      # Refresh configs and sessions
+      configs = Learning.list_configs()
+
+      sessions_by_config =
+        Map.new(configs, fn config ->
+          {config.id, Learning.list_sessions_for_config(config.id)}
+        end)
+
+      {:noreply,
+       assign(socket,
+         configs: configs,
+         sessions_by_config: sessions_by_config,
+         deleting_session_id: nil
+       )}
     else
       {:noreply, socket}
     end
