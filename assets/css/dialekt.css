@@ -704,9 +704,9 @@ body {
 }
 
 .starter:hover {
-  border-color: var(--text);
-  background: var(--text);
-  color: #fff;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-text);
 }
 
 /* Empty State Input */
@@ -750,7 +750,7 @@ body {
 }
 
 .user-bubble {
-  background: var(--text);
+  background: var(--primary);
   border-radius: 8px;
   padding: 11px 15px;
   max-width: 72%;
@@ -767,7 +767,7 @@ body {
 
 .user-text {
   font-size: 0.9rem;
-  color: #fff;
+  color: var(--primary-text);
   line-height: 1.55;
 }
 
