@@ -108,20 +108,81 @@ Hooks.TextToSpeech = {
       return
     }
 
-    // Language code mapping (2-letter to locale)
-    const langMap = {
-      'en': 'en-US',
+    // Complete language to locale mapping (70 languages)
+    // Matches flag country codes from dialekt/languages.ex
+    const langToLocale = {
+      // Verified languages (15) - known good Web Speech API support
+      'en': 'en-GB',
       'es': 'es-ES',
       'fr': 'fr-FR',
       'de': 'de-DE',
+      'it': 'it-IT',
       'pt': 'pt-BR',
-      'zh': 'zh-CN',
       'ja': 'ja-JP',
-      'ar': 'ar-SA',
-      'ru': 'ru-RU',
-      'hi': 'hi-IN',
       'ko': 'ko-KR',
-      'it': 'it-IT'
+      'zh': 'zh-CN',
+      'ru': 'ru-RU',
+      'ar': 'ar-SA',
+      'hi': 'hi-IN',
+      'nl': 'nl-NL',
+      'pl': 'pl-PL',
+      'sv': 'sv-SE',
+
+      // Additional languages (55+)
+      'af': 'af-ZA',   // Afrikaans - South Africa
+      'sq': 'sq-AL',   // Albanian - Albania
+      'hy': 'hy-AM',   // Armenian - Armenia
+      'az': 'az-AZ',   // Azerbaijani - Azerbaijan
+      'bn': 'bn-BD',   // Bengali - Bangladesh
+      'bs': 'bs-BA',   // Bosnian - Bosnia
+      'bg': 'bg-BG',   // Bulgarian - Bulgaria
+      'ca': 'ca-ES',   // Catalan - Spain
+      'hr': 'hr-HR',   // Croatian - Croatia
+      'cs': 'cs-CZ',   // Czech - Czech Republic
+      'da': 'da-DK',   // Danish - Denmark
+      'et': 'et-EE',   // Estonian - Estonia
+      'fi': 'fi-FI',   // Finnish - Finland
+      'ka': 'ka-GE',   // Georgian - Georgia
+      'el': 'el-GR',   // Greek - Greece
+      'gu': 'gu-IN',   // Gujarati - India
+      'ht': 'ht-HT',   // Haitian Creole - Haiti
+      'he': 'he-IL',   // Hebrew - Israel
+      'hu': 'hu-HU',   // Hungarian - Hungary
+      'is': 'is-IS',   // Icelandic - Iceland
+      'id': 'id-ID',   // Indonesian - Indonesia
+      'ga': 'ga-IE',   // Irish - Ireland
+      'kn': 'kn-IN',   // Kannada - India
+      'kk': 'kk-KZ',   // Kazakh - Kazakhstan
+      'km': 'km-KH',   // Khmer - Cambodia
+      'lv': 'lv-LV',   // Latvian - Latvia
+      'lt': 'lt-LT',   // Lithuanian - Lithuania
+      'mk': 'mk-MK',   // Macedonian - North Macedonia
+      'ms': 'ms-MY',   // Malay - Malaysia
+      'ml': 'ml-IN',   // Malayalam - India
+      'mt': 'mt-MT',   // Maltese - Malta
+      'mr': 'mr-IN',   // Marathi - India
+      'mn': 'mn-MN',   // Mongolian - Mongolia
+      'ne': 'ne-NP',   // Nepali - Nepal
+      'nb': 'nb-NO',   // Norwegian - Norway
+      'fa': 'fa-IR',   // Persian - Iran
+      'pa': 'pa-IN',   // Punjabi - India
+      'ro': 'ro-RO',   // Romanian - Romania
+      'sr': 'sr-RS',   // Serbian - Serbia
+      'sk': 'sk-SK',   // Slovak - Slovakia
+      'sl': 'sl-SI',   // Slovenian - Slovenia
+      'so': 'so-SO',   // Somali - Somalia
+      'sw': 'sw-KE',   // Swahili - Kenya
+      'tl': 'tl-PH',   // Tagalog - Philippines
+      'ta': 'ta-IN',   // Tamil - India
+      'te': 'te-IN',   // Telugu - India
+      'th': 'th-TH',   // Thai - Thailand
+      'tr': 'tr-TR',   // Turkish - Turkey
+      'uk': 'uk-UA',   // Ukrainian - Ukraine
+      'ur': 'ur-PK',   // Urdu - Pakistan
+      'uz': 'uz-UZ',   // Uzbek - Uzbekistan
+      'vi': 'vi-VN',   // Vietnamese - Vietnam
+      'cy': 'cy-GB',   // Welsh - Wales (uses GB)
+      'zu': 'zu-ZA'    // Zulu - South Africa
     }
 
     this.handleClick = () => {
@@ -135,7 +196,7 @@ Hooks.TextToSpeech = {
 
       // Create utterance with mapped language
       const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = langMap[langCode] || langCode
+      utterance.lang = langToLocale[langCode] || langCode
 
       // Optional: Add visual feedback
       this.el.style.opacity = '0.6'
