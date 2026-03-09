@@ -604,7 +604,6 @@ defmodule DialektWeb.ChatLive do
                 style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.6'"
-                title="Listen"
               >
                 <.icon name="hero-speaker-wave" class="size-4" />
               </button>
@@ -642,7 +641,6 @@ defmodule DialektWeb.ChatLive do
                     style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
                     onmouseover="this.style.opacity='1'"
                     onmouseout="this.style.opacity='0.6'"
-                    title="Listen"
                   >
                     <.icon name="hero-speaker-wave" class="size-4" />
                   </button>
@@ -654,7 +652,7 @@ defmodule DialektWeb.ChatLive do
                 <% end %>
                 <%= if line.translation != "" do %>
                   <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                    <%= line.translation %>
+                    {line.translation}
                   </div>
                 <% end %>
               </div>
@@ -677,7 +675,6 @@ defmodule DialektWeb.ChatLive do
                 style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.6'"
-                title="Listen"
               >
                 <.icon name="hero-speaker-wave" class="size-4" />
               </button>
@@ -690,7 +687,7 @@ defmodule DialektWeb.ChatLive do
             <% end %>
             <%= if @parsed.followup.translation != "" do %>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                <%= @parsed.followup.translation %>
+                {@parsed.followup.translation}
               </div>
             <% end %>
           </div>
