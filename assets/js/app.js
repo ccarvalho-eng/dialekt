@@ -223,6 +223,11 @@ Hooks.TextToSpeech = {
         this.el.style.opacity = '1'
       }
 
+      utterance.onerror = (event) => {
+        console.error('TTS error:', event)
+        this.el.style.opacity = '1'
+      }
+
       // Speak the text
       window.speechSynthesis.speak(utterance)
     }
