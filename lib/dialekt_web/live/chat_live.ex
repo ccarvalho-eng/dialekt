@@ -596,6 +596,7 @@ defmodule DialektWeb.ChatLive do
             <div style="display: flex; align-items: center; gap: 8px;">
               <div style="font-size: 0.9rem; flex: 1;" phx-no-format><%= raw(format_bold(@parsed.you.phrase)) %></div>
               <button
+                id={"tts-you-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
                 phx-hook="TextToSpeech"
                 data-text={@parsed.you.phrase}
                 data-lang={@target && @target.code}
