@@ -1,0 +1,11 @@
+/* TTS Speaker Button Styles */
+
+/* Hide warning indicator by default (for verified languages) */
+.tts-button[data-verified="true"] .tts-warning {
+  display: none;
+}
+
+/* Show warning indicator for unverified languages */
+.tts-button[data-verified="false"] .tts-warning {
+  display: inline-block;
+}
