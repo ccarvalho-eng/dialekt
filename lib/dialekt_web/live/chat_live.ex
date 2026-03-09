@@ -601,11 +601,13 @@ defmodule DialektWeb.ChatLive do
                 data-text={@parsed.you.phrase}
                 data-lang={@target && @target.code}
                 type="button"
-                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
+                class="tts-button"
+                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle; position: relative;"
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.6'"
               >
                 <.icon name="hero-speaker-wave" class="size-4" />
+                <span class="tts-warning" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.6rem;">⚠️</span>
               </button>
             </div>
             <%= if @parsed.you.ipa != "" do %>
@@ -638,11 +640,13 @@ defmodule DialektWeb.ChatLive do
                     data-text={line.phrase}
                     data-lang={@target && @target.code}
                     type="button"
-                    style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
+                    class="tts-button"
+                    style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle; position: relative;"
                     onmouseover="this.style.opacity='1'"
                     onmouseout="this.style.opacity='0.6'"
                   >
                     <.icon name="hero-speaker-wave" class="size-4" />
+                    <span class="tts-warning" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.6rem;">⚠️</span>
                   </button>
                 </div>
                 <%= if line.ipa != "" do %>
@@ -672,11 +676,13 @@ defmodule DialektWeb.ChatLive do
                 data-text={@parsed.followup.phrase}
                 data-lang={@target && @target.code}
                 type="button"
-                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle;"
+                class="tts-button"
+                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle; position: relative;"
                 onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.6'"
               >
                 <.icon name="hero-speaker-wave" class="size-4" />
+                <span class="tts-warning" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.6rem;">⚠️</span>
               </button>
             </div>
             <%= if @parsed.followup.ipa != "" do %>
