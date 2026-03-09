@@ -124,7 +124,7 @@ Hooks.TextToSpeech = {
       'it': 'it-IT'
     }
 
-    this.el.addEventListener('click', () => {
+    this.handleClick = () => {
       const text = this.el.dataset.text
       const langCode = this.el.dataset.lang
 
@@ -145,12 +145,17 @@ Hooks.TextToSpeech = {
 
       // Speak the text
       window.speechSynthesis.speak(utterance)
-    })
+    }
+
+    this.el.addEventListener('click', this.handleClick)
   },
 
   destroyed() {
     // Cancel any ongoing speech when element is removed
     window.speechSynthesis.cancel()
+    if (this.handleClick) {
+      this.el.removeEventListener('click', this.handleClick)
+    }
   }
 }
 
