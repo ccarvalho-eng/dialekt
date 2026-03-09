@@ -64,12 +64,14 @@
                   <%= if @editing_config_id == config.id do %>
                     <input
                       type="text"
-                      phx-blur="save_name"
-                      phx-value-config-id={config.id}
-                      phx-keydown="cancel_edit"
-                      phx-key="Escape"
+                      id={"config-name-#{config.id}"}
                       value={@edit_name}
                       phx-change="update_edit_name"
+                      phx-blur="save_name"
+                      phx-value-config-id={config.id}
+                      phx-hook="ConfigNameInput"
+                      data-config-id={config.id}
+                      name="value"
                       autofocus
                       style="flex: 1; font-family: var(--fd); font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--text); border: 1px solid var(--text); border-radius: 6px; padding: 6px 10px; outline: none; background: var(--surface);"
                     />

@@ -74,18 +74,48 @@ defmodule DialektWeb.DashboardLive do
 
   @impl true
   def handle_event("save_name", %{"config-id" => config_id}, socket) do
-    config = Learning.get_config!(String.to_integer(config_id))
-    {:ok, _} = Learning.update_config(config, %{name: socket.assigns.edit_name})
+    name = String.trim(socket.assigns.edit_name)
 
-    # Refresh configs and exit edit mode
-    configs = Learning.list_configs()
+    if name != "" do
+      config = Learning.get_config!(String.to_integer(config_id))
+      {:ok, _} = Learning.update_config(config, %{name: name})
 
-    {:noreply,
-     assign(socket,
-       configs: configs,
-       editing_config_id: nil,
-       edit_name: ""
-     )}
+      # Refresh configs and exit edit mode
+      configs = Learning.list_configs()
+
+      {:noreply,
+       assign(socket,
+         configs: configs,
+         editing_config_id: nil,
+         edit_name: ""
+       )}
+    else
+      # Don't save if name is empty, just cancel edit
+      {:noreply, assign(socket, editing_config_id: nil, edit_name: "")}
+    end
+  end
+
+  @impl true
+  def handle_event("save_name_with_value", %{"config-id" => config_id, "name" => name}, socket) do
+    name = String.trim(name)
+
+    if name != "" do
+      config = Learning.get_config!(String.to_integer(config_id))
+      {:ok, _} = Learning.update_config(config, %{name: name})
+
+      # Refresh configs and exit edit mode
+      configs = Learning.list_configs()
+
+      {:noreply,
+       assign(socket,
+         configs: configs,
+         editing_config_id: nil,
+         edit_name: ""
+       )}
+    else
+      # Don't save if name is empty, just cancel edit
+      {:noreply, assign(socket, editing_config_id: nil, edit_name: "")}
+    end
   end
 
   @impl true

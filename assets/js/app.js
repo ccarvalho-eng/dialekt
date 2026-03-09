@@ -42,6 +42,26 @@ Hooks.ChatInput = {
   }
 }
 
+Hooks.ConfigNameInput = {
+  mounted() {
+    this.el.addEventListener("keydown", (e) => {
+      const configId = this.el.dataset.configId
+
+      if (e.key === "Enter") {
+        e.preventDefault()
+        const value = this.el.value.trim()
+        this.pushEvent("save_name_with_value", {
+          "config-id": configId,
+          name: value
+        })
+      } else if (e.key === "Escape") {
+        e.preventDefault()
+        this.pushEvent("cancel_edit", {})
+      }
+    })
+  }
+}
+
 Hooks.ThemeManager = {
   mounted() {
     const savedTheme = localStorage.getItem("dialekt-theme") || "light"
