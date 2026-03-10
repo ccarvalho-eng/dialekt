@@ -1,6 +1,12 @@
 <div align="center">
 
-# ᛞ  Dialekt
+```
+       ██████  ██  █████  ██      ███████ ██   ██ ████████
+    ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+    ██   ██ ██ ███████ ██      █████   █████      ██
+    ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+    ██████  ██ ██   ██ ███████ ███████ ██   ██    ██
+```
 
 [![CI](https://img.shields.io/github/actions/workflow/status/ccarvalho-eng/dialekt/ci.yml?style=flat-square&logo=github-actions)](https://github.com/ccarvalho-eng/dialekt/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/ccarvalho-eng/dialekt?style=flat-square)](https://codecov.io/gh/ccarvalho-eng/dialekt)
