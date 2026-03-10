@@ -202,7 +202,7 @@ defmodule DialektWeb.DashboardLiveTest do
       |> render_change(%{value: "Changed Name"})
 
       # Press Escape
-      # TODO: Implement phx-window-keydown handler for Escape key
+      # NOTE: Requires phx-window-keydown handler for Escape key
       view
       |> element("input")
       |> render_keydown(%{key: "Escape"})

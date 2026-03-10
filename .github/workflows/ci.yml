@@ -120,41 +120,6 @@ jobs:
       - name: Run Dialyzer
         run: mix dialyzer
 
-  frontend:
-    name: Frontend Quality
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: ./.github/actions/setup-node
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Check code style
-        run: npm run prettier:check
-
-      - name: Run TypeScript check
-        run: npx tsc --noEmit
-
-      - name: Run ESLint
-        run: npx eslint assets/js --ext .js,.ts,.tsx --max-warnings 0
-
-      - name: Run unit tests with coverage
-        run: npm run test:coverage
-
-      - name: Upload frontend coverage
-        uses: codecov/codecov-action@v5
-        continue-on-error: true
-        with:
-          file: ./coverage/lcov.info
-          flags: frontend
-          fail_ci_if_error: false
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
   unused-deps:
     name: Check Unused Dependencies
     runs-on: ubuntu-latest

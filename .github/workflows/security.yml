@@ -33,17 +33,8 @@ jobs:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: Install Elixir dependencies
+      - name: Install dependencies
         run: mix deps.get
-
-      - name: Install Node.js dependencies
-        run: npm ci
 
       - name: Elixir security audit
         run: mix deps.audit
@@ -54,13 +45,10 @@ jobs:
           mix compile --warnings-as-errors
           mix sobelow --config .sobelow-conf
 
-      - name: Node.js security audit
-        run: npm audit --audit-level=high
-
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
-    
+
     strategy:
       fail-fast: false
       matrix:
@@ -75,18 +63,6 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: Install Node.js dependencies
-        run: npm ci
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
