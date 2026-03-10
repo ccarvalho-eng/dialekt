@@ -16,6 +16,8 @@ An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-
 
 </div>
 
+> **How it works:** Type in either your native language or the target language you're learning. When you write in your native language, it translates to the target language with phonetics. When you practice in the target language, you get corrections and guidance. The AI adapts vocabulary and grammar complexity to match your proficiency level.
+
 ## Features
 
 - **Adaptive Conversations** - Vocabulary and grammar adjust to your CEFR level (A1-C2)
