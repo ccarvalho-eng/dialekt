@@ -103,14 +103,14 @@ Hooks.ThemeManager = {
 Hooks.SidebarState = {
   mounted() {
     // Read initial state from localStorage
-    const collapsed = localStorage.getItem('sidebar_collapsed') === 'true'
+    const collapsed = localStorage.getItem("dialekt-sidebar-collapsed") === "true"
 
     // Send initial state to server
-    this.pushEvent('init_sidebar_state', { collapsed })
+    this.pushEvent("init_sidebar_state", { collapsed })
 
     // Listen for state changes from server and persist
-    this.handleEvent('sidebar_state_changed', ({ collapsed }) => {
-      localStorage.setItem('sidebar_collapsed', collapsed)
+    this.handleEvent("sidebar_state_changed", ({ collapsed }) => {
+      localStorage.setItem("dialekt-sidebar-collapsed", collapsed)
     })
   }
 }
