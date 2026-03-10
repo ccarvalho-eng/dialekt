@@ -911,7 +911,7 @@ body {
 
 /* ========== SESSIONS SIDEBAR ========== */
 .sessions-sidebar {
-  width: 260px;
+  width: 300px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   background: var(--surface);
@@ -1170,7 +1170,7 @@ body {
 
 /* ========== REFERENCE SIDEBAR ========== */
 .ref-sidebar {
-  width: 260px;
+  width: 300px;
   flex-shrink: 0;
   border-left: 1px solid var(--border);
   background: var(--surface);
