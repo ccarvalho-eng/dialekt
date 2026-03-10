@@ -629,6 +629,7 @@ body {
   background: var(--bg);
   width: 100%;
   max-width: 800px;
+  min-height: 0;
 }
 
 .chat-body::-webkit-scrollbar {
@@ -826,20 +827,11 @@ body {
 }
 
 /* Input Area */
-.input-area {
-  display: flex;
-  justify-content: center;
-  padding: 12px 20px 16px;
-  border-top: 1px solid var(--border);
-  background: var(--header-bg);
-  backdrop-filter: blur(12px);
-  flex-shrink: 0;
-  width: 100%;
-}
-
 .input-inner {
   width: 100%;
   max-width: 800px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .input-inner form {
@@ -1569,10 +1561,6 @@ body {
 
   .tb {
     max-width: 90%;
-  }
-
-  .input-area {
-    padding: 10px 12px 14px;
   }
 
   .chat-ta {
