@@ -69,7 +69,7 @@ jobs:
         uses: codecov/codecov-action@v5
         continue-on-error: true
         with:
-          file: ./cover/excoveralls.json
+          files: ./cover/excoveralls.json
           flags: elixir
           fail_ci_if_error: false
         env:
