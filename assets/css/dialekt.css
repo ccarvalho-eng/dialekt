@@ -911,7 +911,7 @@ body {
 
 /* ========== SESSIONS SIDEBAR ========== */
 .sessions-sidebar {
-  width: 240px;
+  width: 260px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   background: var(--surface);
@@ -1457,7 +1457,7 @@ body {
 
   /* When sidebar expanded on mobile */
   .sessions-sidebar:not(.sessions-sidebar-collapsed) {
-    width: 280px;
+    width: 300px;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
   }
 
