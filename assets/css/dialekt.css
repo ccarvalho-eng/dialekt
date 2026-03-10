@@ -932,11 +932,6 @@ body {
   transition: opacity 0.15s ease;
 }
 
-.sessions-sidebar-collapsed .collapse-sidebar-btn {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .sessions-sidebar-collapsed .session-label,
 .sessions-sidebar-collapsed .session-date {
   opacity: 0;
@@ -996,7 +991,7 @@ body {
   color: var(--primary-text);
 }
 
-.collapse-sidebar-btn {
+.mobile-menu-btn {
   width: 28px;
   height: 28px;
   border-radius: 6px;
@@ -1011,18 +1006,15 @@ body {
   flex-shrink: 0;
 }
 
-.collapse-sidebar-btn:hover {
+.mobile-menu-btn:hover {
   background: var(--surface2);
   color: var(--text);
 }
 
-.collapse-sidebar-btn .size-4 {
-  transition: transform 0.2s ease;
-}
-
 .new-session-btn-bottom {
-  width: 100%;
-  padding: 10px 12px;
+  width: calc(100% - 8px);
+  margin: 4px;
+  padding: 8px 12px;
   border-radius: 8px;
   background: transparent;
   border: 1px solid var(--border);
@@ -1036,7 +1028,6 @@ body {
   font-family: var(--fb);
   font-size: 0.875rem;
   font-weight: 500;
-  margin: 8px;
 }
 
 .new-session-btn-bottom:hover {

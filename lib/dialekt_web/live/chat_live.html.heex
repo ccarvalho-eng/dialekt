@@ -10,17 +10,6 @@
         <div class="sessions-title">{@config.name}</div>
         <button
           phx-click="toggle_sidebar"
-          class="collapse-sidebar-btn"
-          title={if @sidebar_collapsed, do: "Expand sidebar", else: "Collapse sidebar"}
-          aria-label={if @sidebar_collapsed, do: "Expand sidebar", else: "Collapse sidebar"}
-        >
-          <.icon
-            name={if @sidebar_collapsed, do: "hero-chevron-right", else: "hero-chevron-left"}
-            class="size-4"
-          />
-        </button>
-        <button
-          phx-click="toggle_sidebar"
           class="mobile-menu-btn"
           title="Toggle menu"
           aria-label="Toggle menu"
