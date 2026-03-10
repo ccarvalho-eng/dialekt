@@ -1149,6 +1149,25 @@ body {
   color: var(--danger);
 }
 
+/* Sidebar backdrop for mobile overlay */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+}
+
 /* ========== REFERENCE SIDEBAR ========== */
 .ref-sidebar {
   width: 260px;
@@ -1420,6 +1439,39 @@ body {
   /* Chat mobile - sidebar as overlay */
   .chat-root {
     flex-direction: column;
+  }
+
+  /* Mobile sidebar as icon bar */
+  .sessions-sidebar {
+    width: 50px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+  }
+
+  .sessions-sidebar-collapsed {
+    width: 50px;
+  }
+
+  /* When sidebar expanded on mobile */
+  .sessions-sidebar:not(.sessions-sidebar-collapsed) {
+    width: 280px;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Hide text in collapsed mobile state */
+  .sessions-sidebar.sessions-sidebar-collapsed .sessions-title,
+  .sessions-sidebar.sessions-sidebar-collapsed .session-label,
+  .sessions-sidebar.sessions-sidebar-collapsed .session-date,
+  .sessions-sidebar.sessions-sidebar-collapsed .new-session-text {
+    display: none;
+  }
+
+  /* Adjust chat-app margin for fixed sidebar */
+  .chat-app {
+    margin-left: 50px;
   }
 
   .ref-toggle {
