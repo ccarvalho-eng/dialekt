@@ -598,7 +598,7 @@ defmodule DialektWeb.ChatLive do
               <button
                 id={"tts-you-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
                 phx-hook="TextToSpeech"
-                data-text={@parsed.you.phrase}
+                data-text={strip_markdown_bold(@parsed.you.phrase)}
                 data-lang={@target && @target.code}
                 type="button"
                 class="tts-button"
@@ -637,7 +637,7 @@ defmodule DialektWeb.ChatLive do
                   <button
                     id={"tts-tutor-#{DateTime.to_unix(@msg.timestamp, :microsecond)}-#{idx}"}
                     phx-hook="TextToSpeech"
-                    data-text={line.phrase}
+                    data-text={strip_markdown_bold(line.phrase)}
                     data-lang={@target && @target.code}
                     type="button"
                     class="tts-button"
@@ -673,7 +673,7 @@ defmodule DialektWeb.ChatLive do
               <button
                 id={"tts-followup-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
                 phx-hook="TextToSpeech"
-                data-text={@parsed.followup.phrase}
+                data-text={strip_markdown_bold(@parsed.followup.phrase)}
                 data-lang={@target && @target.code}
                 type="button"
                 class="tts-button"
@@ -714,9 +714,16 @@ defmodule DialektWeb.ChatLive do
   end
 
   defp format_bold(text) do
-    text
-    |> String.replace(~r/\*\*(.+?)\*\*/, "<strong>\\1</strong>")
+    String.replace(text, ~r/\*\*(.+?)\*\*/, "<strong>\\1</strong>")
   end
+
+  defp strip_markdown_bold(nil), do: ""
+
+  defp strip_markdown_bold(text) when is_binary(text) do
+    String.replace(text, ~r/\*\*(.+?)\*\*/, "\\1")
+  end
+
+  defp strip_markdown_bold(_), do: ""
 
   defp get_initial_starters(config, native) do
     cond do
