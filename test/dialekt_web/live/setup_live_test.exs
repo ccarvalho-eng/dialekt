@@ -7,7 +7,7 @@ defmodule DialektWeb.SetupLiveTest do
     test "renders setup screen with brand and steps", %{conn: conn} do
       {:ok, _view, html} = live(conn, "/")
 
-      assert html =~ "DIALEKT"
+      assert html =~ "brand-ascii"
       assert html =~ "I speak"
       assert html =~ "I want to learn"
       assert html =~ "My level"
@@ -38,7 +38,8 @@ defmodule DialektWeb.SetupLiveTest do
       |> render_click()
 
       refute render(view) =~ "Select your native language first"
-      assert has_element?(view, "[phx-value-step=\"target\"]")
+      # Target language buttons should be enabled after selecting native
+      assert has_element?(view, "button[phx-click=\"select_target\"]")
     end
 
     test "disables level selection until target is selected", %{conn: conn} do
@@ -105,9 +106,9 @@ defmodule DialektWeb.SetupLiveTest do
       # Should show search input
       assert has_element?(view, "input[placeholder*=\"Search\"]")
 
-      # Type in search
+      # Type in search - phx-change is on the form, not the input
       view
-      |> element("input[placeholder*=\"Search\"]")
+      |> element("form[phx-change=\"update_native_search\"]")
       |> render_change(%{"search" => "italian"})
 
       # Should show Italian

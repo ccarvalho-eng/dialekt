@@ -4,10 +4,11 @@ defmodule Dialekt.Learning do
   configurations and chat sessions.
   """
 
-  import Ecto.Query
   import Ecto.Changeset
-  alias Dialekt.Repo
+  import Ecto.Query
+
   alias Dialekt.Learning.{ChatSession, Config}
+  alias Dialekt.Repo
 
   @doc """
   Returns the list of learning configs.
