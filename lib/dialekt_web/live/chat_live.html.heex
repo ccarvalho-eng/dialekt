@@ -30,13 +30,6 @@
             class="size-5"
           />
         </button>
-        <button
-          phx-click="new_session"
-          class="new-session-btn"
-          title="New Session"
-        >
-          <.icon name="hero-pencil-square" class="size-4" />
-        </button>
       </div>
       <div class="sessions-body">
         <%= if Enum.empty?(@all_sessions) do %>
@@ -70,6 +63,14 @@
             </div>
           <% end %>
         <% end %>
+        <button
+          phx-click="new_session"
+          class="new-session-btn-bottom"
+          title="New Session"
+        >
+          <.icon name="hero-plus" class="size-4" />
+          <span class="new-session-text">New Chat</span>
+        </button>
       </div>
     </div>
   <% end %>
