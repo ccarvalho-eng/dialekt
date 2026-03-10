@@ -59,6 +59,9 @@ jobs:
       - name: Build assets
         run: mix assets.build
 
+      - name: Run database migrations
+        run: mix ecto.migrate
+
       - name: Run tests with coverage
         run: mix coveralls.json
 
