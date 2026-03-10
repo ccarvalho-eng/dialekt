@@ -170,7 +170,10 @@ defmodule DialektWeb.ChatLive do
     session_id = params["session_id"]
     theme = get_connect_params(socket)["theme"] || "light"
 
-    socket = assign(socket, theme: theme)
+    socket =
+      socket
+      |> assign(theme: theme)
+      |> assign(sidebar_collapsed: false)
 
     if session_id do
       mount_with_session(socket, session_id)
@@ -452,6 +455,23 @@ defmodule DialektWeb.ChatLive do
   @impl true
   def handle_event("sync_theme", %{"theme" => theme}, socket) do
     {:noreply, assign(socket, theme: theme)}
+  end
+
+  @impl true
+  def handle_event("init_sidebar_state", %{"collapsed" => collapsed}, socket) do
+    {:noreply, assign(socket, :sidebar_collapsed, collapsed)}
+  end
+
+  @impl true
+  def handle_event("toggle_sidebar", _params, socket) do
+    new_state = !socket.assigns.sidebar_collapsed
+
+    socket =
+      socket
+      |> assign(:sidebar_collapsed, new_state)
+      |> push_event("sidebar_state_changed", %{collapsed: new_state})
+
+    {:noreply, socket}
   end
 
   @impl true
