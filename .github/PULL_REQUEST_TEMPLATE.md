@@ -21,4 +21,3 @@ Small pull requests are much easier to review and more likely to get merged. Mak
 
 Make sure all checks pass on GitHub CI before submitting for review and after each new change.
 
-For more info, see the [Contributing Guide](../CONTRIBUTING.md).

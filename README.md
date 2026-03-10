@@ -52,8 +52,6 @@ mix sobelow            # Security scan
 mix coveralls.html     # Coverage report
 ```
 
-**Quality Assurance:** GitHub Actions CI/CD with automated testing, security scanning (Sobelow, CodeQL, Trivy), code analysis (Credo, Dialyzer), and coverage tracking (75% target).
-
 ## License
 
 Apache License 2.0 - see [LICENSE](LICENSE) for details.
