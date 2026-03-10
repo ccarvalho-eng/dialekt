@@ -191,7 +191,7 @@ defmodule Dialekt.Tutor do
 
     opts =
       if String.starts_with?(model_spec, "openrouter:") do
-        Keyword.put(opts, :provider_options, app_referer: "https://github.com/shawnvo/dialekt", app_title: "Dialekt")
+        Keyword.put(opts, :provider_options, app_referer: "https://github.com/ccarvalho-eng/dialekt", app_title: "Dialekt")
       else
         opts
       end
