@@ -40,19 +40,4 @@ mix ecto.setup && mix phx.server
 
 Visit [localhost:4000](http://localhost:4000)
 
-**Production:** Use the included `Dockerfile` for deployment. See `.env.example` for required environment variables.
 
-## Development
-
-```bash
-mix test               # Run tests
-mix format             # Format code
-mix credo              # Code quality
-mix dialyzer           # Type checking
-mix sobelow            # Security scan
-mix coveralls.html     # Coverage report
-```
-
-## License
-
-Apache License 2.0 - see [LICENSE](LICENSE) for details.
