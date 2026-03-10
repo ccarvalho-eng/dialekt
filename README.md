@@ -8,6 +8,8 @@
 
 AI-powered language tutor built with Phoenix LiveView that adapts to your CEFR proficiency level (A1-C2) and provides real-time conversational practice with Claude AI.
 
+</div>
+
 ## Features
 
 - **Adaptive Conversations** - Vocabulary and grammar adjust to your CEFR level (A1-C2)
