@@ -924,7 +924,7 @@ body {
 
 .sessions-sidebar-collapsed {
   width: 60px;
-  transition: width 0.3s ease-in-out;
+  overflow: hidden;
 }
 
 .sessions-sidebar-collapsed .sessions-title {
@@ -973,6 +973,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: opacity 0.15s ease;
 }
 
 .new-session-btn {
@@ -1138,11 +1139,13 @@ body {
   font-size: 0.78rem;
   color: var(--text);
   font-weight: 500;
+  transition: opacity 0.15s ease;
 }
 
 .session-date {
   font-size: 0.65rem;
   color: var(--text-muted);
+  transition: opacity 0.15s ease;
 }
 
 .session-delete {
