@@ -587,6 +587,8 @@ body {
   border-color: var(--text);
   background: var(--text);
   color: #fff;
+  transform: translateY(-1px);
+  transition: all 0.15s ease;
 }
 
 .hdr-info {
@@ -710,6 +712,25 @@ body {
   border-color: var(--primary);
   background: var(--primary);
   color: var(--primary-text);
+  transform: translateY(-1px);
+  transition: all 0.15s ease;
+}
+
+.back-btn:active {
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+.starter:active {
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+.mobile-menu-btn:active,
+.new-session-btn-bottom:active,
+.theme-toggle:active {
+  transform: scale(0.98);
+  transition: all 0.1s ease;
 }
 
 /* Empty State Input */
