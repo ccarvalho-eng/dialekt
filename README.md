@@ -6,7 +6,19 @@
 [![Coverage](https://img.shields.io/codecov/c/github/ccarvalho-eng/dialekt?style=flat-square)](https://codecov.io/gh/ccarvalho-eng/dialekt)
 [![Security](https://img.shields.io/github/actions/workflow/status/ccarvalho-eng/dialekt/security.yml?style=flat-square&label=Security)](https://github.com/ccarvalho-eng/dialekt/actions/workflows/security.yml)
 
-AI-powered language tutor built with Phoenix LiveView that adapts to your CEFR proficiency level (A1-C2) and provides real-time conversational practice with Claude AI.
+```
+"So the Lord scattered them over the face of the whole earth." — Genesis 11:8
+```
+
+The tower fell. Languages scattered across continents.
+What was once unified became fractured — a permanent schism.
+
+We cannot rebuild Babel.
+But we can rebuild understanding, one conversation at a time.
+
+---
+
+*An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-time conversational synthesis.*
 
 </div>
 
