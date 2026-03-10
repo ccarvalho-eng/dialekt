@@ -42,13 +42,6 @@ Visit [localhost:4000](http://localhost:4000)
 
 **Production:** Use the included `Dockerfile` for deployment. See `.env.example` for required environment variables.
 
-## Usage
-
-1. Select native language, target language, CEFR level (A1-C2), and register (formal/informal)
-2. Chat using AI-generated starters or your own messages
-3. Receive real-time corrections, translations, and pronunciation help
-4. Manage multiple learning configurations from the dashboard
-
 ## Development
 
 ```bash
