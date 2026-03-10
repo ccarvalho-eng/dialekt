@@ -100,6 +100,21 @@ Hooks.ThemeManager = {
   }
 }
 
+Hooks.SidebarState = {
+  mounted() {
+    // Read initial state from localStorage
+    const collapsed = localStorage.getItem('sidebar_collapsed') === 'true'
+
+    // Send initial state to server
+    this.pushEvent('init_sidebar_state', { collapsed })
+
+    // Listen for state changes from server and persist
+    this.handleEvent('sidebar_state_changed', ({ collapsed }) => {
+      localStorage.setItem('sidebar_collapsed', collapsed)
+    })
+  }
+}
+
 Hooks.TextToSpeech = {
   mounted() {
     // Check if speech synthesis is supported
