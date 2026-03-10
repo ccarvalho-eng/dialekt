@@ -1,9 +1,35 @@
 <div class="chat-root" phx-hook="ThemeManager" data-theme={@theme} id="theme-manager">
+  <div phx-hook="SidebarState" id="sidebar-state-manager" style="display: none;"></div>
   <!-- Sessions Sidebar -->
   <%= if @config && @all_sessions do %>
-    <div class="sessions-sidebar">
+    <div class={[
+      "sessions-sidebar",
+      @sidebar_collapsed && "sessions-sidebar-collapsed"
+    ]}>
       <div class="sessions-hdr">
         <div class="sessions-title">{@config.name}</div>
+        <button
+          phx-click="toggle_sidebar"
+          class="mobile-menu-btn"
+          title="Toggle menu"
+          aria-label="Toggle menu"
+        >
+          <.icon
+            name={if @sidebar_collapsed, do: "hero-x-mark", else: "hero-bars-3"}
+            class="size-5"
+          />
+        </button>
+        <button
+          phx-click="toggle_sidebar"
+          class="collapse-sidebar-btn"
+          title={if @sidebar_collapsed, do: "Expand sidebar", else: "Collapse sidebar"}
+          aria-label={if @sidebar_collapsed, do: "Expand sidebar", else: "Collapse sidebar"}
+        >
+          <.icon
+            name={if @sidebar_collapsed, do: "hero-chevron-right", else: "hero-chevron-left"}
+            class="size-4"
+          />
+        </button>
         <button
           phx-click="new_session"
           class="new-session-btn"
