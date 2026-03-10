@@ -12,6 +12,8 @@
 
 An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-time conversational synthesis.
 
+![chrome-capture-2026-03-09 (1)](https://github.com/user-attachments/assets/04e3b1e1-d8d1-4934-8296-6e4439ab4e1b)
+
 </div>
 
 ## Features
