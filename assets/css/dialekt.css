@@ -841,8 +841,7 @@ body {
 
 .input-row {
   display: flex;
-  gap: 9px;
-  align-items: flex-end;
+  width: 100%;
 }
 
 .chat-ta {
@@ -868,31 +867,6 @@ body {
 
 .chat-ta:focus {
   border-color: var(--text);
-}
-
-.send-btn {
-  background: var(--primary);
-  border: none;
-  border-radius: 8px;
-  width: 44px;
-  height: 44px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-text);
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.send-btn:hover:not(:disabled) {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
-}
-
-.send-btn:disabled {
-  opacity: 0.25;
-  cursor: not-allowed;
 }
 
 .input-hint {
@@ -1566,11 +1540,6 @@ body {
   .chat-ta {
     font-size: 0.84rem;
     padding: 10px 13px;
-  }
-
-  .send-btn {
-    width: 40px;
-    height: 40px;
   }
 }
 
