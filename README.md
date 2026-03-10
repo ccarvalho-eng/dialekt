@@ -10,15 +10,7 @@
 "So the Lord scattered them over the face of the whole earth." — Genesis 11:8
 ```
 
-The tower fell. Languages scattered across continents.
-What was once unified became fractured — a permanent schism.
-
-We cannot rebuild Babel.
-But we can rebuild understanding, one conversation at a time.
-
----
-
-*An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-time conversational synthesis.*
+An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-time conversational synthesis.
 
 </div>
 
