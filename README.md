@@ -1,7 +1,5 @@
-<div align="center">
-
 ```
-   ██████  ██  █████  ██      ███████ ██   ██ ████████
+██████  ██  █████  ██      ███████ ██   ██ ████████
 ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
 ██   ██ ██ ███████ ██      █████   █████      ██
 ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
@@ -19,8 +17,6 @@
 An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-time conversational synthesis.
 
 ![chrome-capture-2026-03-09 (1)](https://github.com/user-attachments/assets/04e3b1e1-d8d1-4934-8296-6e4439ab4e1b)
-
-</div>
 
 > **How it works:** Type in either your native language or the target language you're learning. When you write in your native language, it translates to the target language with phonetics. When you practice in the target language, you get corrections and guidance. The AI adapts vocabulary and grammar complexity to match your proficiency level.
 
