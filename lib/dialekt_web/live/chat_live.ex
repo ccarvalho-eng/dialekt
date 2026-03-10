@@ -721,7 +721,7 @@ defmodule DialektWeb.ChatLive do
   defp get_initial_starters(config, native) do
     cond do
       # If config has cached starters, use them
-      config.starters && length(config.starters) > 0 ->
+      config.starters != [] and config.starters != nil ->
         config.starters
 
       # If native language has hardcoded starters, use them and cache

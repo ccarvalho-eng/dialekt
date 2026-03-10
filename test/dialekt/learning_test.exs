@@ -32,7 +32,7 @@ defmodule Dialekt.LearningTest do
 
     test "raises when config does not exist" do
       assert_raise Ecto.NoResultsError, fn ->
-        Learning.get_config!(99999)
+        Learning.get_config!(99_999)
       end
     end
   end
@@ -143,7 +143,7 @@ defmodule Dialekt.LearningTest do
 
     test "raises when session does not exist" do
       assert_raise Ecto.NoResultsError, fn ->
-        Learning.get_session!(99999)
+        Learning.get_session!(99_999)
       end
     end
   end
@@ -161,7 +161,7 @@ defmodule Dialekt.LearningTest do
 
     test "returns error with invalid config_id" do
       assert {:error, %Ecto.Changeset{}} =
-               Learning.create_session(99999)
+               Learning.create_session(99_999)
     end
   end
 

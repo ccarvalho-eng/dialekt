@@ -1,0 +1,34 @@
+{
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": true,
+    "output_dir": "cover/",
+    "template_path": "cover/excoveralls.html.eex"
+  },
+  "terminal_options": {
+    "file_column_width": 40
+  },
+  "skip_files": [
+    "test/",
+    "priv/",
+    "lib/dialekt_web/channels/user_socket.ex",
+    "lib/dialekt_web/endpoint.ex",
+    "lib/dialekt_web/gettext.ex",
+    "lib/dialekt_web/telemetry.ex",
+    "lib/dialekt/application.ex",
+    "lib/dialekt/mailer.ex",
+    "lib/dialekt/repo.ex",
+    "lib/dialekt_web/controllers/error_json.ex",
+    "lib/dialekt_web/controllers/error_html.ex",
+    "lib/dialekt_web/components/core_components.ex",
+    "lib/dialekt_web/components/layouts.ex",
+    "lib/dialekt_web/controllers/page_controller.ex",
+    "lib/dialekt_web/controllers/page_html.ex"
+  ],
+  "custom_skip_files": [
+    "_build/",
+    "deps/",
+    "assets/",
+    "priv/static/",
+    "node_modules/"
+  ]
+}

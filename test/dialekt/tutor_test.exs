@@ -1,8 +1,8 @@
 defmodule Dialekt.TutorTest do
   use ExUnit.Case, async: true
 
-  alias Dialekt.Tutor
   alias Dialekt.Languages
+  alias Dialekt.Tutor
 
   describe "build_system_prompt/4" do
     test "builds system prompt with all parameters" do

@@ -31,7 +31,7 @@ defmodule Dialekt.Learning.ChatSessionTest do
     end
 
     test "validates foreign key constraint" do
-      attrs = %{config_id: 99999}
+      attrs = %{config_id: 99_999}
 
       assert {:error, changeset} =
                %ChatSession{}

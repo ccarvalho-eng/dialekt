@@ -173,10 +173,7 @@ defmodule Dialekt.Tutor do
 
       case Req.post(@claude_api_url, json: body, headers: headers) do
         {:ok, %{status: 200, body: %{"content" => content}}} ->
-          raw_response =
-            content
-            |> Enum.map(fn %{"text" => text} -> text end)
-            |> Enum.join("")
+          raw_response = Enum.map_join(content, "", fn %{"text" => text} -> text end)
 
           case Jason.decode(raw_response) do
             {:ok, starters} when is_list(starters) ->
@@ -230,10 +227,7 @@ defmodule Dialekt.Tutor do
 
       case Req.post(@claude_api_url, json: body, headers: headers) do
         {:ok, %{status: 200, body: %{"content" => content}}} ->
-          raw_response =
-            content
-            |> Enum.map(fn %{"text" => text} -> text end)
-            |> Enum.join("")
+          raw_response = Enum.map_join(content, "", fn %{"text" => text} -> text end)
 
           {:ok, parse_response(raw_response), raw_response}
 
