@@ -7,9 +7,13 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
-# Configure Anthropic API key from environment variable
+# Configure AI Provider and API keys from environment variables
 config :dialekt,
-  anthropic_api_key: System.get_env("ANTHROPIC_API_KEY")
+  ai_provider: System.get_env("AI_PROVIDER") || "anthropic",
+  ai_model: System.get_env("AI_MODEL") || "claude-sonnet-4-6",
+  anthropic_api_key: System.get_env("ANTHROPIC_API_KEY"),
+  openai_api_key: System.get_env("OPENAI_API_KEY"),
+  openrouter_api_key: System.get_env("OPENROUTER_API_KEY")
 
 # ## Using releases
 #

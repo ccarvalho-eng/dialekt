@@ -1,10 +1,7 @@
 defmodule Dialekt.Tutor do
   @moduledoc """
-  Handles AI tutor interactions with Claude API.
+  Handles AI tutor interactions using ReqLLM.
   """
-
-  @claude_api_url "https://api.anthropic.com/v1/messages"
-  @model "claude-sonnet-4-6"
 
   @doc """
   Builds the system prompt for the AI tutor.
@@ -140,55 +137,35 @@ defmodule Dialekt.Tutor do
   @spec generate_starters(map(), map(), map()) ::
           {:ok, list(String.t())} | {:error, String.t()}
   def generate_starters(native, target, level) do
-    api_key = get_api_key()
+    prompt = """
+    Generate exactly 3 short conversation starter questions in #{native.name} for someone learning #{target.name} at #{level.code} level.
 
-    if is_nil(api_key) do
-      {:error, "API key not configured"}
-    else
-      prompt = """
-      Generate exactly 3 short conversation starter questions in #{native.name} for someone learning #{target.name} at #{level.code} level.
+    Return ONLY a JSON array of strings, nothing else:
+    ["phrase 1", "phrase 2", "phrase 3"]
 
-      Return ONLY a JSON array of strings, nothing else:
-      ["phrase 1", "phrase 2", "phrase 3"]
+    Requirements:
+    - Very short greetings or simple questions (like "Hi, how are you?" or "How's your day?")
+    - NEVER use personal names or identity statements
+    - NEVER ask a question and then answer it in the same phrase
+    - Just brief, natural conversation starters
+    - Each phrase should be different
+    """
 
-      Requirements:
-      - Very short greetings or simple questions (like "Hi, how are you?" or "How's your day?")
-      - NEVER use personal names or identity statements
-      - NEVER ask a question and then answer it in the same phrase
-      - Just brief, natural conversation starters
-      - Each phrase should be different
-      """
+    model_spec = get_model()
 
-      body = %{
-        model: @model,
-        max_tokens: 200,
-        messages: [%{role: "user", content: prompt}]
-      }
+    case ReqLLM.generate_text(model_spec, prompt, max_tokens: 2000) do
+      {:ok, response} ->
+        raw_response = ReqLLM.Response.text(response) || ""
+        case Jason.decode(raw_response) do
+          {:ok, starters} when is_list(starters) ->
+            {:ok, starters}
 
-      headers = [
-        {"content-type", "application/json"},
-        {"x-api-key", api_key},
-        {"anthropic-version", "2023-06-01"}
-      ]
+          _ ->
+            {:error, "Invalid response format"}
+        end
 
-      case Req.post(@claude_api_url, json: body, headers: headers) do
-        {:ok, %{status: 200, body: %{"content" => content}}} ->
-          raw_response = Enum.map_join(content, "", fn %{"text" => text} -> text end)
-
-          case Jason.decode(raw_response) do
-            {:ok, starters} when is_list(starters) ->
-              {:ok, starters}
-
-            _ ->
-              {:error, "Invalid response format"}
-          end
-
-        {:ok, %{body: body}} ->
-          {:error, "API error: #{inspect(body)}"}
-
-        {:error, reason} ->
-          {:error, "Request failed: #{inspect(reason)}"}
-      end
+      {:error, reason} ->
+        {:error, "Request failed: #{inspect(reason)}"}
     end
   end
 
@@ -197,46 +174,35 @@ defmodule Dialekt.Tutor do
   """
   @spec chat(String.t(), map()) :: {:ok, map(), String.t()} | {:error, String.t()}
   def chat(message, context) do
-    api_key = get_api_key()
+    system_prompt =
+      build_system_prompt(
+        context.native,
+        context.target,
+        context.level,
+        context.register
+      )
 
-    if is_nil(api_key) do
-      {:error, "API key not configured"}
-    else
-      system_prompt =
-        build_system_prompt(
-          context.native,
-          context.target,
-          context.level,
-          context.register
-        )
+    llm_context = build_message_history(system_prompt, context.history, message)
+    model_spec = get_model()
 
-      messages = build_message_history(context.history, message)
+    opts = [
+      max_tokens: 16_000
+    ]
 
-      body = %{
-        model: @model,
-        max_tokens: 1000,
-        system: system_prompt,
-        messages: messages
-      }
-
-      headers = [
-        {"content-type", "application/json"},
-        {"x-api-key", api_key},
-        {"anthropic-version", "2023-06-01"}
-      ]
-
-      case Req.post(@claude_api_url, json: body, headers: headers) do
-        {:ok, %{status: 200, body: %{"content" => content}}} ->
-          raw_response = Enum.map_join(content, "", fn %{"text" => text} -> text end)
-
-          {:ok, parse_response(raw_response), raw_response}
-
-        {:ok, %{body: body}} ->
-          {:error, "API error: #{inspect(body)}"}
-
-        {:error, reason} ->
-          {:error, "Request failed: #{inspect(reason)}"}
+    opts =
+      if String.starts_with?(model_spec, "openrouter:") do
+        Keyword.put(opts, :provider_options, app_referer: "https://github.com/shawnvo/dialekt", app_title: "Dialekt")
+      else
+        opts
       end
+
+    case ReqLLM.generate_text(model_spec, llm_context, opts) do
+      {:ok, response} ->
+        raw_response = ReqLLM.Response.text(response) || ""
+        {:ok, parse_response(raw_response), raw_response}
+
+      {:error, reason} ->
+        {:error, "Request failed: #{inspect(reason)}"}
     end
   end
 
@@ -411,20 +377,25 @@ defmodule Dialekt.Tutor do
     end
   end
 
-  defp build_message_history(history, current_message) do
-    history_messages =
-      Enum.map(history, fn msg ->
-        %{
-          role: msg.role,
-          content: if(msg.role == "user", do: msg.text, else: msg.raw_response || "")
-        }
+  defp build_message_history(system_prompt, history, current_message) do
+    context = ReqLLM.Context.new([ReqLLM.Context.system(system_prompt)])
+
+    context =
+      Enum.reduce(history, context, fn msg, acc ->
+        content = if(msg.role == "user", do: msg.text, else: msg.raw_response || "")
+        if msg.role == "user" do
+          ReqLLM.Context.append(acc, ReqLLM.Context.user(content))
+        else
+          ReqLLM.Context.append(acc, ReqLLM.Context.assistant(content))
+        end
       end)
 
-    history_messages ++ [%{role: "user", content: current_message}]
+    ReqLLM.Context.append(context, ReqLLM.Context.user(current_message))
   end
 
-  defp get_api_key do
-    System.get_env("ANTHROPIC_API_KEY") ||
-      Application.get_env(:dialekt, :anthropic_api_key)
+  defp get_model do
+    provider = Application.get_env(:dialekt, :ai_provider) || "anthropic"
+    model = Application.get_env(:dialekt, :ai_model) || "claude-sonnet-4-6"
+    "#{provider}:#{model}"
   end
 end
