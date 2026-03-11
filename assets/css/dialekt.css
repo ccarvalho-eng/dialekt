@@ -253,8 +253,8 @@ body {
 }
 
 .cefr-on {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--text);
+  border-color: var(--text);
 }
 
 .cefr-code {
@@ -264,7 +264,7 @@ body {
 }
 
 .cefr-on .cefr-code {
-  color: var(--primary-text);
+  color: #fff;
 }
 
 .cefr-desc {
@@ -275,7 +275,7 @@ body {
 }
 
 .cefr-on .cefr-desc {
-  color: var(--primary-text);
+  color: #fff;
   opacity: 0.7;
 }
 
@@ -312,8 +312,8 @@ body {
 }
 
 .reg-on {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--text);
+  border-color: var(--text);
 }
 
 .reg-icon {
@@ -327,7 +327,7 @@ body {
 }
 
 .reg-on .reg-label {
-  color: var(--primary-text);
+  color: #fff;
 }
 
 .reg-desc {
@@ -338,7 +338,7 @@ body {
 }
 
 .reg-on .reg-desc {
-  color: var(--primary-text);
+  color: #fff;
   opacity: 0.7;
 }
 
@@ -374,9 +374,9 @@ body {
 }
 
 .qpill-on {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--primary-text);
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
 }
 
 .qpill-other {
@@ -513,9 +513,9 @@ body {
 }
 
 .go-on {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--primary-text);
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
   cursor: pointer;
   box-shadow: var(--shadow-md);
 }
