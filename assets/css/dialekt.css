@@ -1144,7 +1144,7 @@ body {
 }
 
 .session-delete:hover {
-  color: var(--danger);
+  color: var(--text);
 }
 
 /* Sidebar backdrop for mobile overlay */
