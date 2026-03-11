@@ -23,6 +23,7 @@ defmodule DialektWeb.DashboardLive do
        edit_name: "",
        expanded_config_id: nil,
        deleting_config_id: nil,
+       deleting_config_name: nil,
        deleting_session_id: nil,
        theme: theme
      )}
@@ -39,30 +40,45 @@ defmodule DialektWeb.DashboardLive do
 
   @impl true
   def handle_event("show_delete_config", %{"config-id" => config_id}, socket) do
-    {:noreply, assign(socket, deleting_config_id: String.to_integer(config_id))}
+    config_id = String.to_integer(config_id)
+    config = Enum.find(socket.assigns.configs, &(&1.id == config_id))
+
+    {:noreply,
+     assign(socket,
+       deleting_config_id: config_id,
+       deleting_config_name: if(config, do: config.name, else: "this configuration")
+     )}
   end
 
   @impl true
   def handle_event("delete_config", _, socket) do
     if socket.assigns.deleting_config_id do
       config = Learning.get_config!(socket.assigns.deleting_config_id)
-      {:ok, _} = Learning.delete_config(config)
 
-      # Refresh configs and sessions
-      configs = Learning.list_configs()
+      case Learning.delete_config(config) do
+        {:ok, _} ->
+          # Refresh configs and sessions
+          configs = Learning.list_configs()
 
-      sessions_by_config =
-        Map.new(configs, fn config ->
-          {config.id, Learning.list_sessions_for_config(config.id)}
-        end)
+          sessions_by_config =
+            Map.new(configs, fn config ->
+              {config.id, Learning.list_sessions_for_config(config.id)}
+            end)
 
-      {:noreply,
-       assign(socket,
-         configs: configs,
-         sessions_by_config: sessions_by_config,
-         show_form: Enum.empty?(configs),
-         deleting_config_id: nil
-       )}
+          {:noreply,
+           assign(socket,
+             configs: configs,
+             sessions_by_config: sessions_by_config,
+             show_form: Enum.empty?(configs),
+             deleting_config_id: nil,
+             deleting_config_name: nil
+           )}
+
+        {:error, changeset} ->
+          require Logger
+          Logger.error("Failed to delete config: #{inspect(changeset)}")
+          {:noreply, assign(socket, deleting_config_id: nil, deleting_config_name: nil)}
+      end
     else
       {:noreply, socket}
     end
@@ -70,7 +86,12 @@ defmodule DialektWeb.DashboardLive do
 
   @impl true
   def handle_event("cancel_delete", _, socket) do
-    {:noreply, assign(socket, deleting_config_id: nil, deleting_session_id: nil)}
+    {:noreply,
+     assign(socket,
+       deleting_config_id: nil,
+       deleting_config_name: nil,
+       deleting_session_id: nil
+     )}
   end
 
   @impl true
@@ -164,22 +185,27 @@ defmodule DialektWeb.DashboardLive do
   def handle_event("delete_session", _, socket) do
     if socket.assigns.deleting_session_id do
       session = Learning.get_session!(socket.assigns.deleting_session_id)
-      {:ok, _} = Learning.delete_session(session)
 
-      # Refresh configs and sessions
-      configs = Learning.list_configs()
+      case Learning.delete_session(session) do
+        {:ok, _} ->
+          # Refresh configs and sessions
+          configs = Learning.list_configs()
 
-      sessions_by_config =
-        Map.new(configs, fn config ->
-          {config.id, Learning.list_sessions_for_config(config.id)}
-        end)
+          sessions_by_config =
+            Map.new(configs, fn config ->
+              {config.id, Learning.list_sessions_for_config(config.id)}
+            end)
 
-      {:noreply,
-       assign(socket,
-         configs: configs,
-         sessions_by_config: sessions_by_config,
-         deleting_session_id: nil
-       )}
+          {:noreply,
+           assign(socket,
+             configs: configs,
+             sessions_by_config: sessions_by_config,
+             deleting_session_id: nil
+           )}
+
+        {:error, _changeset} ->
+          {:noreply, assign(socket, deleting_session_id: nil)}
+      end
     else
       {:noreply, socket}
     end

@@ -200,7 +200,7 @@
 <!-- Delete Session Modal -->
   <%= if @deleting_session_id do %>
     <.confirm_modal
-      id="delete-chat-session-modal"
+      id={"delete-chat-session-modal-#{@deleting_session_id}"}
       title="Delete Session"
       on_confirm={JS.push("delete_session_from_sidebar")}
     >
