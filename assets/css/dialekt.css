@@ -776,7 +776,7 @@ body {
 }
 
 .user-bubble {
-  background: var(--primary);
+  background: var(--text);
   border-radius: 8px;
   padding: 11px 15px;
   max-width: 70%;
