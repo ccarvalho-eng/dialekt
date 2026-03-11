@@ -16,22 +16,23 @@ ol {
 }
 
 /* ========== CSS VARIABLES ========== */
+/* Subtle newspaper aesthetic: slightly warm newsprint with pure black ink */
 :root {
-  --bg: #fafafa;
+  --bg: #fafaf8;
   --surface: #ffffff;
-  --surface2: #f5f5f5;
-  --surface3: #eeeeee;
-  --border: #e0e0e0;
-  --border2: #d0d0d0;
-  --text: #2c313c;
-  --text-dim: #5c6370;
-  --text-muted: #9da5b4;
-  --primary: #2c313c;
-  --primary-hover: #1a1d23;
+  --surface2: #f5f5f3;
+  --surface3: #525252;
+  --border: #e5e5e3;
+  --border2: #d0d0ce;
+  --text: #1a1a1a;
+  --text-dim: #525252;
+  --text-muted: #7a7a7a;
+  --primary: #1a1a1a;
+  --primary-hover: #000000;
   --primary-text: #ffffff;
-  --danger: #e45649;
-  --danger-hover: #ca3c30;
-  --header-bg: rgba(250, 250, 250, 0.96);
+  --danger: #525252;
+  --danger-hover: #3a3a3a;
+  --header-bg: rgba(250, 250, 248, 0.96);
   --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.12);
@@ -40,21 +41,21 @@ ol {
 }
 
 [data-theme="dark"] {
-  --bg: #282c34;
-  --surface: #21252b;
-  --surface2: #2c313a;
-  --surface3: #3e4451;
-  --border: #181a1f;
-  --border2: #4b5263;
-  --text: #abb2bf;
-  --text-dim: #828997;
-  --text-muted: #5c6370;
-  --primary: #98c379;
-  --primary-hover: #aed190;
-  --primary-text: #282c34;
-  --danger: #e06c75;
-  --danger-hover: #e88388;
-  --header-bg: rgba(33, 37, 43, 0.96);
+  --bg: #2a2a2a;
+  --surface: #323232;
+  --surface2: #3a3a3a;
+  --surface3: #4a4a4a;
+  --border: #1f1f1f;
+  --border2: #525252;
+  --text: #d0d0d0;
+  --text-dim: #9a9a9a;
+  --text-muted: #6a6a6a;
+  --primary: #d0d0d0;
+  --primary-hover: #e5e5e5;
+  --primary-text: #2a2a2a;
+  --danger: #9a9a9a;
+  --danger-hover: #afafaf;
+  --header-bg: rgba(42, 42, 42, 0.96);
   --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.6);
