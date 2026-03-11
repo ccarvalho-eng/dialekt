@@ -977,9 +977,9 @@ body {
 }
 
 .new-session-btn:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--primary-text);
+  background: var(--surface2);
+  border-color: var(--border2);
+  color: var(--text);
 }
 
 .mobile-menu-btn {
