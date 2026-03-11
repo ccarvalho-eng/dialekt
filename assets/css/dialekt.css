@@ -1023,6 +1023,7 @@ body {
 }
 
 .new-session-btn-bottom:hover {
+  background: var(--text-dim);
   transform: translateY(-1px);
 }
 
