@@ -57,14 +57,6 @@ defmodule Dialekt.TutorTest do
     end
   end
 
-  describe "chat/2" do
-    @tag :skip
-    test "sends message to Claude API with proper configuration" do
-      # This test would require mocking the API call
-      # For now, we'll skip it since it requires actual API integration
-    end
-  end
-
   describe "parse_response/1" do
     test "parses well-formed response with all sections" do
       raw = """
@@ -136,6 +128,70 @@ defmodule Dialekt.TutorTest do
       result = Tutor.parse_response(raw)
 
       assert result.note =~ "Remember the accent"
+    end
+  end
+
+  describe "generate_starters/3" do
+    @tag :llm
+    test "returns three conversation starters" do
+      native = Languages.get_language("en")
+      target = Languages.get_language("es")
+      level = Languages.get_cefr_level("A1")
+
+      assert {:ok, starters} = Tutor.generate_starters(native, target, level)
+      assert length(starters) == 3
+      assert Enum.all?(starters, &is_binary/1)
+    end
+  end
+
+  describe "chat/2" do
+    @tag :llm
+    test "returns a parsed response and raw text" do
+      native = Languages.get_language("en")
+      target = Languages.get_language("es")
+      level = Languages.get_cefr_level("A1")
+      register = Languages.get_register("informal")
+
+      context = %{
+        native: native,
+        target: target,
+        level: level,
+        register: register,
+        history: []
+      }
+
+      assert {:ok, parsed, raw} = Tutor.chat("Hola", context)
+      assert is_map(parsed)
+      assert is_binary(raw)
+      assert String.length(raw) > 0
+    end
+
+    @tag :llm
+    test "includes openrouter provider options when using openrouter" do
+      original_provider = Application.get_env(:dialekt, :ai_provider)
+      original_model = Application.get_env(:dialekt, :ai_model)
+
+      Application.put_env(:dialekt, :ai_provider, "openrouter")
+      Application.put_env(:dialekt, :ai_model, "anthropic/claude-sonnet-4.6")
+
+      native = Languages.get_language("en")
+      target = Languages.get_language("es")
+      level = Languages.get_cefr_level("A1")
+      register = Languages.get_register("informal")
+
+      context = %{
+        native: native,
+        target: target,
+        level: level,
+        register: register,
+        history: []
+      }
+
+      assert {:ok, _parsed, raw} = Tutor.chat("Hola", context)
+      assert String.length(raw) > 0
+
+      Application.put_env(:dialekt, :ai_provider, original_provider)
+      Application.put_env(:dialekt, :ai_model, original_model)
     end
   end
 end
