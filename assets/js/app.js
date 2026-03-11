@@ -264,7 +264,8 @@ const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: () => {
     const theme = localStorage.getItem("dialekt-theme") || "light"
-    return {_csrf_token: csrfToken, theme: theme}
+    const sidebarCollapsed = localStorage.getItem("dialekt-sidebar-collapsed") === "true"
+    return {_csrf_token: csrfToken, theme: theme, sidebar_collapsed: sidebarCollapsed}
   },
   hooks: {...colocatedHooks, ...Hooks},
 })

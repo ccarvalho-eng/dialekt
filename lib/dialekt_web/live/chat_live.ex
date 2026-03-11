@@ -168,12 +168,14 @@ defmodule DialektWeb.ChatLive do
   @impl true
   def mount(params, _session, socket) do
     session_id = params["session_id"]
-    theme = get_connect_params(socket)["theme"] || "light"
+    connect_params = get_connect_params(socket)
+    theme = connect_params["theme"] || "light"
+    sidebar_collapsed = connect_params["sidebar_collapsed"] || false
 
     socket =
       socket
       |> assign(theme: theme)
-      |> assign(sidebar_collapsed: false)
+      |> assign(sidebar_collapsed: sidebar_collapsed)
 
     if session_id do
       mount_with_session(socket, session_id)

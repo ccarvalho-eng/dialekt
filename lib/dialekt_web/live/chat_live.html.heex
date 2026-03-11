@@ -34,6 +34,7 @@
                 phx-value-session-id={session.id}
                 class="session-content"
               >
+                <div class="session-id-badge">#{session.id}</div>
                 <div class="session-label">Session #{session.id}</div>
                 <div class="session-date">
                   {Calendar.strftime(session.inserted_at, "%b %d")}

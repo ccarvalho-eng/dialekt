@@ -1311,8 +1311,11 @@ body {
 
 .sessions-sidebar-collapsed .session-label,
 .sessions-sidebar-collapsed .session-date {
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  display: none;
+}
+
+.sessions-sidebar-collapsed .session-id-badge {
+  display: block;
 }
 
 .sessions-sidebar-collapsed .session-content {
@@ -1485,6 +1488,10 @@ body {
   background: var(--surface2);
 }
 
+.session-active .session-id-badge {
+  color: var(--text);
+}
+
 .session-active .session-label {
   color: var(--text);
   font-weight: 500;
@@ -1501,6 +1508,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.session-id-badge {
+  display: none;
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  font-weight: 500;
 }
 
 .session-label {
@@ -1859,6 +1873,11 @@ body {
   .sessions-sidebar.sessions-sidebar-collapsed .session-date,
   .sessions-sidebar.sessions-sidebar-collapsed .new-session-text {
     display: none;
+  }
+
+  /* Show ID badge in collapsed mobile state */
+  .sessions-sidebar.sessions-sidebar-collapsed .session-id-badge {
+    display: block;
   }
 
   /* Adjust chat-app margin for fixed sidebar */
