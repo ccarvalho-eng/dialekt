@@ -584,9 +584,9 @@ body {
 }
 
 .back-btn:hover {
-  border-color: var(--primary);
-  background: var(--primary);
-  color: var(--primary-text);
+  border-color: var(--border2);
+  background: var(--surface2);
+  color: var(--text);
   transform: translateY(-1px);
   transition: all 0.15s ease;
 }
@@ -709,9 +709,9 @@ body {
 }
 
 .starter:hover {
-  border-color: var(--primary);
-  background: var(--primary);
-  color: var(--primary-text);
+  border-color: var(--border2);
+  background: var(--surface2);
+  color: var(--text);
   transform: translateY(-1px);
   transition: all 0.15s ease;
 }
@@ -996,9 +996,9 @@ body {
 }
 
 .mobile-menu-btn:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--primary-text);
+  background: var(--surface2);
+  border-color: var(--border2);
+  color: var(--text);
 }
 
 .new-session-btn-bottom {
@@ -1044,9 +1044,9 @@ body {
 }
 
 .theme-toggle:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--primary-text);
+  background: var(--surface2);
+  border-color: var(--border2);
+  color: var(--text);
 }
 
 .sessions-body {
@@ -1351,9 +1351,9 @@ body {
 }
 
 .ref-toggle:hover {
-  border-color: var(--primary);
-  background: var(--primary);
-  color: var(--primary-text);
+  border-color: var(--border2);
+  background: var(--surface2);
+  color: var(--text);
 }
 
 .ref-close {
