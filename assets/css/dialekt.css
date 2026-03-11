@@ -243,13 +243,13 @@ body {
 }
 
 .cefr-btn:hover {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--border2);
+  background: var(--surface2);
 }
 
 .cefr-btn:hover .cefr-code,
 .cefr-btn:hover .cefr-desc {
-  color: var(--primary-text);
+  color: var(--text);
 }
 
 .cefr-on {
@@ -302,13 +302,13 @@ body {
 }
 
 .reg-btn:hover {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--border2);
+  background: var(--surface2);
 }
 
 .reg-btn:hover .reg-label,
 .reg-btn:hover .reg-desc {
-  color: var(--primary-text);
+  color: var(--text);
 }
 
 .reg-on {
@@ -368,9 +368,9 @@ body {
 }
 
 .qpill:hover {
-  border-color: var(--primary);
-  background: var(--primary);
-  color: var(--primary-text);
+  border-color: var(--border2);
+  background: var(--surface2);
+  color: var(--text);
 }
 
 .qpill-on {
@@ -521,7 +521,9 @@ body {
 }
 
 .go-on:hover {
-  background: var(--primary-hover);
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
