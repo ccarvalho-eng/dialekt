@@ -16,46 +16,45 @@ ol {
 }
 
 /* ========== CSS VARIABLES ========== */
-/* Old newspaper aesthetic: warm aged newsprint in light mode, grey newsprint in dark mode */
 :root {
-  --bg: #f9f7f3;
-  --surface: #fefdfb;
-  --surface2: #f3f0ea;
-  --surface3: #5c5c5c;
-  --border: #e3dfd7;
-  --border2: #ccc8c0;
-  --text: #1a1a1a;
-  --text-dim: #4a4a4a;
-  --text-muted: #7a7a7a;
-  --primary: #1a1a1a;
-  --primary-hover: #000000;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface2: #f5f5f5;
+  --surface3: #eeeeee;
+  --border: #e0e0e0;
+  --border2: #d0d0d0;
+  --text: #2c313c;
+  --text-dim: #5c6370;
+  --text-muted: #9da5b4;
+  --primary: #2c313c;
+  --primary-hover: #1a1d23;
   --primary-text: #ffffff;
-  --danger: #5c5c5c;
-  --danger-hover: #4a4a4a;
-  --header-bg: rgba(249, 247, 243, 0.96);
-  --shadow-xs: 0 1px 3px rgba(26, 26, 26, 0.06);
-  --shadow-sm: 0 2px 8px rgba(26, 26, 26, 0.08);
-  --shadow-md: 0 3px 12px rgba(26, 26, 26, 0.12);
+  --danger: #e45649;
+  --danger-hover: #ca3c30;
+  --header-bg: rgba(250, 250, 250, 0.96);
+  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.12);
   --fd: 'Lora', serif;
   --fb: 'Nunito', sans-serif;
 }
 
 [data-theme="dark"] {
-  --bg: #1c1c1c;
-  --surface: #252525;
-  --surface2: #2f2f2f;
-  --surface3: #3d3d3d;
-  --border: #0f0f0f;
-  --border2: #4a4a4a;
-  --text: #c5c5c5;
-  --text-dim: #8a8a8a;
-  --text-muted: #5a5a5a;
-  --primary: #c5c5c5;
-  --primary-hover: #e0e0e0;
-  --primary-text: #1c1c1c;
-  --danger: #8a8a8a;
-  --danger-hover: #9a9a9a;
-  --header-bg: rgba(28, 28, 28, 0.96);
+  --bg: #282c34;
+  --surface: #21252b;
+  --surface2: #2c313a;
+  --surface3: #3e4451;
+  --border: #181a1f;
+  --border2: #4b5263;
+  --text: #abb2bf;
+  --text-dim: #828997;
+  --text-muted: #5c6370;
+  --primary: #98c379;
+  --primary-hover: #aed190;
+  --primary-text: #282c34;
+  --danger: #e06c75;
+  --danger-hover: #e88388;
+  --header-bg: rgba(33, 37, 43, 0.96);
   --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.6);
