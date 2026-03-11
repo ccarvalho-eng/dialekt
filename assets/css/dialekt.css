@@ -1008,22 +1008,22 @@ body {
   margin: 4px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
+  background: var(--text);
+  border: none;
+  color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background 0.2s;
+  transition: all 0.2s;
   font-family: var(--fb);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .new-session-btn-bottom:hover {
-  background: var(--surface2);
+  transform: translateY(-1px);
 }
 
 .new-session-text {
