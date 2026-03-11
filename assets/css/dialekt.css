@@ -253,8 +253,8 @@ body {
 }
 
 .cefr-on {
-  background: var(--surface3);
-  border-color: var(--surface3);
+  background: #4a5260;
+  border-color: #4a5260;
 }
 
 .cefr-code {
@@ -312,8 +312,8 @@ body {
 }
 
 .reg-on {
-  background: var(--surface3);
-  border-color: var(--surface3);
+  background: #4a5260;
+  border-color: #4a5260;
 }
 
 .reg-icon {
@@ -374,8 +374,8 @@ body {
 }
 
 .qpill-on {
-  background: var(--surface3);
-  border-color: var(--surface3);
+  background: #4a5260;
+  border-color: #4a5260;
   color: #fff;
 }
 
@@ -458,7 +458,12 @@ body {
 }
 
 .ls-sel {
-  background: var(--surface3);
+  background: #4a5260;
+}
+
+.ls-sel .ls-name,
+.ls-sel .ls-native {
+  color: #fff;
 }
 
 .ls-flag {
@@ -513,16 +518,16 @@ body {
 }
 
 .go-on {
-  background: var(--surface3);
-  border-color: var(--surface3);
+  background: #4a5260;
+  border-color: #4a5260;
   color: #fff;
   cursor: pointer;
   box-shadow: var(--shadow-md);
 }
 
 .go-on:hover {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--text-dim);
+  border-color: var(--text-dim);
   color: #fff;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -586,11 +591,9 @@ body {
 }
 
 .back-btn:hover {
-  background: var(--text);
-  border-color: var(--text);
-  color: #fff;
-  transform: translateY(-1px);
-  transition: all 0.15s ease;
+  background: var(--surface3);
+  border-color: var(--border2);
+  color: var(--text);
 }
 
 .hdr-info {
@@ -1023,7 +1026,7 @@ body {
 }
 
 .new-session-btn-bottom:hover {
-  background: var(--text);
+  background: #4a5260;
   transform: translateY(-1px);
 }
 
@@ -1047,7 +1050,7 @@ body {
 }
 
 .theme-toggle:hover {
-  background: var(--surface2);
+  background: var(--surface3);
   border-color: var(--border2);
   color: var(--text);
 }
@@ -1082,7 +1085,7 @@ body {
   border-radius: 8px;
   background: transparent;
   border: none;
-  transition: background 0.2s;
+  transition: all 0.2s;
   overflow: hidden;
   cursor: pointer;
 }
@@ -1092,13 +1095,16 @@ body {
 }
 
 .session-active {
-  background: var(--surface3);
-  border-color: var(--surface3);
+  background: var(--surface2);
 }
 
-.session-active .session-label,
+.session-active .session-label {
+  color: var(--text);
+  font-weight: 500;
+}
+
 .session-active .session-date {
-  color: #fff;
+  color: var(--text-dim);
 }
 
 .session-content {
@@ -1112,7 +1118,7 @@ body {
 
 .session-label {
   font-size: 0.875rem;
-  color: var(--text);
+  color: var(--text-dim);
   font-weight: 400;
   transition: opacity 0.15s ease;
 }
