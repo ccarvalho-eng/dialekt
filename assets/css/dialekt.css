@@ -584,9 +584,9 @@ body {
 }
 
 .back-btn:hover {
-  border-color: var(--text);
-  background: var(--text);
-  color: #fff;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-text);
   transform: translateY(-1px);
   transition: all 0.15s ease;
 }
@@ -996,8 +996,9 @@ body {
 }
 
 .mobile-menu-btn:hover {
-  background: var(--surface2);
-  color: var(--text);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
 }
 
 .new-session-btn-bottom {
@@ -1043,9 +1044,9 @@ body {
 }
 
 .theme-toggle:hover {
-  background: var(--surface3);
-  border-color: var(--border2);
-  color: var(--text);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
 }
 
 .sessions-body {
@@ -1350,9 +1351,9 @@ body {
 }
 
 .ref-toggle:hover {
-  border-color: var(--text);
-  background: var(--text);
-  color: #fff;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-text);
 }
 
 .ref-close {
