@@ -776,7 +776,7 @@ body {
 }
 
 .user-bubble {
-  background: var(--text);
+  background: var(--surface3);
   border-radius: 8px;
   padding: 11px 15px;
   max-width: 70%;
@@ -793,7 +793,7 @@ body {
 
 .user-text {
   font-size: 0.9rem;
-  color: var(--primary-text);
+  color: var(--text);
   line-height: 1.55;
 }
 
