@@ -4,11 +4,11 @@
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
         <div class="brand">
           <pre class="brand-ascii">
-                                      ██████  ██  █████  ██      ███████ ██   ██ ████████
-                                      ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
-                                      ██   ██ ██ ███████ ██      █████   █████      ██
-                                      ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
-                                      ██████  ██ ██   ██ ███████ ███████ ██   ██    ██
+                          ██████  ██  █████  ██      ███████ ██   ██ ████████
+                          ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+                          ██   ██ ██ ███████ ██      █████   █████      ██
+                          ██   ██ ██ ██   ██ ██      ██      ██  ██     ██
+                          ██████  ██ ██   ██ ███████ ███████ ██   ██    ██
           </pre>
         </div>
         <button
@@ -28,11 +28,11 @@
     <div class="content-section">
       <%= if @show_form do %>
         <!-- Empty State -->
-        <div style="text-align: center; padding: 30px 0;">
-          <h2 style="font-family: var(--fd); font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 12px; font-style: italic;">
+        <div class="dashboard-welcome">
+          <h2 class="dashboard-welcome-title">
             Welcome!
           </h2>
-          <p style="color: var(--text-dim); margin-bottom: 24px; font-size: 0.88rem;">
+          <p class="dashboard-welcome-text">
             Create your first learning configuration to get started.
           </p>
           <.link
@@ -47,20 +47,14 @@
       <% else %>
         <!-- Configs List -->
         <div style="margin-bottom: 48px;">
-          <div style="margin-bottom: 20px;">
-            <h2 style="font-family: var(--fd); font-size: 1.1rem; font-style: italic; color: var(--text);">
-              Your Configurations
-            </h2>
-          </div>
+          <h2 class="dashboard-section-title">
+            Your Configurations
+          </h2>
 
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; align-items: start;">
+          <div class="configs-grid">
             <%= for config <- @configs do %>
-              <div
-                style="background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; transition: all 0.2s;"
-                onmouseover="this.style.background='var(--surface3)'; this.style.borderColor='var(--border2)';"
-                onmouseout="this.style.background='var(--surface2)'; this.style.borderColor='var(--border)';"
-              >
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <div class="config-card">
+                <div class="config-header">
                   <%= if @editing_config_id == config.id do %>
                     <input
                       type="text"
@@ -73,41 +67,38 @@
                       data-config-id={config.id}
                       name="value"
                       autofocus
-                      style="flex: 1; font-family: var(--fd); font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--text); border: 1px solid var(--text); border-radius: 6px; padding: 6px 10px; outline: none; background: var(--surface);"
+                      class="config-name-input"
                     />
                   <% else %>
                     <h3
                       phx-click="edit_name"
                       phx-value-config-id={config.id}
-                      style="flex: 1; font-family: var(--fd); font-size: 1.05rem; font-weight: 600; font-style: italic; color: var(--text); cursor: pointer; transition: color 0.2s; margin: 0;"
-                      onmouseover="this.style.color='var(--text-dim)';"
-                      onmouseout="this.style.color='var(--text)';"
+                      class="config-name"
                     >
                       {config.name}
                     </h3>
                   <% end %>
 
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 0.72rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;">
+                  <div class="config-badges">
+                    <span class="config-badge">
                       {config.native_language_code |> String.upcase()} → {config.target_language_code
                       |> String.upcase()}
                     </span>
-                    <span style="font-size: 0.72rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;">
+                    <span class="config-badge">
                       {config.cefr_level_code}
                     </span>
-                    <span style="font-size: 0.72rem; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;">
+                    <span class="config-badge">
                       {config.register_code |> String.capitalize()}
                     </span>
                   </div>
                 </div>
 
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <div class="config-actions">
                   <button
+                    type="button"
                     phx-click="toggle_sessions"
                     phx-value-config-id={config.id}
-                    style="background: none; border: none; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; font-family: var(--fb); padding: 0; text-decoration: underline; text-decoration-style: dotted; transition: color 0.2s;"
-                    onmouseover="this.style.color='var(--text)';"
-                    onmouseout="this.style.color='var(--text-muted)';"
+                    class="config-sessions-toggle"
                   >
                     {length(@sessions_by_config[config.id] || [])} session(s) {if @expanded_config_id ==
                                                                                     config.id,
@@ -115,23 +106,21 @@
                                                                                   else: " ▼"}
                   </button>
 
-                  <div style="display: flex; gap: 6px;">
+                  <div class="config-btn-group">
                     <button
+                      type="button"
                       phx-click="start_new_chat"
                       phx-value-config-id={config.id}
-                      style="background: var(--primary); border: none; border-radius: 6px; color: var(--primary-text); padding: 6px 14px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                      onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-1px)';"
-                      onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)';"
+                      class="btn btn-sm btn-primary"
                     >
                       New Chat
                     </button>
 
                     <button
+                      type="button"
                       phx-click="show_delete_config"
                       phx-value-config-id={config.id}
-                      style="background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; color: var(--text-dim); padding: 6px 12px; font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                      onmouseover="this.style.borderColor='var(--danger)'; this.style.color='var(--danger)';"
-                      onmouseout="this.style.borderColor='var(--border2)'; this.style.color='var(--text-dim)';"
+                      class="btn btn-sm btn-secondary"
                     >
                       Delete
                     </button>
@@ -139,40 +128,38 @@
                 </div>
 
                 <%= if @expanded_config_id == config.id do %>
-                  <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+                  <div class="config-sessions">
                     <% sessions = @sessions_by_config[config.id] || [] %>
                     <%= if Enum.empty?(sessions) do %>
-                      <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 8px;">
+                      <p class="config-sessions-empty">
                         No sessions yet
                       </p>
                     <% else %>
-                      <div style="display: flex; flex-direction: column; gap: 6px;">
+                      <div class="config-sessions-list">
                         <%= for session <- sessions do %>
-                          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; transition: background 0.2s;">
-                            <div style="flex: 1;">
-                              <div style="font-size: 0.72rem; color: var(--text-dim);">
+                          <div class="config-session-item">
+                            <div class="config-session-info">
+                              <div class="config-session-label">
                                 Session #{session.id}
                               </div>
-                              <div style="font-size: 0.65rem; color: var(--text-muted);">
+                              <div class="config-session-date">
                                 {Calendar.strftime(session.inserted_at, "%b %d, %Y at %I:%M %p")}
                               </div>
                             </div>
-                            <div style="display: flex; gap: 4px;">
+                            <div class="config-session-actions">
                               <button
+                                type="button"
                                 phx-click="resume_session"
                                 phx-value-session-id={session.id}
-                                style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 10px; font-size: 0.7rem; font-weight: 500; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                                onmouseover="this.style.borderColor='var(--primary)'; this.style.color='var(--primary)';"
-                                onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
+                                class="btn btn-xs btn-secondary"
                               >
                                 Resume
                               </button>
                               <button
+                                type="button"
                                 phx-click="show_delete_session"
                                 phx-value-session-id={session.id}
-                                style="background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); padding: 4px 8px; font-size: 0.7rem; cursor: pointer; font-family: var(--fb); transition: all 0.2s;"
-                                onmouseover="this.style.borderColor='var(--danger)'; this.style.color='var(--danger)';"
-                                onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-dim)';"
+                                class="btn btn-xs btn-icon btn-secondary"
                               >
                                 ✕
                               </button>
@@ -191,9 +178,7 @@
 <!-- New Configuration Button -->
         <.link
           navigate={~p"/"}
-          style="position: fixed; bottom: 32px; right: 32px; display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); padding: 7px 14px; font-size: 0.82rem; font-weight: 500; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 16px rgba(41, 37, 36, 0.08);"
-          onmouseover="this.style.borderColor='var(--primary)'; this.style.background='var(--primary)'; this.style.color='var(--primary-text)';"
-          onmouseout="this.style.borderColor='var(--border)'; this.style.background='var(--surface2)'; this.style.color='var(--text-dim)';"
+          class="fab"
           title="New Configuration"
         >
           + New Configuration
@@ -204,21 +189,18 @@
   
 <!-- Delete Config Modal -->
   <%= if @deleting_config_id do %>
-    <% config = Enum.find(@configs, &(&1.id == @deleting_config_id)) %>
-    <%= if config do %>
-      <.confirm_modal
-        id="delete-config-modal"
-        title="Delete Configuration"
-        on_confirm={JS.push("delete_config")}
-      >
-        Are you sure you want to delete "{config.name}"? All chat sessions will be deleted.
-      </.confirm_modal>
-    <% end %>
+    <.confirm_modal
+      id={"delete-config-modal-#{@deleting_config_id}"}
+      title="Delete Configuration"
+      on_confirm={JS.push("delete_config")}
+    >
+      Are you sure you want to delete "{@deleting_config_name}"? All chat sessions will be deleted.
+    </.confirm_modal>
   <% end %>
   <!-- Delete Session Modal -->
   <%= if @deleting_session_id do %>
     <.confirm_modal
-      id="delete-session-modal"
+      id={"delete-session-modal-#{@deleting_session_id}"}
       title="Delete Session"
       on_confirm={JS.push("delete_session")}
     >

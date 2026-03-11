@@ -437,19 +437,19 @@ defmodule DialektWeb.CoreComponents do
     ~H"""
     <div
       id={@id}
-      style="position: relative; z-index: 50; display: none;"
+      style="position: relative; z-index: 999; display: none;"
       phx-mounted={show_modal(@id)}
       phx-remove={hide_modal(@id)}
     >
       <!-- Backdrop -->
       <div
         id={"#{@id}-backdrop"}
-        style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); transition: opacity 0.2s;"
+        style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); transition: opacity 0.2s; z-index: 1000;"
         aria-hidden="true"
       />
       <!-- Modal -->
       <div
-        style="position: fixed; inset: 0; overflow-y: auto;"
+        style="position: fixed; inset: 0; overflow-y: auto; z-index: 1001;"
         aria-labelledby={"#{@id}-title"}
         aria-describedby={"#{@id}-description"}
         role="dialog"
@@ -485,9 +485,9 @@ defmodule DialektWeb.CoreComponents do
               <button
                 type="button"
                 phx-click={@on_confirm |> hide_modal(@id)}
-                style="padding: 8px 16px; font-size: 0.88rem; font-weight: 500; font-family: var(--fb); border-radius: 6px; background: var(--danger); color: var(--primary-text); border: none; cursor: pointer; transition: background 0.2s;"
-                onmouseover="this.style.background='var(--danger-hover)';"
-                onmouseout="this.style.background='var(--danger)';"
+                style="padding: 8px 16px; font-size: 0.88rem; font-weight: 500; font-family: var(--fb); border-radius: 6px; background: var(--selected-bg); color: var(--selected-text); border: none; cursor: pointer; transition: background 0.2s;"
+                onmouseover="this.style.background='var(--hover-bg)';"
+                onmouseout="this.style.background='var(--selected-bg)';"
               >
                 Delete
               </button>

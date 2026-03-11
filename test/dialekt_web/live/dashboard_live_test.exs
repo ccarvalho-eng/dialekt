@@ -125,7 +125,7 @@ defmodule DialektWeb.DashboardLiveTest do
 
       # Confirm deletion in modal
       view
-      |> element("#delete-config-modal button", "Delete")
+      |> element("#delete-config-modal-#{config.id} button", "Delete")
       |> render_click()
 
       # Config should be deleted
@@ -284,7 +284,7 @@ defmodule DialektWeb.DashboardLiveTest do
 
       # Confirm deletion in modal
       view
-      |> element("#delete-config-modal button", "Delete")
+      |> element("#delete-config-modal-#{config1.id} button", "Delete")
       |> render_click()
 
       # Config1 should be deleted

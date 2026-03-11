@@ -1,15 +1,23 @@
 <div class="chat-root" phx-hook="ThemeManager" data-theme={@theme} id="theme-manager">
+  <div phx-hook="SidebarState" id="sidebar-state-manager" style="display: none;"></div>
   <!-- Sessions Sidebar -->
   <%= if @config && @all_sessions do %>
-    <div class="sessions-sidebar">
+    <div class={[
+      "sessions-sidebar",
+      @sidebar_collapsed && "sessions-sidebar-collapsed"
+    ]}>
       <div class="sessions-hdr">
         <div class="sessions-title">{@config.name}</div>
         <button
-          phx-click="new_session"
-          class="new-session-btn"
-          title="New Session"
+          phx-click="toggle_sidebar"
+          class="mobile-menu-btn"
+          title="Toggle menu"
+          aria-label="Toggle menu"
         >
-          <.icon name="hero-pencil-square" class="size-4" />
+          <.icon
+            name={if @sidebar_collapsed, do: "hero-chevron-right", else: "hero-chevron-left"}
+            class="size-5"
+          />
         </button>
       </div>
       <div class="sessions-body">
@@ -26,6 +34,7 @@
                 phx-value-session-id={session.id}
                 class="session-content"
               >
+                <div class="session-id-badge">#{session.id}</div>
                 <div class="session-label">Session #{session.id}</div>
                 <div class="session-date">
                   {Calendar.strftime(session.inserted_at, "%b %d")}
@@ -44,6 +53,14 @@
             </div>
           <% end %>
         <% end %>
+        <button
+          phx-click="new_session"
+          class="new-session-btn-bottom"
+          title="New Session"
+        >
+          <.icon name="hero-pencil-square" class="size-4" />
+          <span class="new-session-text">New Chat</span>
+        </button>
       </div>
     </div>
   <% end %>
@@ -117,26 +134,6 @@
                     phx-hook="ChatInput"
                     id="chat-input-empty"
                   ></textarea>
-                  <button
-                    type="button"
-                    class="send-btn"
-                    disabled={@input == ""}
-                    phx-click="send_message"
-                    phx-disable-with="Sending..."
-                  >
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-                    </svg>
-                  </button>
                 </div>
                 <div class="input-hint">
                   ↵ send · ⇧↵ new line · AI transliteration may contain mistakes
@@ -178,11 +175,7 @@
             <% end %>
           <% end %>
         <% end %>
-      <% end %>
-    </div>
 
-    <%= if @messages != [] do %>
-      <div class="input-area">
         <div class="input-inner">
           <form phx-change="update_input">
             <div class="input-row">
@@ -195,40 +188,20 @@
                 phx-hook="ChatInput"
                 id="chat-input-active"
               ></textarea>
-              <button
-                type="button"
-                class="send-btn"
-                disabled={@input == ""}
-                phx-click="send_message"
-                phx-disable-with="Sending..."
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
-              </button>
             </div>
             <div class="input-hint">
               ↵ send · ⇧↵ new line · AI transliteration may contain mistakes
             </div>
           </form>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
   
 <!-- Delete Session Modal -->
   <%= if @deleting_session_id do %>
     <.confirm_modal
-      id="delete-chat-session-modal"
+      id={"delete-chat-session-modal-#{@deleting_session_id}"}
       title="Delete Session"
       on_confirm={JS.push("delete_session_from_sidebar")}
     >

@@ -100,6 +100,21 @@ Hooks.ThemeManager = {
   }
 }
 
+Hooks.SidebarState = {
+  mounted() {
+    // Read initial state from localStorage
+    const collapsed = localStorage.getItem("dialekt-sidebar-collapsed") === "true"
+
+    // Send initial state to server
+    this.pushEvent("init_sidebar_state", { collapsed })
+
+    // Listen for state changes from server and persist
+    this.handleEvent("sidebar_state_changed", ({ collapsed }) => {
+      localStorage.setItem("dialekt-sidebar-collapsed", collapsed)
+    })
+  }
+}
+
 Hooks.TextToSpeech = {
   mounted() {
     // Check if speech synthesis is supported
@@ -249,7 +264,8 @@ const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: () => {
     const theme = localStorage.getItem("dialekt-theme") || "light"
-    return {_csrf_token: csrfToken, theme: theme}
+    const sidebarCollapsed = localStorage.getItem("dialekt-sidebar-collapsed") === "true"
+    return {_csrf_token: csrfToken, theme: theme, sidebar_collapsed: sidebarCollapsed}
   },
   hooks: {...colocatedHooks, ...Hooks},
 })

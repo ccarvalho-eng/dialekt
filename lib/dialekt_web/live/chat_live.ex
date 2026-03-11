@@ -168,9 +168,14 @@ defmodule DialektWeb.ChatLive do
   @impl true
   def mount(params, _session, socket) do
     session_id = params["session_id"]
-    theme = get_connect_params(socket)["theme"] || "light"
+    connect_params = get_connect_params(socket)
+    theme = connect_params["theme"] || "light"
+    sidebar_collapsed = connect_params["sidebar_collapsed"] || false
 
-    socket = assign(socket, theme: theme)
+    socket =
+      socket
+      |> assign(theme: theme)
+      |> assign(sidebar_collapsed: sidebar_collapsed)
 
     if session_id do
       mount_with_session(socket, session_id)
@@ -373,21 +378,26 @@ defmodule DialektWeb.ChatLive do
   def handle_event("delete_session_from_sidebar", _, socket) do
     if socket.assigns.deleting_session_id do
       session = Learning.get_session!(socket.assigns.deleting_session_id)
-      {:ok, _} = Learning.delete_session(session)
 
-      # Refresh sessions list
-      all_sessions =
-        if socket.assigns.config do
-          Learning.list_sessions_for_config(socket.assigns.config.id)
-        else
-          []
-        end
+      case Learning.delete_session(session) do
+        {:ok, _} ->
+          # Refresh sessions list
+          all_sessions =
+            if socket.assigns.config do
+              Learning.list_sessions_for_config(socket.assigns.config.id)
+            else
+              []
+            end
 
-      # If we deleted the current session, redirect to dashboard
-      if socket.assigns.chat_session && socket.assigns.chat_session.id == session.id do
-        {:noreply, push_navigate(socket, to: ~p"/dashboard")}
-      else
-        {:noreply, assign(socket, all_sessions: all_sessions, deleting_session_id: nil)}
+          # If we deleted the current session, redirect to dashboard
+          if socket.assigns.chat_session && socket.assigns.chat_session.id == session.id do
+            {:noreply, push_navigate(socket, to: ~p"/dashboard")}
+          else
+            {:noreply, assign(socket, all_sessions: all_sessions, deleting_session_id: nil)}
+          end
+
+        {:error, _changeset} ->
+          {:noreply, assign(socket, deleting_session_id: nil)}
       end
     else
       {:noreply, socket}
@@ -452,6 +462,23 @@ defmodule DialektWeb.ChatLive do
   @impl true
   def handle_event("sync_theme", %{"theme" => theme}, socket) do
     {:noreply, assign(socket, theme: theme)}
+  end
+
+  @impl true
+  def handle_event("init_sidebar_state", %{"collapsed" => collapsed}, socket) do
+    {:noreply, assign(socket, :sidebar_collapsed, collapsed)}
+  end
+
+  @impl true
+  def handle_event("toggle_sidebar", _params, socket) do
+    new_state = !socket.assigns.sidebar_collapsed
+
+    socket =
+      socket
+      |> assign(:sidebar_collapsed, new_state)
+      |> push_event("sidebar_state_changed", %{collapsed: new_state})
+
+    {:noreply, socket}
   end
 
   @impl true

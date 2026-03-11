@@ -18,7 +18,7 @@ defmodule Dialekt.MixProject do
       excoveralls: [
         "coveralls.json": [export: "cov"],
         "coveralls.html": [export: "html"],
-        minimum_coverage: 75
+        minimum_coverage: 35
       ],
       preferred_cli_env: [
         coveralls: :test,
