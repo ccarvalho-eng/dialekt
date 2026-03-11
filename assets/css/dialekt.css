@@ -1008,7 +1008,7 @@ body {
   margin: 4px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: var(--text);
+  background: var(--text-dim);
   border: none;
   color: #fff;
   cursor: pointer;
@@ -1023,7 +1023,7 @@ body {
 }
 
 .new-session-btn-bottom:hover {
-  background: var(--text-dim);
+  background: var(--text);
   transform: translateY(-1px);
 }
 
