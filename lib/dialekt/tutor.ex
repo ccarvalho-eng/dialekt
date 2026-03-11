@@ -156,6 +156,7 @@ defmodule Dialekt.Tutor do
     case ReqLLM.generate_text(model_spec, prompt, max_tokens: 2000) do
       {:ok, response} ->
         raw_response = ReqLLM.Response.text(response) || ""
+
         case Jason.decode(raw_response) do
           {:ok, starters} when is_list(starters) ->
             {:ok, starters}
@@ -191,12 +192,15 @@ defmodule Dialekt.Tutor do
 
     opts =
       if String.starts_with?(model_spec, "openrouter:") do
-        Keyword.put(opts, :provider_options, app_referer: "https://github.com/ccarvalho-eng/dialekt", app_title: "Dialekt")
+        Keyword.put(opts, :provider_options,
+          app_referer: "https://github.com/ccarvalho-eng/dialekt",
+          app_title: "Dialekt"
+        )
       else
         opts
       end
 
-    case ReqLLM.generate_text(model_spec, llm_context, opts) do
+    case ReqLLM.generate_text(model_spec, ReqLLM.Context.to_list(llm_context), opts) do
       {:ok, response} ->
         raw_response = ReqLLM.Response.text(response) || ""
         {:ok, parse_response(raw_response), raw_response}
@@ -383,6 +387,7 @@ defmodule Dialekt.Tutor do
     context =
       Enum.reduce(history, context, fn msg, acc ->
         content = if(msg.role == "user", do: msg.text, else: msg.raw_response || "")
+
         if msg.role == "user" do
           ReqLLM.Context.append(acc, ReqLLM.Context.user(content))
         else
