@@ -253,8 +253,8 @@ body {
 }
 
 .cefr-on {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--surface3);
+  border-color: var(--surface3);
 }
 
 .cefr-code {
@@ -312,8 +312,8 @@ body {
 }
 
 .reg-on {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--surface3);
+  border-color: var(--surface3);
 }
 
 .reg-icon {
@@ -374,8 +374,8 @@ body {
 }
 
 .qpill-on {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--surface3);
+  border-color: var(--surface3);
   color: #fff;
 }
 
@@ -513,8 +513,8 @@ body {
 }
 
 .go-on {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--surface3);
+  border-color: var(--surface3);
   color: #fff;
   cursor: pointer;
   box-shadow: var(--shadow-md);
@@ -1091,7 +1091,13 @@ body {
 }
 
 .session-active {
-  background: var(--surface2);
+  background: var(--surface3);
+  border-color: var(--surface3);
+}
+
+.session-active .session-label,
+.session-active .session-date {
+  color: #fff;
 }
 
 .session-content {
