@@ -584,9 +584,9 @@ body {
 }
 
 .back-btn:hover {
-  border-color: var(--border2);
-  background: var(--surface2);
-  color: var(--text);
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
   transform: translateY(-1px);
   transition: all 0.15s ease;
 }
@@ -1351,9 +1351,9 @@ body {
 }
 
 .ref-toggle:hover {
-  border-color: var(--border2);
-  background: var(--surface2);
-  color: var(--text);
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
 }
 
 .ref-close {
