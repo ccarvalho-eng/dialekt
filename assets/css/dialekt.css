@@ -1227,22 +1227,22 @@ body {
 
 /* AI avatar styling */
 .avatar-ai {
-  background: linear-gradient(135deg, #fef3c7, #fef9c3);
-  border-color: #fcd34d;
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+  border-color: #c084fc;
   position: relative;
 }
 
 .avatar-ai .avatar-icon {
-  color: #f59e0b;
+  color: #9333ea;
 }
 
 [data-theme="dark"] .avatar-ai {
-  background: linear-gradient(135deg, rgba(252, 211, 77, 0.15), rgba(251, 191, 36, 0.1));
-  border-color: rgba(252, 211, 77, 0.4);
+  background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), rgba(147, 51, 234, 0.1));
+  border-color: rgba(192, 132, 252, 0.4);
 }
 
 [data-theme="dark"] .avatar-ai .avatar-icon {
-  color: #fbbf24;
+  color: #a78bfa;
 }
 
 /* Flag badge positioning */
