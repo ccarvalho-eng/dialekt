@@ -502,9 +502,11 @@ defmodule DialektWeb.CoreComponents do
   @doc """
   Shows a modal with smooth animations.
   """
-  @spec show_modal(Phoenix.LiveView.JS.t(), String.t()) ::
+  @spec show_modal(Phoenix.LiveView.JS.t() | nil, String.t()) ::
           Phoenix.LiveView.JS.t()
-  def show_modal(js \\ %JS{}, id) when is_binary(id) do
+  def show_modal(js \\ nil, id) when is_binary(id) do
+    js = js || %JS{ops: :ordsets.new()}
+
     js
     |> JS.show(to: "##{id}")
     |> JS.show(
@@ -525,9 +527,11 @@ defmodule DialektWeb.CoreComponents do
   @doc """
   Hides a modal with smooth animations.
   """
-  @spec hide_modal(Phoenix.LiveView.JS.t(), String.t()) ::
+  @spec hide_modal(Phoenix.LiveView.JS.t() | nil, String.t()) ::
           Phoenix.LiveView.JS.t()
-  def hide_modal(js \\ %JS{}, id) do
+  def hide_modal(js \\ nil, id) do
+    js = js || %JS{ops: :ordsets.new()}
+
     js
     |> JS.hide(
       to: "##{id}-backdrop",

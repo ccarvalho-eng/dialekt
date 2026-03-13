@@ -9,8 +9,8 @@ on:
     - cron: '0 2 * * 1' # Weekly on Mondays at 2 AM UTC
 
 env:
-  ELIXIR_VERSION: "1.17"
-  OTP_VERSION: "27"
+  ELIXIR_VERSION: "1.19.5"
+  OTP_VERSION: "28.4"
   NODE_VERSION: "20"
 
 permissions:
