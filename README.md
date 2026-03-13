@@ -1,13 +1,14 @@
 <div align="center">
 
 ```
+
 ██████╗ ██╗ █████╗ ██╗     ███████╗██╗  ██╗████████╗
 ██╔══██╗██║██╔══██╗██║     ██╔════╝██║ ██╔╝╚══██╔══╝
 ██║  ██║██║███████║██║     █████╗  █████╔╝    ██║   
 ██║  ██║██║██╔══██║██║     ██╔══╝  ██╔═██╗    ██║   
 ██████╔╝██║██║  ██║███████╗███████╗██║  ██╗   ██║   
 ╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   
-                                                    
+                                                  
 ```
 
 [![CI](https://img.shields.io/github/actions/workflow/status/ccarvalho-eng/dialekt/ci.yml?style=flat-square&logo=github-actions)](https://github.com/ccarvalho-eng/dialekt/actions/workflows/ci.yml)
