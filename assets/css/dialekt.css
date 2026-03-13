@@ -934,6 +934,25 @@ body {
   min-width: 0;
   align-items: center;
   background: var(--bg);
+  position: relative;
+  background-image:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.004) 25%, transparent 25%),
+    linear-gradient(225deg, rgba(0, 0, 0, 0.004) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(0, 0, 0, 0.004) 25%, transparent 25%),
+    linear-gradient(315deg, rgba(0, 0, 0, 0.004) 25%, transparent 25%);
+  background-position: 10px 0, 10px 0, 0 0, 0 0;
+  background-size: 40px 40px;
+  background-repeat: repeat;
+}
+
+[data-theme="dark"] .chat-app {
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.004) 25%, transparent 25%),
+    linear-gradient(225deg, rgba(255, 255, 255, 0.004) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.004) 25%, transparent 25%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.004) 25%, transparent 25%);
+  background-position: 10px 0, 10px 0, 0 0, 0 0;
+  background-size: 40px 40px;
 }
 
 /* Chat Header */
@@ -1052,6 +1071,22 @@ body {
   width: 100%;
   max-width: 800px;
   min-height: 0;
+  position: relative;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.015) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.01) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(0, 0, 0, 0.008) 0%, transparent 50%),
+    radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px;
+}
+
+[data-theme="dark"] .chat-body {
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.015) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.008) 0%, transparent 50%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px;
 }
 
 .chat-body::-webkit-scrollbar {
