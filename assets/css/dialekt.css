@@ -985,52 +985,39 @@ body {
   flex-direction: column;
 }
 
-/* Language Pair Display */
-.language-pair {
+/* Language Pair Display - Inline */
+.language-pair-inline {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  background: var(--surface2);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  margin-bottom: 6px;
-  width: fit-content;
-}
-
-.language-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  gap: 8px;
+  font-size: var(--text-base);
+  line-height: 1.2;
 }
 
 .language-flag {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   line-height: 1;
   filter: saturate(0.8);
 }
 
 .language-code {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  opacity: 0.8;
+  padding: 2px 4px;
+  background: var(--surface2);
+  border-radius: 4px;
+  border: 1px solid var(--border);
 }
 
-.language-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.arrow-icon-inline {
+  width: 14px;
+  height: 14px;
   color: var(--text-muted);
   opacity: 0.5;
-}
-
-.arrow-icon {
-  width: 16px;
-  height: 16px;
+  margin: 0 2px;
 }
 
 .hdr-title {
@@ -1038,6 +1025,9 @@ body {
   font-size: var(--text-md);
   font-style: italic;
   color: var(--text);
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border);
 }
 
 .hdr-badge {
@@ -2286,9 +2276,6 @@ body {
     height: 30px;
   }
 
-  .hdr-title {
-    font-size: var(--text-base);
-  }
 
   .hdr-badge {
     font-size: var(--text-xs);
@@ -2413,21 +2400,27 @@ body {
   }
 
   /* Language pair mobile adjustments */
-  .language-pair {
-    padding: 6px 8px;
-    gap: 8px;
+  .language-pair-inline {
+    gap: 6px;
+    font-size: var(--text-sm);
   }
 
   .language-flag {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .language-code {
     font-size: 0.6rem;
+    padding: 1px 3px;
   }
 
-  .arrow-icon {
-    width: 14px;
-    height: 14px;
+  .arrow-icon-inline {
+    width: 12px;
+    height: 12px;
+    margin: 0 1px;
+  }
+
+  .hdr-title {
+    display: none; /* Hide title on mobile to save space */
   }
 }
