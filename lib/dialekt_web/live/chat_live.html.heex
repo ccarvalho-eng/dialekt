@@ -11,11 +11,11 @@
         <button
           phx-click="toggle_sidebar"
           class="mobile-menu-btn"
-          title="Toggle menu"
-          aria-label="Toggle menu"
+          title={if @sidebar_collapsed, do: "Show sessions", else: "Hide sessions"}
+          aria-label={if @sidebar_collapsed, do: "Show sessions", else: "Hide sessions"}
         >
           <.icon
-            name={if @sidebar_collapsed, do: "hero-chevron-right", else: "hero-chevron-left"}
+            name={if @sidebar_collapsed, do: "hero-bars-3", else: "hero-x-mark"}
             class="size-5"
           />
         </button>
