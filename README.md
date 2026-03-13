@@ -20,6 +20,7 @@ An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-
 
 > **How it works:** Type in either your native language or the target language. The AI tutor always responds in the target language to maintain immersion. When you write in your native language, your message is translated to the target language with phonetics. When you practice in the target language, you receive corrections and guidance. All responses include phonetics and translations to help you understand.
 
+## Architecture
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        User Input Layer                         │
