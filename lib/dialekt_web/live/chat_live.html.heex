@@ -11,11 +11,11 @@
         <button
           phx-click="toggle_sidebar"
           class="mobile-menu-btn"
-          title="Toggle menu"
-          aria-label="Toggle menu"
+          title={if @sidebar_collapsed, do: "Show sessions", else: "Hide sessions"}
+          aria-label={if @sidebar_collapsed, do: "Show sessions", else: "Hide sessions"}
         >
           <.icon
-            name={if @sidebar_collapsed, do: "hero-chevron-right", else: "hero-chevron-left"}
+            name={if @sidebar_collapsed, do: "hero-bars-3", else: "hero-x-mark"}
             class="size-5"
           />
         </button>
@@ -70,8 +70,14 @@
       <div class="chat-hdr-inner">
         <button class="back-btn" phx-click={JS.navigate(~p"/dashboard")} type="button">←</button>
         <div class="hdr-info">
-          <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
-          <span class="hdr-title">{@target && @target.name} Tutor</span>
+          <div class="language-pair-inline">
+            <span class="language-flag">{@native && @native.flag}</span>
+            <span class="language-code">{@native && @native.code}</span>
+            <.icon name="hero-arrow-right" class="arrow-icon-inline" />
+            <span class="language-flag">{@target && @target.flag}</span>
+            <span class="language-code">{@target && @target.code}</span>
+            <span class="hdr-title">{@target && @target.name} Tutor</span>
+          </div>
         </div>
         <span class="hdr-badge">{@level && @level.code}</span>
         <span class="hdr-badge">{@register && @register.label}</span>
@@ -146,7 +152,10 @@
         <%= for msg <- @messages do %>
           <%= if msg.role == "user" do %>
             <div class="msg user-msg">
-              <span class="av">{@native && @native.flag}</span>
+              <div class="avatar avatar-user">
+                <.icon name="hero-user-circle-solid" class="avatar-icon" />
+                <span class="avatar-flag-badge">{@native && @native.flag}</span>
+              </div>
               <div class="user-bubble">
                 <span class="user-text">{msg.content}</span>
               </div>
@@ -154,7 +163,10 @@
           <% else %>
             <%= if Map.get(msg, :loading) do %>
               <div class="msg">
-                <span class="av">{@target && @target.flag}</span>
+                <div class="avatar avatar-ai">
+                  <.icon name="hero-cpu-chip-solid" class="avatar-icon" />
+                  <span class="avatar-flag-badge">{@target && @target.flag}</span>
+                </div>
                 <div class="tb tb-loading">
                   <span class="ld"></span>
                   <span class="ld"></span>
@@ -163,7 +175,10 @@
               </div>
             <% else %>
               <div class="msg">
-                <span class="av">{@target && @target.flag}</span>
+                <div class="avatar avatar-ai">
+                  <.icon name="hero-cpu-chip-solid" class="avatar-icon" />
+                  <span class="avatar-flag-badge">{@target && @target.flag}</span>
+                </div>
                 <div class="tb">
                   <%= if Map.get(msg, :error) do %>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">{msg.content}</p>
@@ -175,7 +190,11 @@
             <% end %>
           <% end %>
         <% end %>
+      <% end %>
+    </div>
 
+    <%= if @messages != [] do %>
+      <div class="input-container">
         <div class="input-inner">
           <form phx-change="update_input">
             <div class="input-row">
@@ -194,8 +213,8 @@
             </div>
           </form>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   </div>
   
 <!-- Delete Session Modal -->
