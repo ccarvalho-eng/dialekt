@@ -616,121 +616,133 @@ defmodule DialektWeb.ChatLive do
     <% else %>
       <%= if @parsed do %>
         <%= if @parsed.you && @parsed.you.phrase && @parsed.you.phrase != "" do %>
-          <div style="margin-bottom: 12px;">
-            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
-              In {@target && @target.name}:
+          <div class="tutor-section tutor-section-you">
+            <div class="tutor-section-header">
+              <.icon name="hero-language" class="tutor-section-icon" />
+              <span>Your phrase in {@target && @target.name}</span>
             </div>
-            <div style="font-size: 0.9rem;" phx-no-format>
-              <%= raw(format_bold(@parsed.you.phrase)) %>
-              <button
-                id={"tts-you-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
-                phx-hook="TextToSpeech"
-                data-text={strip_markdown_bold(@parsed.you.phrase)}
-                data-lang={@target && @target.code}
-                type="button"
-                class="tts-button"
-                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle; position: relative;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.6'"
-              >
-                <.icon name="hero-speaker-wave" class="size-4" />
-                <span class="tts-warning" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.6rem;">⚠️</span>
-              </button>
-            </div>
-            <%= if @parsed.you.ipa != "" do %>
-              <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                [{@parsed.you.ipa}] {@parsed.you.roman != "" && "(#{@parsed.you.roman})"}
+            <div class="tutor-section-content">
+              <div class="tutor-phrase" phx-no-format>
+                <%= raw(format_bold(@parsed.you.phrase)) %>
+                <button
+                  id={"tts-you-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
+                  phx-hook="TextToSpeech"
+                  data-text={strip_markdown_bold(@parsed.you.phrase)}
+                  data-lang={@target && @target.code}
+                  type="button"
+                  class="tts-button"
+                >
+                  <.icon name="hero-speaker-wave" class="size-4" />
+                  <span class="tts-warning" style="display: none;">⚠️</span>
+                </button>
               </div>
-            <% end %>
-          </div>
-        <% end %>
-        <%= if @parsed.note && @parsed.note != "" do %>
-          <div
-            style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-dim);"
-            phx-no-format
-          >
-            💡 <%= raw(format_bold(@parsed.note)) %>
-          </div>
-        <% end %>
-        <%= if @parsed.tutor && length(@parsed.tutor) > 0 do %>
-          <div style="margin-bottom: 12px;">
-            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
-              Tutor:
-            </div>
-            <%= for {line, idx} <- Enum.with_index(@parsed.tutor) do %>
-              <div style="margin-bottom: 8px;">
-                <div style="font-size: 0.9rem;" phx-no-format>
-                  <%= raw(format_bold(line.phrase)) %>
-                  <button
-                    id={"tts-tutor-#{DateTime.to_unix(@msg.timestamp, :microsecond)}-#{idx}"}
-                    phx-hook="TextToSpeech"
-                    data-text={strip_markdown_bold(line.phrase)}
-                    data-lang={@target && @target.code}
-                    type="button"
-                    class="tts-button"
-                    style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle; position: relative;"
-                    onmouseover="this.style.opacity='1'"
-                    onmouseout="this.style.opacity='0.6'"
-                  >
-                    <.icon name="hero-speaker-wave" class="size-4" />
-                    <span class="tts-warning" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.6rem;">⚠️</span>
-                  </button>
+              <%= if @parsed.you.ipa != "" do %>
+                <div class="tutor-pronunciation">
+                  [{@parsed.you.ipa}] {@parsed.you.roman != "" && "(#{@parsed.you.roman})"}
                 </div>
-                <%= if line.ipa != "" do %>
-                  <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                    [{line.ipa}] {if line.roman != "", do: "(#{line.roman})"}
-                  </div>
-                <% end %>
-                <%= if line.translation != "" do %>
-                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                    {line.translation}
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         <% end %>
+
+        <%= if @parsed.note && @parsed.note != "" do %>
+          <div class="tutor-section tutor-section-feedback">
+            <div class="tutor-section-header">
+              <.icon name="hero-light-bulb" class="tutor-section-icon" />
+              <span>Feedback</span>
+            </div>
+            <div class="tutor-section-content" phx-no-format>
+              <%= raw(format_bold(@parsed.note)) %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= if @parsed.tutor && length(@parsed.tutor) > 0 do %>
+          <div class="tutor-section tutor-section-response">
+            <div class="tutor-section-header">
+              <.icon name="hero-chat-bubble-left-right" class="tutor-section-icon" />
+              <span>Response</span>
+            </div>
+            <div class="tutor-section-content">
+              <%= for {line, idx} <- Enum.with_index(@parsed.tutor) do %>
+                <div class="tutor-response-item">
+                  <div class="tutor-phrase" phx-no-format>
+                    <%= raw(format_bold(line.phrase)) %>
+                    <button
+                      id={"tts-tutor-#{DateTime.to_unix(@msg.timestamp, :microsecond)}-#{idx}"}
+                      phx-hook="TextToSpeech"
+                      data-text={strip_markdown_bold(line.phrase)}
+                      data-lang={@target && @target.code}
+                      type="button"
+                      class="tts-button"
+                    >
+                      <.icon name="hero-speaker-wave" class="size-4" />
+                      <span class="tts-warning" style="display: none;">⚠️</span>
+                    </button>
+                  </div>
+                  <%= if line.ipa != "" do %>
+                    <div class="tutor-pronunciation">
+                      [{line.ipa}] {if line.roman != "", do: "(#{line.roman})"}
+                    </div>
+                  <% end %>
+                  <%= if line.translation != "" do %>
+                    <div class="tutor-translation">
+                      <.icon name="hero-arrow-path-rounded-square" class="tutor-translation-icon" />
+                      {line.translation}
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
         <%= if @parsed.followup do %>
-          <div style="margin-bottom: 8px;">
-            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
-              Follow-up:
+          <div class="tutor-section tutor-section-question">
+            <div class="tutor-section-header">
+              <.icon name="hero-question-mark-circle" class="tutor-section-icon" />
+              <span>Continue the conversation</span>
             </div>
-            <div style="font-size: 0.9rem;" phx-no-format>
-              <%= raw(format_bold(@parsed.followup.phrase)) %>
-              <button
-                id={"tts-followup-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
-                phx-hook="TextToSpeech"
-                data-text={strip_markdown_bold(@parsed.followup.phrase)}
-                data-lang={@target && @target.code}
-                type="button"
-                class="tts-button"
-                style="display: inline-block; background: none; border: none; cursor: pointer; padding: 2px; margin-left: 4px; opacity: 0.6; transition: opacity 0.2s; vertical-align: middle; position: relative;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.6'"
-              >
-                <.icon name="hero-speaker-wave" class="size-4" />
-                <span class="tts-warning" style="display: none; position: absolute; top: -2px; right: -2px; font-size: 0.6rem;">⚠️</span>
-              </button>
+            <div class="tutor-section-content">
+              <div class="tutor-phrase" phx-no-format>
+                <%= raw(format_bold(@parsed.followup.phrase)) %>
+                <button
+                  id={"tts-followup-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
+                  phx-hook="TextToSpeech"
+                  data-text={strip_markdown_bold(@parsed.followup.phrase)}
+                  data-lang={@target && @target.code}
+                  type="button"
+                  class="tts-button"
+                >
+                  <.icon name="hero-speaker-wave" class="size-4" />
+                  <span class="tts-warning" style="display: none;">⚠️</span>
+                </button>
+              </div>
+              <%= if @parsed.followup.ipa != "" do %>
+                <div class="tutor-pronunciation">
+                  [{@parsed.followup.ipa}] {if @parsed.followup.roman != "",
+                    do: "(#{@parsed.followup.roman})"}
+                </div>
+              <% end %>
+              <%= if @parsed.followup.translation != "" do %>
+                <div class="tutor-translation">
+                  <.icon name="hero-arrow-path-rounded-square" class="tutor-translation-icon" />
+                  {@parsed.followup.translation}
+                </div>
+              <% end %>
             </div>
-            <%= if @parsed.followup.ipa != "" do %>
-              <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
-                [{@parsed.followup.ipa}] {if @parsed.followup.roman != "",
-                  do: "(#{@parsed.followup.roman})"}
-              </div>
-            <% end %>
-            <%= if @parsed.followup.translation != "" do %>
-              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">
-                {@parsed.followup.translation}
-              </div>
-            <% end %>
           </div>
         <% end %>
+
         <%= if @parsed.tips && @parsed.tips != "" do %>
-          <div
-            style="background: var(--surface2); padding: 8px 12px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: var(--text-dim);"
-            phx-no-format
-          >
-            💡 <%= raw(format_bold(@parsed.tips)) %>
+          <div class="tutor-section tutor-section-tips">
+            <div class="tutor-section-header">
+              <.icon name="hero-academic-cap" class="tutor-section-icon" />
+              <span>Learning tip</span>
+            </div>
+            <div class="tutor-section-content" phx-no-format>
+              <%= raw(format_bold(@parsed.tips)) %>
+            </div>
           </div>
         <% end %>
       <% else %>
