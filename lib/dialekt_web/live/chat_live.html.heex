@@ -70,7 +70,19 @@
       <div class="chat-hdr-inner">
         <button class="back-btn" phx-click={JS.navigate(~p"/dashboard")} type="button">←</button>
         <div class="hdr-info">
-          <span class="hdr-pair">{@native && @native.flag} → {@target && @target.flag}</span>
+          <div class="language-pair">
+            <div class="language-item">
+              <span class="language-flag">{@native && @native.flag}</span>
+              <span class="language-code">{@native && @native.code}</span>
+            </div>
+            <div class="language-arrow">
+              <.icon name="hero-arrow-right" class="arrow-icon" />
+            </div>
+            <div class="language-item">
+              <span class="language-flag">{@target && @target.flag}</span>
+              <span class="language-code">{@target && @target.code}</span>
+            </div>
+          </div>
           <span class="hdr-title">{@target && @target.name} Tutor</span>
         </div>
         <span class="hdr-badge">{@level && @level.code}</span>
