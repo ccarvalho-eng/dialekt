@@ -1183,10 +1183,94 @@ body {
   line-height: 1.55;
 }
 
-.av {
-  font-size: var(--text-2xl);
+/* Avatar Containers */
+.avatar {
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
-  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.avatar-flag {
+  font-size: 1.4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* User avatar styling */
+.avatar-user {
+  background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+  border-color: #7dd3fc;
+}
+
+[data-theme="dark"] .avatar-user {
+  background: linear-gradient(135deg, rgba(125, 211, 252, 0.15), rgba(59, 130, 246, 0.1));
+  border-color: rgba(125, 211, 252, 0.4);
+}
+
+/* AI avatar styling */
+.avatar-ai {
+  background: linear-gradient(135deg, #fef3c7, #fef9c3);
+  border-color: #fcd34d;
+  position: relative;
+}
+
+[data-theme="dark"] .avatar-ai {
+  background: linear-gradient(135deg, rgba(252, 211, 77, 0.15), rgba(251, 191, 36, 0.1));
+  border-color: rgba(252, 211, 77, 0.4);
+}
+
+/* AI indicator badge */
+.avatar-ai::after {
+  content: "AI";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #3b82f6;
+  color: white;
+  font-size: 0.5rem;
+  font-weight: 700;
+  padding: 2px 3px;
+  border-radius: 4px;
+  border: 1px solid var(--surface);
+  letter-spacing: 0.025em;
+}
+
+[data-theme="dark"] .avatar-ai::after {
+  background: #60a5fa;
+  border-color: var(--background);
+}
+
+/* Avatar hover effects */
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Animation for message appearance */
+@keyframes avatar-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.msg .avatar {
+  animation: avatar-fade-in 0.3s ease-out;
 }
 
 .tb {
@@ -2216,6 +2300,21 @@ body {
 
   .tutor-pronunciation {
     font-size: 0.7rem;
+  }
+
+  /* Avatar mobile adjustments */
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .avatar-flag {
+    font-size: 1.2rem;
+  }
+
+  .avatar-ai::after {
+    font-size: 0.45rem;
+    padding: 1px 2px;
   }
 }
 

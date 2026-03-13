@@ -146,7 +146,9 @@
         <%= for msg <- @messages do %>
           <%= if msg.role == "user" do %>
             <div class="msg user-msg">
-              <span class="av">{@native && @native.flag}</span>
+              <div class="avatar avatar-user">
+                <span class="avatar-flag">{@native && @native.flag}</span>
+              </div>
               <div class="user-bubble">
                 <span class="user-text">{msg.content}</span>
               </div>
@@ -154,7 +156,9 @@
           <% else %>
             <%= if Map.get(msg, :loading) do %>
               <div class="msg">
-                <span class="av">{@target && @target.flag}</span>
+                <div class="avatar avatar-ai">
+                  <span class="avatar-flag">{@target && @target.flag}</span>
+                </div>
                 <div class="tb tb-loading">
                   <span class="ld"></span>
                   <span class="ld"></span>
@@ -163,7 +167,9 @@
               </div>
             <% else %>
               <div class="msg">
-                <span class="av">{@target && @target.flag}</span>
+                <div class="avatar avatar-ai">
+                  <span class="avatar-flag">{@target && @target.flag}</span>
+                </div>
                 <div class="tb">
                   <%= if Map.get(msg, :error) do %>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">{msg.content}</p>
