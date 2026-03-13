@@ -1,9 +1,13 @@
+<div align="center">
+
 ```
-██████  ██  █████  ██      ███████ ██   ██ ████████
-██   ██ ██ ██   ██ ██      ██      ██  ██     ██
-██   ██ ██ ███████ ██      █████   █████      ██
-██   ██ ██ ██   ██ ██      ██      ██  ██     ██
-██████  ██ ██   ██ ███████ ███████ ██   ██    ██
+██████╗ ██╗ █████╗ ██╗     ███████╗██╗  ██╗████████╗
+██╔══██╗██║██╔══██╗██║     ██╔════╝██║ ██╔╝╚══██╔══╝
+██║  ██║██║███████║██║     █████╗  █████╔╝    ██║   
+██║  ██║██║██╔══██║██║     ██╔══╝  ██╔═██╗    ██║   
+██████╔╝██║██║  ██║███████╗███████╗██║  ██╗   ██║   
+╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   
+                                                    
 ```
 
 [![CI](https://img.shields.io/github/actions/workflow/status/ccarvalho-eng/dialekt/ci.yml?style=flat-square&logo=github-actions)](https://github.com/ccarvalho-eng/dialekt/actions/workflows/ci.yml)
@@ -17,6 +21,8 @@
 An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-time conversational synthesis.
 
 <img width="1566" height="764" alt="Untitled" src="https://github.com/user-attachments/assets/edb56322-0315-46a9-8db2-30adb94adf30" />
+
+</div>
 
 > **How it works:** Type in either your native language or the target language. The AI tutor always responds in the target language to maintain immersion. When you write in your native language, your message is translated to the target language with phonetics. When you practice in the target language, you receive corrections and guidance. All responses include phonetics and translations to help you understand.
 
