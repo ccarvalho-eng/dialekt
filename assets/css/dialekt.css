@@ -1194,10 +1194,18 @@ body {
 }
 
 .user-bubble {
-  background: var(--surface3);
+  background: linear-gradient(135deg, var(--surface3), rgba(0, 0, 0, 0.02));
   border-radius: var(--radius-md);
   padding: 11px 15px;
   max-width: 70%;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .user-bubble {
+  background: linear-gradient(135deg, var(--surface3), rgba(255, 255, 255, 0.02));
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.02);
 }
 
 .eyebrow {
@@ -1328,13 +1336,18 @@ body {
 }
 
 .tb {
-  background: var(--surface);
+  background: linear-gradient(145deg, var(--surface), var(--surface2));
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 15px;
   max-width: 84%;
   flex: 1;
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .tb {
+  background: linear-gradient(145deg, var(--surface), rgba(255, 255, 255, 0.03));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .tb-loading {
@@ -1379,7 +1392,13 @@ body {
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface), rgba(0, 0, 0, 0.01));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .tutor-section {
+  background: linear-gradient(180deg, var(--surface), rgba(255, 255, 255, 0.01));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .tutor-section:last-child {
@@ -1391,13 +1410,19 @@ body {
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: var(--surface2);
+  background: linear-gradient(90deg, var(--surface2), rgba(0, 0, 0, 0.02));
   border-bottom: 1px solid var(--border);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.025em;
   text-transform: uppercase;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .tutor-section-header {
+  background: linear-gradient(90deg, var(--surface2), rgba(255, 255, 255, 0.02));
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .tutor-section-icon {
@@ -1523,9 +1548,15 @@ body {
   color: var(--text-muted);
   margin-top: 8px;
   padding: 8px 10px;
-  background: var(--surface2);
+  background: linear-gradient(135deg, var(--surface2), rgba(0, 0, 0, 0.015));
   border-radius: 6px;
   border-left: 3px solid var(--border2);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .tutor-translation {
+  background: linear-gradient(135deg, var(--surface2), rgba(255, 255, 255, 0.015));
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.02);
 }
 
 .tutor-translation-icon {
