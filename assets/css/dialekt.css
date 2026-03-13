@@ -1199,12 +1199,11 @@ body {
   position: relative;
 }
 
-.avatar-flag {
-  font-size: 1.4rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Avatar icon styling */
+.avatar-icon {
+  width: 24px;
+  height: 24px;
+  color: #64748b;
 }
 
 /* User avatar styling */
@@ -1213,9 +1212,17 @@ body {
   border-color: #7dd3fc;
 }
 
+.avatar-user .avatar-icon {
+  color: #0ea5e9;
+}
+
 [data-theme="dark"] .avatar-user {
   background: linear-gradient(135deg, rgba(125, 211, 252, 0.15), rgba(59, 130, 246, 0.1));
   border-color: rgba(125, 211, 252, 0.4);
+}
+
+[data-theme="dark"] .avatar-user .avatar-icon {
+  color: #7dd3fc;
 }
 
 /* AI avatar styling */
@@ -1225,30 +1232,41 @@ body {
   position: relative;
 }
 
+.avatar-ai .avatar-icon {
+  color: #f59e0b;
+}
+
 [data-theme="dark"] .avatar-ai {
   background: linear-gradient(135deg, rgba(252, 211, 77, 0.15), rgba(251, 191, 36, 0.1));
   border-color: rgba(252, 211, 77, 0.4);
 }
 
-/* AI indicator badge */
-.avatar-ai::after {
-  content: "AI";
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  background: #3b82f6;
-  color: white;
-  font-size: 0.5rem;
-  font-weight: 700;
-  padding: 2px 3px;
-  border-radius: 4px;
-  border: 1px solid var(--surface);
-  letter-spacing: 0.025em;
+[data-theme="dark"] .avatar-ai .avatar-icon {
+  color: #fbbf24;
 }
 
-[data-theme="dark"] .avatar-ai::after {
-  background: #60a5fa;
-  border-color: var(--background);
+/* Flag badge positioning */
+.avatar-flag-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 0.75rem;
+  line-height: 1;
+  background: white;
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+[data-theme="dark"] .avatar-flag-badge {
+  background: var(--surface2);
+  border-color: var(--border2);
 }
 
 /* Avatar hover effects */
@@ -2308,13 +2326,17 @@ body {
     height: 36px;
   }
 
-  .avatar-flag {
-    font-size: 1.2rem;
+  .avatar-icon {
+    width: 20px;
+    height: 20px;
   }
 
-  .avatar-ai::after {
-    font-size: 0.45rem;
-    padding: 1px 2px;
+  .avatar-flag-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+    top: -2px;
+    right: -2px;
   }
 }
 

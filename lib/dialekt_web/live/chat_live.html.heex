@@ -147,7 +147,8 @@
           <%= if msg.role == "user" do %>
             <div class="msg user-msg">
               <div class="avatar avatar-user">
-                <span class="avatar-flag">{@native && @native.flag}</span>
+                <.icon name="hero-user-circle-solid" class="avatar-icon" />
+                <span class="avatar-flag-badge">{@native && @native.flag}</span>
               </div>
               <div class="user-bubble">
                 <span class="user-text">{msg.content}</span>
@@ -157,7 +158,8 @@
             <%= if Map.get(msg, :loading) do %>
               <div class="msg">
                 <div class="avatar avatar-ai">
-                  <span class="avatar-flag">{@target && @target.flag}</span>
+                  <.icon name="hero-cpu-chip-solid" class="avatar-icon" />
+                  <span class="avatar-flag-badge">{@target && @target.flag}</span>
                 </div>
                 <div class="tb tb-loading">
                   <span class="ld"></span>
@@ -168,7 +170,8 @@
             <% else %>
               <div class="msg">
                 <div class="avatar avatar-ai">
-                  <span class="avatar-flag">{@target && @target.flag}</span>
+                  <.icon name="hero-cpu-chip-solid" class="avatar-icon" />
+                  <span class="avatar-flag-badge">{@target && @target.flag}</span>
                 </div>
                 <div class="tb">
                   <%= if Map.get(msg, :error) do %>
