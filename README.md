@@ -20,10 +20,63 @@ An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-
 
 > **How it works:** Type in either your native language or the target language. The AI tutor always responds in the target language to maintain immersion. When you write in your native language, your message is translated to the target language with phonetics. When you practice in the target language, you receive corrections and guidance. All responses include phonetics and translations to help you understand.
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        User Input Layer                         │
+│                  (Native or Target Language)                    │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+┌─────────────────────────────────────────────────────────────────┐
+│                    Phoenix LiveView Layer                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
+│  │  SetupLive   │  │ DashboardLive│  │     ChatLive         │   │
+│  │  (Config)    │  │  (Sessions)  │  │  (Conversation)      │   │
+│  └──────────────┘  └──────────────┘  └──────────┬───────────┘   │
+└─────────────────────────────────────────────────┼───────────────┘
+                                                  │
+┌─────────────────────────────────────────────────────────────────┐
+│                      Business Logic Layer                       │
+│  ┌──────────────────────────────┐  ┌────────────────────────┐   │
+│  │    Dialekt.Tutor             │  │  Dialekt.Learning      │   │
+│  │  • Build CEFR prompts        │  │  • Config schema       │   │
+│  │  • Enforce register rules    │  │  • ChatSession schema  │   │
+│  │  • Parse AI responses        │  │  • Persistence layer   │   │
+│  │  • Generate starters         │  │                        │   │
+│  └────────────┬─────────────────┘  └────────────────────────┘   │
+└───────────────┼─────────────────────────────────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     HTTP Client Layer (ReqLLM)                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
+│  │  Anthropic   │  │   OpenAI     │  │    OpenRouter        │   │
+│  │  Claude 3.5  │  │  GPT-4/4o    │  │  (Multiple models)   │   │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘   │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  Structured Response Format                     │
+│  • You: [phrase + IPA + transliteration]                        │
+│  • Note: [corrections in native language]                       │
+│  • Tutor: [response in target + translation]                    │
+│  • Follow-up: [question to continue]                            │
+│  • Tips: [learning insights]                                    │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      PostgreSQL Database                        │
+│  • User configurations (languages, CEFR level, register)        │
+│  • Chat sessions and message history                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ## Features
 
 - **Adaptive Conversations** - Vocabulary and grammar adjust to your CEFR level (A1-C2)
 - **Multi-Language Support** - English, Spanish, French, German, Mandarin, Japanese, Portuguese, Arabic, Russian, Hindi
+- **Multiple LLM Providers** - Choose between Anthropic, OpenAI, or OpenRouter
 - **Contextual Feedback** - Real-time corrections, translations, IPA phonetics
 - **Text-to-Speech** - Native pronunciation synthesis
 - **Session Management** - Save and resume configurations
@@ -38,7 +91,7 @@ docker compose -f dockercompose.yml up -d
 asdf install && mix deps.get
 
 # Configure environment
-cp .env.example .env  # Add your ANTHROPIC_API_KEY
+cp .env.example .env  # Add API key for your chosen provider (Anthropic/OpenAI/OpenRouter)
 
 # Setup and run
 mix ecto.setup && mix phx.server
