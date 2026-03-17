@@ -133,16 +133,59 @@
                 <div class="input-row">
                   <textarea
                     class="chat-ta"
-                    placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
+                    placeholder={"Type or use voice input to speak in #{@native && @native.name} or #{@target && @target.name}..."}
                     rows="1"
                     name="value"
                     value={@input}
                     phx-hook="ChatInput"
                     id="chat-input-empty"
                   ></textarea>
+                  <button
+                    type="button"
+                    class="voice-input-btn"
+                    phx-hook="VoiceInput"
+                    id="voice-input-empty"
+                    data-target-lang={@target && @target.code}
+                    data-native-lang={@native && @native.code}
+                    data-textarea-id="chat-input-empty"
+                    data-canvas-id="waveform-empty"
+                    data-status-id="recording-status-empty"
+                    data-lang-indicator-id="lang-indicator-empty"
+                    title="Voice input"
+                    aria-label="Voice input"
+                  >
+                    <.icon name="hero-microphone" class="size-5 mic-icon" />
+                    <.icon name="hero-stop-circle" class="size-5 stop-icon" />
+                  </button>
+                </div>
+                <canvas
+                  id="waveform-empty"
+                  class="waveform-canvas"
+                  width="400"
+                  height="60"
+                  aria-hidden="true"
+                >
+                </canvas>
+                <div
+                  id="recording-status-empty"
+                  class="recording-status"
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  style="display: none;"
+                >
+                  <span class="recording-dot"></span>
+                  <span>Recording...</span>
+                  <button
+                    type="button"
+                    id="lang-indicator-empty"
+                    class="lang-toggle-btn"
+                    title="Click to switch language"
+                  >
+                  </button>
                 </div>
                 <div class="input-hint">
-                  ↵ send · ⇧↵ new line · AI transliteration may contain mistakes
+                  ↵ send · ⇧↵ new line · voice input: click mic then language badge to switch · AI may contain mistakes
                 </div>
               </form>
             </div>
@@ -200,16 +243,59 @@
             <div class="input-row">
               <textarea
                 class="chat-ta"
-                placeholder={"Write in #{@native && @native.name} or try #{@target && @target.name}..."}
+                placeholder={"Type or use voice input to speak in #{@native && @native.name} or #{@target && @target.name}..."}
                 rows="1"
                 name="value"
                 value={@input}
                 phx-hook="ChatInput"
                 id="chat-input-active"
               ></textarea>
+              <button
+                type="button"
+                class="voice-input-btn"
+                phx-hook="VoiceInput"
+                id="voice-input-active"
+                data-target-lang={@target && @target.code}
+                data-native-lang={@native && @native.code}
+                data-textarea-id="chat-input-active"
+                data-canvas-id="waveform-active"
+                data-status-id="recording-status-active"
+                data-lang-indicator-id="lang-indicator-active"
+                title="Voice input"
+                aria-label="Voice input"
+              >
+                <.icon name="hero-microphone" class="size-5 mic-icon" />
+                <.icon name="hero-stop-circle" class="size-5 stop-icon" />
+              </button>
+            </div>
+            <canvas
+              id="waveform-active"
+              class="waveform-canvas"
+              width="400"
+              height="60"
+              aria-hidden="true"
+            >
+            </canvas>
+            <div
+              id="recording-status-active"
+              class="recording-status"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              style="display: none;"
+            >
+              <span class="recording-dot"></span>
+              <span>Recording...</span>
+              <button
+                type="button"
+                id="lang-indicator-active"
+                class="lang-toggle-btn"
+                title="Click to switch language"
+              >
+              </button>
             </div>
             <div class="input-hint">
-              ↵ send · ⇧↵ new line · AI transliteration may contain mistakes
+              ↵ send · ⇧↵ new line · voice input: click mic then language badge to switch · AI may contain mistakes
             </div>
           </form>
         </div>
