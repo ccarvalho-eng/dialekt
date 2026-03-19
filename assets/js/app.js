@@ -27,6 +27,92 @@ import topbar from "../vendor/topbar"
 
 const Hooks = {}
 
+// VoiceInput configuration constants
+const VOICE_INPUT_CONFIG = {
+  LANG_SWITCH_DELAY_MS: 100,
+  FFT_SIZE: 256,
+  WAVEFORM_BAR_COUNT: 40,
+  WAVEFORM_HEIGHT_SCALE: 0.8,
+  WAVEFORM_BAR_GAP: 2
+}
+
+// Language to locale mapping for speech APIs (70+ languages)
+// Shared between TextToSpeech and VoiceInput hooks
+const LANG_TO_LOCALE = {
+  // Verified languages (15) - known good Web Speech API support
+  'en': 'en-GB',
+  'es': 'es-ES',
+  'fr': 'fr-FR',
+  'de': 'de-DE',
+  'it': 'it-IT',
+  'pt': 'pt-BR',
+  'ja': 'ja-JP',
+  'ko': 'ko-KR',
+  'zh': 'zh-CN',
+  'ru': 'ru-RU',
+  'ar': 'ar-SA',
+  'hi': 'hi-IN',
+  'nl': 'nl-NL',
+  'pl': 'pl-PL',
+  'sv': 'sv-SE',
+
+  // Additional languages (55+)
+  'af': 'af-ZA',   // Afrikaans - South Africa
+  'sq': 'sq-AL',   // Albanian - Albania
+  'hy': 'hy-AM',   // Armenian - Armenia
+  'az': 'az-AZ',   // Azerbaijani - Azerbaijan
+  'bn': 'bn-BD',   // Bengali - Bangladesh
+  'bs': 'bs-BA',   // Bosnian - Bosnia
+  'bg': 'bg-BG',   // Bulgarian - Bulgaria
+  'ca': 'ca-ES',   // Catalan - Spain
+  'hr': 'hr-HR',   // Croatian - Croatia
+  'cs': 'cs-CZ',   // Czech - Czech Republic
+  'da': 'da-DK',   // Danish - Denmark
+  'et': 'et-EE',   // Estonian - Estonia
+  'fi': 'fi-FI',   // Finnish - Finland
+  'ka': 'ka-GE',   // Georgian - Georgia
+  'el': 'el-GR',   // Greek - Greece
+  'gu': 'gu-IN',   // Gujarati - India
+  'ht': 'ht-HT',   // Haitian Creole - Haiti
+  'he': 'he-IL',   // Hebrew - Israel
+  'hu': 'hu-HU',   // Hungarian - Hungary
+  'is': 'is-IS',   // Icelandic - Iceland
+  'id': 'id-ID',   // Indonesian - Indonesia
+  'ga': 'ga-IE',   // Irish - Ireland
+  'kn': 'kn-IN',   // Kannada - India
+  'kk': 'kk-KZ',   // Kazakh - Kazakhstan
+  'km': 'km-KH',   // Khmer - Cambodia
+  'lv': 'lv-LV',   // Latvian - Latvia
+  'lt': 'lt-LT',   // Lithuanian - Lithuania
+  'mk': 'mk-MK',   // Macedonian - North Macedonia
+  'ms': 'ms-MY',   // Malay - Malaysia
+  'ml': 'ml-IN',   // Malayalam - India
+  'mt': 'mt-MT',   // Maltese - Malta
+  'mr': 'mr-IN',   // Marathi - India
+  'mn': 'mn-MN',   // Mongolian - Mongolia
+  'ne': 'ne-NP',   // Nepali - Nepal
+  'nb': 'nb-NO',   // Norwegian - Norway
+  'fa': 'fa-IR',   // Persian - Iran
+  'pa': 'pa-IN',   // Punjabi - India
+  'ro': 'ro-RO',   // Romanian - Romania
+  'sr': 'sr-RS',   // Serbian - Serbia
+  'sk': 'sk-SK',   // Slovak - Slovakia
+  'sl': 'sl-SI',   // Slovenian - Slovenia
+  'so': 'so-SO',   // Somali - Somalia
+  'sw': 'sw-KE',   // Swahili - Kenya
+  'tl': 'tl-PH',   // Tagalog - Philippines
+  'ta': 'ta-IN',   // Tamil - India
+  'te': 'te-IN',   // Telugu - India
+  'th': 'th-TH',   // Thai - Thailand
+  'tr': 'tr-TR',   // Turkish - Turkey
+  'uk': 'uk-UA',   // Ukrainian - Ukraine
+  'ur': 'ur-PK',   // Urdu - Pakistan
+  'uz': 'uz-UZ',   // Uzbek - Uzbekistan
+  'vi': 'vi-VN',   // Vietnamese - Vietnam
+  'cy': 'cy-GB',   // Welsh - Wales (uses GB)
+  'zu': 'zu-ZA'    // Zulu - South Africa
+}
+
 Hooks.ChatInput = {
   mounted() {
     this.el.addEventListener("keydown", (e) => {
@@ -123,83 +209,6 @@ Hooks.TextToSpeech = {
       return
     }
 
-    // Complete language to locale mapping (70 languages)
-    // Matches flag country codes from dialekt/languages.ex
-    const langToLocale = {
-      // Verified languages (15) - known good Web Speech API support
-      'en': 'en-GB',
-      'es': 'es-ES',
-      'fr': 'fr-FR',
-      'de': 'de-DE',
-      'it': 'it-IT',
-      'pt': 'pt-BR',
-      'ja': 'ja-JP',
-      'ko': 'ko-KR',
-      'zh': 'zh-CN',
-      'ru': 'ru-RU',
-      'ar': 'ar-SA',
-      'hi': 'hi-IN',
-      'nl': 'nl-NL',
-      'pl': 'pl-PL',
-      'sv': 'sv-SE',
-
-      // Additional languages (55+)
-      'af': 'af-ZA',   // Afrikaans - South Africa
-      'sq': 'sq-AL',   // Albanian - Albania
-      'hy': 'hy-AM',   // Armenian - Armenia
-      'az': 'az-AZ',   // Azerbaijani - Azerbaijan
-      'bn': 'bn-BD',   // Bengali - Bangladesh
-      'bs': 'bs-BA',   // Bosnian - Bosnia
-      'bg': 'bg-BG',   // Bulgarian - Bulgaria
-      'ca': 'ca-ES',   // Catalan - Spain
-      'hr': 'hr-HR',   // Croatian - Croatia
-      'cs': 'cs-CZ',   // Czech - Czech Republic
-      'da': 'da-DK',   // Danish - Denmark
-      'et': 'et-EE',   // Estonian - Estonia
-      'fi': 'fi-FI',   // Finnish - Finland
-      'ka': 'ka-GE',   // Georgian - Georgia
-      'el': 'el-GR',   // Greek - Greece
-      'gu': 'gu-IN',   // Gujarati - India
-      'ht': 'ht-HT',   // Haitian Creole - Haiti
-      'he': 'he-IL',   // Hebrew - Israel
-      'hu': 'hu-HU',   // Hungarian - Hungary
-      'is': 'is-IS',   // Icelandic - Iceland
-      'id': 'id-ID',   // Indonesian - Indonesia
-      'ga': 'ga-IE',   // Irish - Ireland
-      'kn': 'kn-IN',   // Kannada - India
-      'kk': 'kk-KZ',   // Kazakh - Kazakhstan
-      'km': 'km-KH',   // Khmer - Cambodia
-      'lv': 'lv-LV',   // Latvian - Latvia
-      'lt': 'lt-LT',   // Lithuanian - Lithuania
-      'mk': 'mk-MK',   // Macedonian - North Macedonia
-      'ms': 'ms-MY',   // Malay - Malaysia
-      'ml': 'ml-IN',   // Malayalam - India
-      'mt': 'mt-MT',   // Maltese - Malta
-      'mr': 'mr-IN',   // Marathi - India
-      'mn': 'mn-MN',   // Mongolian - Mongolia
-      'ne': 'ne-NP',   // Nepali - Nepal
-      'nb': 'nb-NO',   // Norwegian - Norway
-      'fa': 'fa-IR',   // Persian - Iran
-      'pa': 'pa-IN',   // Punjabi - India
-      'ro': 'ro-RO',   // Romanian - Romania
-      'sr': 'sr-RS',   // Serbian - Serbia
-      'sk': 'sk-SK',   // Slovak - Slovakia
-      'sl': 'sl-SI',   // Slovenian - Slovenia
-      'so': 'so-SO',   // Somali - Somalia
-      'sw': 'sw-KE',   // Swahili - Kenya
-      'tl': 'tl-PH',   // Tagalog - Philippines
-      'ta': 'ta-IN',   // Tamil - India
-      'te': 'te-IN',   // Telugu - India
-      'th': 'th-TH',   // Thai - Thailand
-      'tr': 'tr-TR',   // Turkish - Turkey
-      'uk': 'uk-UA',   // Ukrainian - Ukraine
-      'ur': 'ur-PK',   // Urdu - Pakistan
-      'uz': 'uz-UZ',   // Uzbek - Uzbekistan
-      'vi': 'vi-VN',   // Vietnamese - Vietnam
-      'cy': 'cy-GB',   // Welsh - Wales (uses GB)
-      'zu': 'zu-ZA'    // Zulu - South Africa
-    }
-
     // Languages with verified good Web Speech API support
     const verifiedLanguages = new Set([
       'en', 'es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'zh',
@@ -230,7 +239,7 @@ Hooks.TextToSpeech = {
 
       // Create utterance with mapped language
       const utterance = new SpeechSynthesisUtterance(text)
-      utterance.lang = langToLocale[langCode] || langCode
+      utterance.lang = LANG_TO_LOCALE[langCode] || langCode
 
       // Optional: Add visual feedback
       this.el.style.opacity = '0.6'
@@ -256,6 +265,306 @@ Hooks.TextToSpeech = {
     if (this.handleClick) {
       this.el.removeEventListener('click', this.handleClick)
     }
+  }
+}
+
+Hooks.VoiceInput = {
+  mounted() {
+    this.isRecording = false
+    this.recognition = null
+    this.audioContext = null
+    this.analyser = null
+    this.microphone = null
+    this.animationId = null
+
+    // Check browser support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      this.el.style.display = 'none'
+      console.warn('Speech recognition not supported in this browser')
+      return
+    }
+
+    // Get languages from data attributes
+    this.targetLang = this.el.dataset.targetLang
+    this.nativeLang = this.el.dataset.nativeLang
+    this.currentLang = this.targetLang // Start with target language
+
+    // Get language indicator element
+    this.langIndicatorId = this.el.dataset.langIndicatorId
+    this.langIndicator = document.getElementById(this.langIndicatorId)
+
+    // Setup language toggle handler
+    if (this.langIndicator) {
+      this.handleLangToggle = () => this.toggleLanguage()
+      this.langIndicator.addEventListener('click', this.handleLangToggle)
+    }
+
+    // Store handler reference for cleanup
+    this.handleClick = () => this.toggleRecording()
+    this.el.addEventListener('click', this.handleClick)
+  },
+
+  toggleLanguage() {
+    // Switch between target and native language
+    this.currentLang = this.currentLang === this.targetLang ? this.nativeLang : this.targetLang
+    this.updateLanguageIndicator()
+
+    // If recording, restart recognition with new language
+    if (this.isRecording && this.recognition) {
+      this.recognition.stop()
+      setTimeout(() => {
+        if (this.isRecording) {
+          this.recognition.lang = this.getLangCode(this.currentLang)
+          try {
+            this.recognition.start()
+          } catch (error) {
+            console.error('Failed to restart recognition:', error)
+          }
+        }
+      }, VOICE_INPUT_CONFIG.LANG_SWITCH_DELAY_MS)
+    }
+  },
+
+  updateLanguageIndicator() {
+    if (this.langIndicator) {
+      const isTarget = this.currentLang === this.targetLang
+      this.langIndicator.textContent = this.currentLang.toUpperCase()
+      this.langIndicator.classList.toggle('target-lang', isTarget)
+      this.langIndicator.classList.toggle('native-lang', !isTarget)
+      this.langIndicator.title = isTarget
+        ? `Listening in target language (${this.currentLang}). Click to switch.`
+        : `Listening in native language (${this.currentLang}). Click to switch.`
+    }
+  },
+
+  toggleRecording() {
+    if (this.isRecording) {
+      this.stopRecording()
+    } else {
+      this.startRecording()
+    }
+  },
+
+  getLangCode(code) {
+    return LANG_TO_LOCALE[code] || code
+  },
+
+  async startRecording() {
+    try {
+      // Request microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+
+      // Get textarea reference
+      const textareaId = this.el.dataset.textareaId
+
+      // Setup speech recognition - simple mode, no real-time
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      this.recognition = new SpeechRecognition()
+      this.recognition.continuous = false
+      this.recognition.interimResults = false
+      this.recognition.lang = this.getLangCode(this.currentLang)
+      this.recognition.maxAlternatives = 1
+
+      // Handle final results only
+      this.recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript
+
+        // Update textarea value directly
+        const textarea = document.getElementById(textareaId)
+        if (textarea) {
+          textarea.value = transcript
+
+          // Dispatch as if user typed
+          const inputEvent = new Event('input', { bubbles: true })
+          Object.defineProperty(inputEvent, 'target', {
+            writable: false,
+            value: { value: transcript }
+          })
+          textarea.dispatchEvent(inputEvent)
+        }
+      }
+
+      this.recognition.onerror = async (event) => {
+        console.error('Speech recognition error:', event.error)
+
+        if (event.error === 'no-speech') {
+          // No speech detected - this is normal, keep recording
+          return
+        } else if (event.error === 'aborted') {
+          // User stopped recording, don't show error
+          return
+        } else if (event.error === 'not-allowed') {
+          alert('Microphone access denied')
+          await this.stopRecording()
+        } else if (event.error === 'network') {
+          alert('Network error - speech recognition unavailable')
+          await this.stopRecording()
+        } else {
+          // Other errors - stop recording
+          console.error('Recognition error:', event.error)
+          await this.stopRecording()
+        }
+      }
+
+      this.recognition.onend = () => {
+        // Recognition ended but keep waveform visible
+        // Don't stop recording - let user decide when to stop
+      }
+
+      // Setup audio visualization
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      this.analyser = this.audioContext.createAnalyser()
+      this.analyser.fftSize = VOICE_INPUT_CONFIG.FFT_SIZE
+      this.microphone = this.audioContext.createMediaStreamSource(stream)
+      this.microphone.connect(this.analyser)
+
+      // Set recording state BEFORE drawing waveform
+      this.isRecording = true
+      this.stream = stream
+
+      // Get canvas element and cache color
+      const canvasId = this.el.dataset.canvasId
+      this.canvas = document.getElementById(canvasId)
+      if (this.canvas) {
+        this.canvasContext = this.canvas.getContext('2d')
+        this.cachedColor = getComputedStyle(document.documentElement).getPropertyValue('--color-base-content').trim() || 'oklch(21% 0.006 285.885)'
+        this.drawWaveform()
+      }
+
+      // Start recognition (can throw)
+      try {
+        this.recognition.start()
+      } catch (error) {
+        console.error('Failed to start speech recognition:', error)
+        this.isRecording = false
+        await this.cleanup()
+        throw error
+      }
+
+      // Update UI
+      this.el.classList.add('recording')
+      if (this.canvas) {
+        this.canvas.style.display = 'block'
+      }
+
+      // Show recording status and language indicator
+      const statusId = this.el.dataset.statusId
+      const status = document.getElementById(statusId)
+      if (status) {
+        status.style.display = 'flex'
+      }
+
+      // Update and show language indicator
+      this.updateLanguageIndicator()
+    } catch (error) {
+      console.error('Failed to start recording:', error)
+
+      let message = 'Could not start voice input. '
+      if (error.name === 'NotAllowedError') {
+        message += 'Microphone access denied. Please allow microphone access and try again.'
+      } else if (error.name === 'NotFoundError') {
+        message += 'No microphone found.'
+      } else {
+        message += error.message
+      }
+
+      alert(message)
+      await this.cleanup()
+    }
+  },
+
+  async stopRecording() {
+    if (this.recognition) {
+      this.recognition.stop()
+      this.recognition = null
+    }
+
+    await this.cleanup()
+
+    this.isRecording = false
+    this.el.classList.remove('recording')
+
+    if (this.canvas) {
+      this.canvas.style.display = 'none'
+    }
+
+    // Hide recording status
+    const statusId = this.el.dataset.statusId
+    const status = document.getElementById(statusId)
+    if (status) {
+      status.style.display = 'none'
+    }
+  },
+
+  async cleanup() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId)
+      this.animationId = null
+    }
+
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop())
+      this.stream = null
+    }
+
+    if (this.microphone) {
+      this.microphone.disconnect()
+      this.microphone = null
+    }
+
+    if (this.audioContext) {
+      await this.audioContext.close()
+      this.audioContext = null
+    }
+
+    this.analyser = null
+  },
+
+  drawWaveform() {
+    if (!this.isRecording || !this.canvas) {
+      return
+    }
+
+    const bufferLength = this.analyser.frequencyBinCount
+    const dataArray = new Uint8Array(bufferLength)
+    this.analyser.getByteFrequencyData(dataArray)
+
+    const canvas = this.canvas
+    const canvasCtx = this.canvasContext
+    const width = canvas.width
+    const height = canvas.height
+
+    // Clear canvas
+    canvasCtx.clearRect(0, 0, width, height)
+
+    // Draw bars
+    const barCount = VOICE_INPUT_CONFIG.WAVEFORM_BAR_COUNT
+    const barWidth = width / barCount
+    const step = Math.floor(bufferLength / barCount)
+
+    for (let i = 0; i < barCount; i++) {
+      const value = dataArray[i * step]
+      const barHeight = (value / 255) * height * VOICE_INPUT_CONFIG.WAVEFORM_HEIGHT_SCALE
+      const x = i * barWidth
+      const y = (height - barHeight) / 2
+
+      // Use cached color
+      canvasCtx.fillStyle = this.cachedColor
+      canvasCtx.fillRect(x, y, barWidth - VOICE_INPUT_CONFIG.WAVEFORM_BAR_GAP, barHeight)
+    }
+
+    this.animationId = requestAnimationFrame(() => this.drawWaveform())
+  },
+
+  destroyed() {
+    if (this.handleClick) {
+      this.el.removeEventListener('click', this.handleClick)
+    }
+    if (this.handleLangToggle && this.langIndicator) {
+      this.langIndicator.removeEventListener('click', this.handleLangToggle)
+    }
+    this.cleanup()
   }
 }
 

@@ -77,10 +77,11 @@ An AI-powered language tutor leveraging adaptive CEFR-aligned pedagogy and real-
 ## Features
 
 - **Adaptive Conversations** - Vocabulary and grammar adjust to your CEFR level (A1-C2)
-- **Multi-Language Support** - English, Spanish, French, German, Mandarin, Japanese, Portuguese, Arabic, Russian, Hindi
+- **Multi-Language Support** - 70+ languages including English, Spanish, French, German, Mandarin, Japanese, Portuguese, Arabic, Russian, Hindi
 - **Multiple LLM Providers** - Choose between Anthropic, OpenAI, or OpenRouter
 - **Contextual Feedback** - Real-time corrections, translations, IPA phonetics
-- **Text-to-Speech** - Native pronunciation synthesis
+- **Text-to-Speech** - Native pronunciation synthesis for all supported languages
+- **Voice Input** - Browser-based speech-to-text with support for both native and target languages
 - **Session Management** - Save and resume configurations
 
 ## Quick Start
@@ -100,5 +101,21 @@ mix ecto.setup && mix phx.server
 ```
 
 Visit [localhost:4000](http://localhost:4000)
+
+## Using Voice Input
+
+Dialekt supports browser-based speech-to-text for hands-free language practice:
+
+1. **Start recording** - Click the microphone button next to the text input
+2. **Switch languages** - Click the language badge (e.g., "DE" or "EN") that appears while recording to toggle between your native and target language
+3. **Speak naturally** - The waveform visualizes your voice input in real-time
+4. **Stop recording** - Click the stop button or simply finish speaking (recognition ends automatically)
+5. **Review transcript** - Your speech is transcribed and appears in the text input for you to review before sending
+
+**Notes:**
+- Voice input uses the Web Speech API (requires internet connection)
+- Supports 70+ languages with varying quality depending on browser support
+- Works best in Chrome/Brave (may require disabling privacy shields for localhost)
+- Recognition accuracy depends on microphone quality, accent, and language
 
 
