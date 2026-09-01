@@ -5,20 +5,12 @@ defmodule DialektWeb.DashboardLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    configs = Learning.list_configs()
     theme = get_connect_params(socket)["theme"] || "light"
 
-    # Pre-fetch all sessions for each config
-    sessions_by_config =
-      Map.new(configs, fn config ->
-        {config.id, Learning.list_sessions_for_config(config.id)}
-      end)
-
     {:ok,
-     assign(socket,
-       configs: configs,
-       sessions_by_config: sessions_by_config,
-       show_form: Enum.empty?(configs),
+     socket
+     |> assign(
+       sessions_by_config: %{},
        editing_config_id: nil,
        edit_name: "",
        expanded_config_id: nil,
@@ -26,7 +18,8 @@ defmodule DialektWeb.DashboardLive do
        deleting_config_name: nil,
        deleting_session_id: nil,
        theme: theme
-     )}
+     )
+     |> assign_dashboard_data()}
   end
 
   @impl true
@@ -57,22 +50,15 @@ defmodule DialektWeb.DashboardLive do
 
       case Learning.delete_config(config) do
         {:ok, _} ->
-          # Refresh configs and sessions
-          configs = Learning.list_configs()
-
-          sessions_by_config =
-            Map.new(configs, fn config ->
-              {config.id, Learning.list_sessions_for_config(config.id)}
-            end)
-
           {:noreply,
-           assign(socket,
-             configs: configs,
-             sessions_by_config: sessions_by_config,
-             show_form: Enum.empty?(configs),
+           socket
+           |> assign(
+             sessions_by_config: %{},
+             expanded_config_id: nil,
              deleting_config_id: nil,
              deleting_config_name: nil
-           )}
+           )
+           |> assign_dashboard_data()}
 
         {:error, changeset} ->
           require Logger
@@ -161,14 +147,17 @@ defmodule DialektWeb.DashboardLive do
   def handle_event("toggle_sessions", %{"config-id" => config_id}, socket) do
     config_id = String.to_integer(config_id)
 
-    new_expanded =
-      if socket.assigns.expanded_config_id == config_id do
-        nil
-      else
-        config_id
-      end
+    if socket.assigns.expanded_config_id == config_id do
+      {:noreply, assign(socket, expanded_config_id: nil)}
+    else
+      sessions = Learning.list_sessions_for_config(config_id)
 
-    {:noreply, assign(socket, expanded_config_id: new_expanded)}
+      {:noreply,
+       assign(socket,
+         expanded_config_id: config_id,
+         sessions_by_config: Map.put(socket.assigns.sessions_by_config, config_id, sessions)
+       )}
+    end
   end
 
   @impl true
@@ -188,20 +177,11 @@ defmodule DialektWeb.DashboardLive do
 
       case Learning.delete_session(session) do
         {:ok, _} ->
-          # Refresh configs and sessions
-          configs = Learning.list_configs()
-
-          sessions_by_config =
-            Map.new(configs, fn config ->
-              {config.id, Learning.list_sessions_for_config(config.id)}
-            end)
-
           {:noreply,
-           assign(socket,
-             configs: configs,
-             sessions_by_config: sessions_by_config,
-             deleting_session_id: nil
-           )}
+           socket
+           |> assign(deleting_session_id: nil)
+           |> refresh_expanded_sessions()
+           |> assign_dashboard_data()}
 
         {:error, _changeset} ->
           {:noreply, assign(socket, deleting_session_id: nil)}
@@ -224,5 +204,31 @@ defmodule DialektWeb.DashboardLive do
   @impl true
   def handle_event("sync_theme", %{"theme" => theme}, socket) do
     {:noreply, assign(socket, theme: theme)}
+  end
+
+  defp assign_dashboard_data(socket) do
+    configs = Learning.list_configs()
+    config_ids = Enum.map(configs, & &1.id)
+
+    assign(socket,
+      configs: configs,
+      session_counts: Learning.session_counts_by_config(config_ids),
+      mistake_counts: Learning.active_mistake_counts_by_config(config_ids),
+      show_form: Enum.empty?(configs)
+    )
+  end
+
+  defp refresh_expanded_sessions(%{assigns: %{expanded_config_id: nil}} = socket) do
+    socket
+  end
+
+  defp refresh_expanded_sessions(socket) do
+    config_id = socket.assigns.expanded_config_id
+    sessions = Learning.list_sessions_for_config(config_id)
+
+    assign(
+      socket,
+      sessions_by_config: Map.put(socket.assigns.sessions_by_config, config_id, sessions)
+    )
   end
 end

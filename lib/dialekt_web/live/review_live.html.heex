@@ -1,0 +1,156 @@
+<div class="review-page" phx-hook="ThemeManager" data-theme={@theme} id="review-theme-manager">
+  <Layouts.flash_group flash={@flash} />
+  <header class="review-topbar">
+    <.link navigate={~p"/dashboard"} class="review-back" id="review-back">
+      <.icon name="hero-arrow-left" class="size-4" /> Dashboard
+    </.link>
+    <button
+      phx-click="toggle_theme"
+      class="theme-toggle"
+      title="Toggle dark mode"
+      type="button"
+      id="review-theme-toggle"
+    >
+      <.icon name={if @theme == "dark", do: "hero-sun", else: "hero-moon"} class="size-4" />
+    </button>
+  </header>
+
+  <main class="review-shell">
+    <%= if @config do %>
+      <section class="review-heading">
+        <div>
+          <p class="review-eyebrow">Mistake review</p>
+          <h1 id="review-title">{@config.name}</h1>
+          <p class="review-subtitle">
+            Revisit corrections from your conversations and mark them learned when they stick.
+          </p>
+        </div>
+
+        <div class="review-summary" aria-label="Review totals">
+          <span><strong>{@active_count}</strong> active</span>
+          <span><strong>{@learned_count}</strong> learned</span>
+          <span><strong>{@all_count}</strong> total</span>
+        </div>
+      </section>
+
+      <nav class="review-filters" aria-label="Review status">
+        <.link
+          patch={~p"/review/#{@config.id}?status=active"}
+          id="review-filter-active"
+          class={["review-filter", @status == :active && "is-active"]}
+        >
+          Active
+        </.link>
+        <.link
+          patch={~p"/review/#{@config.id}?status=learned"}
+          id="review-filter-learned"
+          class={["review-filter", @status == :learned && "is-active"]}
+        >
+          Learned
+        </.link>
+        <.link
+          patch={~p"/review/#{@config.id}?status=all"}
+          id="review-filter-all"
+          class={["review-filter", @status == :all && "is-active"]}
+        >
+          All
+        </.link>
+      </nav>
+
+      <div :if={@loading} id="review-loading" class="review-empty" aria-live="polite">
+        Loading review items…
+      </div>
+
+      <div
+        :if={!@loading && @visible_count == 0}
+        id="review-empty"
+        class="review-empty"
+      >
+        <.icon name="hero-check-circle" class="review-empty-icon" />
+        <h2>{empty_title(@status)}</h2>
+        <p>{empty_message(@status)}</p>
+        <.link navigate={~p"/dashboard"} class="btn btn-primary btn-sm">Start a chat</.link>
+      </div>
+
+      <div
+        id="review-mistakes"
+        phx-update="stream"
+        class="review-list"
+        aria-live="polite"
+      >
+        <article
+          :for={{dom_id, mistake} <- @streams.mistakes}
+          id={dom_id}
+          class={["review-card", mistake.learned_at && "is-learned"]}
+        >
+          <div class="review-card-state">
+            <span class={["review-state", mistake.learned_at && "is-learned"]}>
+              {if mistake.learned_at, do: "Learned", else: "Active"}
+            </span>
+            <time datetime={DateTime.to_iso8601(mistake.inserted_at)}>
+              {Calendar.strftime(mistake.inserted_at, "%b %d, %Y")}
+            </time>
+          </div>
+
+          <div class="review-comparison">
+            <div class="review-phrase review-original">
+              <span class="review-label">You wrote</span>
+              <p
+                lang={@config.target_language_code}
+                dir={text_direction(@config.target_language_code)}
+              >
+                {mistake.original_input}
+              </p>
+            </div>
+            <.icon name="hero-arrow-right" class="review-arrow" />
+            <div class="review-phrase review-correction">
+              <span class="review-label">Correction</span>
+              <p
+                lang={@config.target_language_code}
+                dir={text_direction(@config.target_language_code)}
+              >
+                {mistake.corrected_form}
+              </p>
+            </div>
+          </div>
+
+          <p
+            :if={mistake.explanation && mistake.explanation != ""}
+            class="review-explanation"
+            lang={@config.native_language_code}
+            dir={text_direction(@config.native_language_code)}
+          >
+            {mistake.explanation}
+          </p>
+
+          <div class="review-card-actions">
+            <button
+              :if={is_nil(mistake.learned_at)}
+              id={"mark-learned-#{mistake.id}"}
+              type="button"
+              class="btn btn-primary btn-sm"
+              phx-click="mark_learned"
+              phx-value-id={mistake.id}
+            >
+              Mark learned
+            </button>
+            <button
+              :if={mistake.learned_at}
+              id={"restore-mistake-#{mistake.id}"}
+              type="button"
+              class="btn btn-secondary btn-sm"
+              phx-click="restore"
+              phx-value-id={mistake.id}
+            >
+              Review again
+            </button>
+          </div>
+        </article>
+      </div>
+    <% else %>
+      <div id="review-loading" class="review-empty" aria-live="polite">
+        Loading review items…
+      </div>
+    <% end %>
+  </main>
+</div>

@@ -511,13 +511,16 @@ defmodule DialektWeb.ChatLive do
   end
 
   @impl true
-  def handle_info({:get_tutor_response, user_input, _message_index}, socket) do
+  def handle_info({:get_tutor_response, user_input, message_index}, socket) do
     context = %{
       native: socket.assigns.native,
       target: socket.assigns.target,
       level: socket.assigns.level,
       register: socket.assigns.register,
-      history: build_history(socket.assigns.messages)
+      history:
+        socket.assigns.messages
+        |> Enum.take(message_index)
+        |> build_history()
     }
 
     case Tutor.chat(user_input, context) do
@@ -535,10 +538,10 @@ defmodule DialektWeb.ChatLive do
 
         all_messages = messages_without_loading ++ [assistant_message]
 
-        # Persist messages if we have a session
+        # Persist the response and optional correction in one transaction.
         socket =
           if socket.assigns.chat_session do
-            persist_messages(socket, all_messages)
+            persist_tutor_response(socket, all_messages, user_input, parsed)
           else
             socket
           end
@@ -571,27 +574,50 @@ defmodule DialektWeb.ChatLive do
   end
 
   defp persist_messages(socket, messages) do
-    # Convert messages to persistable format (remove loading messages and parsed field)
-    persistable_messages =
-      messages
-      |> Enum.reject(&Map.get(&1, :loading))
-      |> Enum.map(fn msg ->
-        %{
-          "role" => msg.role,
-          "content" => msg[:content] || msg[:text] || "",
-          "text" => msg[:text] || msg[:content] || "",
-          "raw_response" => msg[:raw_response],
-          "error" => msg[:error],
-          "timestamp" => DateTime.to_iso8601(msg.timestamp)
-        }
-      end)
-
-    # Update session with all messages
     session = socket.assigns.chat_session
     fresh_session = Learning.get_session!(session.id)
-    {:ok, updated_session} = Learning.update_session_messages(fresh_session, persistable_messages)
+
+    {:ok, updated_session} =
+      Learning.update_session_messages(fresh_session, persistable_messages(messages))
 
     assign(socket, chat_session: updated_session)
+  end
+
+  defp persist_tutor_response(socket, messages, user_input, parsed) do
+    fresh_session = Learning.get_session!(socket.assigns.chat_session.id)
+
+    mistake_attrs = %{
+      original_input: user_input,
+      corrected_form: parsed.correction,
+      explanation: parsed.note
+    }
+
+    case Learning.complete_tutor_response(
+           fresh_session,
+           persistable_messages(messages),
+           mistake_attrs
+         ) do
+      {:ok, updated_session, _mistake} ->
+        assign(socket, chat_session: updated_session)
+
+      {:error, _changeset} ->
+        socket
+    end
+  end
+
+  defp persistable_messages(messages) do
+    messages
+    |> Enum.reject(&Map.get(&1, :loading))
+    |> Enum.map(fn msg ->
+      %{
+        "role" => msg.role,
+        "content" => msg[:content] || msg[:text] || "",
+        "text" => msg[:text] || msg[:content] || "",
+        "raw_response" => msg[:raw_response],
+        "error" => msg[:error],
+        "timestamp" => DateTime.to_iso8601(msg.timestamp)
+      }
+    end)
   end
 
   defp build_history(messages) do
@@ -623,7 +649,7 @@ defmodule DialektWeb.ChatLive do
             </div>
             <div class="tutor-section-content">
               <div class="tutor-phrase" phx-no-format>
-                <%= raw(format_bold(@parsed.you.phrase)) %>
+                <.formatted_text text={@parsed.you.phrase} />
                 <button
                   id={"tts-you-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
                   phx-hook="TextToSpeech"
@@ -652,7 +678,7 @@ defmodule DialektWeb.ChatLive do
               <span>Feedback</span>
             </div>
             <div class="tutor-section-content" phx-no-format>
-              <%= raw(format_bold(@parsed.note)) %>
+              <.formatted_text text={@parsed.note} />
             </div>
           </div>
         <% end %>
@@ -667,7 +693,7 @@ defmodule DialektWeb.ChatLive do
               <%= for {line, idx} <- Enum.with_index(@parsed.tutor) do %>
                 <div class="tutor-response-item">
                   <div class="tutor-phrase" phx-no-format>
-                    <%= raw(format_bold(line.phrase)) %>
+                    <.formatted_text text={line.phrase} />
                     <button
                       id={"tts-tutor-#{DateTime.to_unix(@msg.timestamp, :microsecond)}-#{idx}"}
                       phx-hook="TextToSpeech"
@@ -705,7 +731,7 @@ defmodule DialektWeb.ChatLive do
             </div>
             <div class="tutor-section-content">
               <div class="tutor-phrase" phx-no-format>
-                <%= raw(format_bold(@parsed.followup.phrase)) %>
+                <.formatted_text text={@parsed.followup.phrase} />
                 <button
                   id={"tts-followup-#{DateTime.to_unix(@msg.timestamp, :microsecond)}"}
                   phx-hook="TextToSpeech"
@@ -741,7 +767,7 @@ defmodule DialektWeb.ChatLive do
               <span>Learning tip</span>
             </div>
             <div class="tutor-section-content" phx-no-format>
-              <%= raw(format_bold(@parsed.tips)) %>
+              <.formatted_text text={@parsed.tips} />
             </div>
           </div>
         <% end %>
@@ -752,8 +778,32 @@ defmodule DialektWeb.ChatLive do
     """
   end
 
-  defp format_bold(text) do
-    String.replace(text, ~r/\*\*(.+?)\*\*/, "<strong>\\1</strong>")
+  attr :text, :string, required: true
+
+  defp formatted_text(assigns) do
+    assigns = assign(assigns, :segments, bold_segments(assigns.text))
+
+    ~H"""
+    <%= for segment <- @segments do %>
+      <%= if segment.bold do %>
+        <strong>{segment.text}</strong>
+      <% else %>
+        {segment.text}
+      <% end %>
+    <% end %>
+    """
+  end
+
+  defp bold_segments(text) when is_binary(text) do
+    ~r/(\*\*.+?\*\*)/s
+    |> Regex.split(text, include_captures: true, trim: true)
+    |> Enum.map(fn segment ->
+      if String.starts_with?(segment, "**") && String.ends_with?(segment, "**") do
+        %{bold: true, text: String.slice(segment, 2, String.length(segment) - 4)}
+      else
+        %{bold: false, text: segment}
+      end
+    end)
   end
 
   defp strip_markdown_bold(nil), do: ""

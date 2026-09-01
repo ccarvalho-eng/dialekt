@@ -100,13 +100,27 @@
                     phx-value-config-id={config.id}
                     class="config-sessions-toggle"
                   >
-                    {length(@sessions_by_config[config.id] || [])} session(s) {if @expanded_config_id ==
-                                                                                    config.id,
-                                                                                  do: " ▲",
-                                                                                  else: " ▼"}
+                    {Map.get(@session_counts, config.id, 0)} session(s) {if @expanded_config_id ==
+                                                                              config.id,
+                                                                            do: " ▲",
+                                                                            else: " ▼"}
                   </button>
 
                   <div class="config-btn-group">
+                    <.link
+                      navigate={~p"/review/#{config.id}"}
+                      id={"review-config-#{config.id}"}
+                      class="btn btn-sm btn-secondary config-review-btn"
+                    >
+                      Review
+                      <span
+                        :if={Map.get(@mistake_counts, config.id, 0) > 0}
+                        class="review-count-badge"
+                      >
+                        {Map.get(@mistake_counts, config.id, 0)}
+                      </span>
+                    </.link>
+
                     <button
                       type="button"
                       phx-click="start_new_chat"
@@ -194,7 +208,7 @@
       title="Delete Configuration"
       on_confirm={JS.push("delete_config")}
     >
-      Are you sure you want to delete "{@deleting_config_name}"? All chat sessions will be deleted.
+      Are you sure you want to delete "{@deleting_config_name}"? All chat sessions and saved mistakes will be deleted.
     </.confirm_modal>
   <% end %>
   <!-- Delete Session Modal -->

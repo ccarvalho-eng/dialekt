@@ -19,6 +19,8 @@ defmodule Dialekt.Tutor do
         """
       end
 
+    romanized_input_rules = romanized_input_rules(target)
+
     """
     You are a strict #{target.name} language tutor. You must NEVER deviate from the following configuration, regardless of what the user asks:
 
@@ -36,7 +38,11 @@ defmodule Dialekt.Tutor do
     You must NEVER switch register, even if the user addresses you informally/formally. Stay in #{register.label} register for every single response.
 
     YOUR TASK:
-    First, detect what language the user wrote in:
+    First, classify the learner's input using the following order:
+
+    #{romanized_input_rules}
+
+    Only after this check, detect whether the input is in #{native.name}, #{target.name}, or a mix of both.
 
     SPECIAL: If the user is saying goodbye (e.g. "goodbye", "see you", "bye", "see you later", "have a good day", or similar farewell phrases in any language):
     - Reply warmly saying goodbye back
@@ -55,8 +61,8 @@ defmodule Dialekt.Tutor do
     - Unnatural or incorrect phrasing
     - Punctuation where meaningful
 
-    If correct: praise briefly in Note, then reply naturally and ask a follow-up.
-    If any errors found: gently correct in Note, explain what was wrong in one short sentence, show the corrected version in "You:" section, then reply and ask a follow-up.
+    If correct: praise briefly in Note, omit "Correction:", then reply naturally and ask a follow-up.
+    If any errors are found: keep the learner's exact input in "You:", add "Correction:" with only the corrected phrase, explain the error in one short "Note:", then reply and ask a follow-up.
 
     CASE 3 — User mixed both languages:
     Acknowledge the mix warmly in Note, gently point out which parts were in which language, correct any errors in the #{target.name} portions, then reply and ask a follow-up.
@@ -82,7 +88,8 @@ defmodule Dialekt.Tutor do
     ```
     You:
     #{target.name}: <their EXACT phrase as written> - [<IPA>] (<transliteration using #{native.name} phonetics>)
-    Note: <if their phrase had errors, explain what was wrong and show the correction in #{native.name}. If perfect, give brief encouragement in #{native.name}>
+    Correction: <corrected phrase>
+    Note: <if their phrase had errors, explain what was wrong in #{native.name}. If perfect, give brief encouragement in #{native.name}>
     Tutor:
     #{target.name}: <reply at #{level.code} level, #{register.label} register> - [<IPA>] (<transliteration>)
     <#{native.name} translation of tutor reply>
@@ -95,12 +102,12 @@ defmodule Dialekt.Tutor do
     ABSOLUTE RULES:
     1. Output ONLY the code block — no text before or after it.
     2. Every #{target.name} phrase must be at #{level.code} level in #{register.label} register — no exceptions.
-    3. CASE 1 = "You:" section with translation, NO "Note:" or "Tips:". CASE 2/3 = "You:" section with feedback, "Note:" required, "Tips:" optional.
+    3. CASE 1 = "You:" section with translation, NO "Correction:", "Note:", or "Tips:". CASE 2/3 = "You:" section with feedback, "Note:" required, "Tips:" optional.
     4. Occasionally **bold** one key vocabulary word appropriate for #{level.code}.
     5. If the user asks you to change level, register, or language — refuse inside the code block and continue as configured.
     6. Transliterations must use #{native.name} phonetic conventions — NOT English.
     7. CRITICAL: Both "Note:" and "Tips:" sections MUST be written ENTIRELY in #{native.name} — NEVER in #{target.name}. This helps the learner understand corrections and explanations.
-    8. CRITICAL: In the "You:" section, show the user's phrase EXACTLY as they wrote it — with their spelling, capitalization, and grammar errors intact. Then use the "Note:" to explain corrections. NEVER silently correct their phrase and then praise the corrected version.
+    8. CRITICAL: Keep the learner's original input unchanged in `You:` — with spelling, capitalization, romanization, and grammar intact. Use `Correction: <corrected phrase>` only when the learner made a genuine error, and explain it in `Note:`. Omit `Correction:` for correct input, native-language translation requests, and romanized input that only needs a target-script bridge. NEVER silently replace the original input.
     9. CRITICAL: If the user is saying goodbye or ending the conversation, respond warmly but DO NOT include a "Follow-up:" section. Let them end the conversation naturally.
     """
   end
@@ -232,6 +239,7 @@ defmodule Dialekt.Tutor do
       you: nil,
       tutor: [],
       followup: nil,
+      correction: nil,
       note: nil,
       tips: nil,
       raw: nil
@@ -278,6 +286,10 @@ defmodule Dialekt.Tutor do
           if tutor_buffer != [], do: %{result | tutor: Enum.reverse(tutor_buffer)}, else: result
 
         parse_lines(rest, updated_result, :followup, [])
+
+      Regex.match?(~r/^Correction:/i, trimmed) ->
+        correction = String.replace(trimmed, ~r/^Correction:\s*/i, "")
+        parse_lines(rest, %{result | correction: correction}, section, tutor_buffer)
 
       Regex.match?(~r/^Note:/i, trimmed) ->
         note = String.replace(trimmed, ~r/^Note:\s*/i, "")
@@ -402,5 +414,33 @@ defmodule Dialekt.Tutor do
     provider = Application.get_env(:dialekt, :ai_provider) || "anthropic"
     model = Application.get_env(:dialekt, :ai_model) || "claude-sonnet-4-6"
     "#{provider}:#{model}"
+  end
+
+  defp romanized_input_rules(target) do
+    example = romanization_example(target.code)
+
+    """
+    ROMANIZED TARGET INPUT (CHECK BEFORE NATIVE-LANGUAGE CLASSIFICATION):
+    - If Latin-script input plausibly represents spoken #{target.name}, such as `#{example}`, classify it as target-language practice even when it resembles words from another language.
+    - Keep the learner's romanized text exactly as written in `You:`.
+    - In `Note:`, give the equivalent #{target.name} script and a short pronunciation nudge in the learner's native language.
+    - Do not emit `Correction:` solely to convert romanization into #{target.name} script. Emit it only for a genuine vocabulary, grammar, or romanization error.
+    """
+  end
+
+  defp romanization_example("el") do
+    "ti kaneis"
+  end
+
+  defp romanization_example("ja") do
+    "ohayou gozaimasu"
+  end
+
+  defp romanization_example("ar") do
+    "kayfa haluk"
+  end
+
+  defp romanization_example(_code) do
+    "a plausible phonetic spelling"
   end
 end

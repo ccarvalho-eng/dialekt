@@ -68,7 +68,15 @@
   <div class="chat-app">
     <header class="chat-hdr">
       <div class="chat-hdr-inner">
-        <button class="back-btn" phx-click={JS.navigate(~p"/dashboard")} type="button">←</button>
+        <button
+          class="back-btn"
+          phx-click={JS.navigate(~p"/dashboard")}
+          type="button"
+          aria-label="Back to dashboard"
+          title="Back to dashboard"
+        >
+          ←
+        </button>
         <div class="hdr-info">
           <div class="language-pair-inline">
             <span class="language-flag">{@native && @native.flag}</span>
@@ -82,10 +90,22 @@
         <span class="hdr-badge">{@level && @level.code}</span>
         <span class="hdr-badge">{@register && @register.label}</span>
         <span class="hdr-badge">{@target && @target.native}</span>
+        <.link
+          :if={@config}
+          navigate={~p"/review/#{@config.id}"}
+          id="chat-review-link"
+          class="chat-review-link"
+          aria-label="Review saved mistakes"
+          title="Review saved mistakes"
+        >
+          <.icon name="hero-academic-cap" class="size-4" />
+          <span>Review</span>
+        </.link>
         <button
           phx-click="toggle_theme"
           class="theme-toggle"
           title="Toggle dark mode"
+          aria-label="Toggle dark mode"
           type="button"
         >
           <.icon name={if @theme == "dark", do: "hero-sun", else: "hero-moon"} class="size-4" />

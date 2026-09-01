@@ -44,6 +44,42 @@ defmodule Dialekt.TutorTest do
       assert prompt =~ "REGISTER — INFORMAL (STRICT)"
       assert prompt =~ "Always use informal pronouns"
     end
+
+    test "classifies plausible romanized target input before native-language input" do
+      native = Languages.get_language("en")
+      level = Languages.get_cefr_level("A1")
+      register = Languages.get_register("informal")
+
+      examples = [
+        {"el", "ti kaneis"},
+        {"ja", "ohayou gozaimasu"},
+        {"ar", "kayfa haluk"}
+      ]
+
+      for {target_code, example} <- examples do
+        target = Languages.get_language(target_code)
+        prompt = Tutor.build_system_prompt(native, target, level, register)
+
+        assert prompt =~ "ROMANIZED TARGET INPUT"
+        assert prompt =~ example
+        assert prompt =~ "classify it as target-language practice"
+        assert prompt =~ "Do not emit `Correction:` solely to convert romanization"
+      end
+    end
+
+    test "requires explicit correction metadata only for genuine errors" do
+      native = Languages.get_language("en")
+      target = Languages.get_language("es")
+      level = Languages.get_cefr_level("A2")
+      register = Languages.get_register("informal")
+
+      prompt = Tutor.build_system_prompt(native, target, level, register)
+
+      assert prompt =~ "Correction: <corrected phrase>"
+      assert prompt =~ "only when the learner made a genuine error"
+      assert prompt =~ "Keep the learner's original input unchanged in `You:`"
+      assert prompt =~ "Omit `Correction:`"
+    end
   end
 
   describe "cefr_rules/1" do
@@ -128,6 +164,45 @@ defmodule Dialekt.TutorTest do
       result = Tutor.parse_response(raw)
 
       assert result.note =~ "Remember the accent"
+    end
+
+    test "parses an explicit correction separately from the explanation" do
+      raw = """
+      ```
+      You:
+      Spanish: Como estas - [komo estas] (koh-moh ehs-tahs)
+      Correction: ¿Cómo estás?
+      Note: Add the opening question mark and written accents.
+      Tutor:
+      Spanish: Estoy bien - [estoi bien] (ehs-toy bee-en)
+      I am well
+      ```
+      """
+
+      result = Tutor.parse_response(raw)
+
+      assert result.you.phrase == "Como estas"
+      assert result.correction == "¿Cómo estás?"
+      assert result.note == "Add the opening question mark and written accents."
+    end
+
+    test "leaves correction empty for correct, native, and romanized bridge responses" do
+      responses = [
+        "You:\nSpanish: Hola - [ola] (oh-lah)\nNote: Great work!\nTutor:\nSpanish: Hola - [ola] (oh-lah)\nHello",
+        "You:\nSpanish: Buenos días - [bwenos dias] (bweh-nohs dee-ahs)\nTutor:\nSpanish: Hola - [ola] (oh-lah)\nHello",
+        "You:\nJapanese: ohayou - [o.ha.joː] (oh-hah-yoh)\nNote: In Japanese script: おはよう.\nTutor:\nJapanese: おはよう - [o.ha.joː] (oh-hah-yoh)\nGood morning"
+      ]
+
+      for raw <- responses do
+        assert Tutor.parse_response(raw).correction == nil
+      end
+    end
+
+    test "keeps correction empty when a malformed response falls back to raw text" do
+      result = Tutor.parse_response("<unexpected>response</unexpected>")
+
+      assert result.correction == nil
+      assert result.raw == "<unexpected>response</unexpected>"
     end
   end
 

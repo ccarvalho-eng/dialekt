@@ -5,7 +5,7 @@ defmodule Dialekt.Learning.Config do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Dialekt.Learning.ChatSession
+  alias Dialekt.Learning.{ChatSession, Mistake}
 
   @required_fields ~w(name native_language_code target_language_code cefr_level_code register_code)a
   @optional_fields ~w(starters)a
@@ -19,6 +19,7 @@ defmodule Dialekt.Learning.Config do
     field(:starters, {:array, :string}, default: [])
 
     has_many(:chat_sessions, ChatSession)
+    has_many(:mistakes, Mistake)
 
     timestamps(type: :utc_datetime)
   end

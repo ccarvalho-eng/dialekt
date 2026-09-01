@@ -76,6 +76,42 @@ defmodule DialektWeb.DashboardLiveTest do
 
       assert html =~ "0 session(s)"
     end
+
+    test "loads session details only when a configuration is expanded", %{
+      conn: conn,
+      config: config
+    } do
+      {:ok, session} = Learning.create_session(config.id)
+      {:ok, view, html} = live(conn, ~p"/dashboard")
+
+      refute html =~ "Session ##{session.id}"
+
+      view
+      |> element("button[phx-click='toggle_sessions'][phx-value-config-id='#{config.id}']")
+      |> render_click()
+
+      assert render(view) =~ "Session ##{session.id}"
+    end
+
+    test "links to review with an active mistake count", %{conn: conn, config: config} do
+      {:ok, _mistake} =
+        Learning.create_mistake(%{
+          config_id: config.id,
+          original_input: "Ich bin gut",
+          corrected_form: "Mir geht es gut",
+          explanation: "Use the idiomatic expression."
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/dashboard")
+
+      assert has_element?(
+               view,
+               "#review-config-#{config.id}[href='/review/#{config.id}']",
+               "Review"
+             )
+
+      assert has_element?(view, "#review-config-#{config.id} .review-count-badge", "1")
+    end
   end
 
   describe "Dashboard - Config Management" do

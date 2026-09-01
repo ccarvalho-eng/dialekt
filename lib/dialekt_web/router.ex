@@ -20,6 +20,7 @@ defmodule DialektWeb.Router do
     live "/", SetupLive
     live "/dashboard", DashboardLive
     live "/chat", ChatLive
+    live "/review/:config_id", ReviewLive
   end
 
   # Other scopes may use custom stacks.
